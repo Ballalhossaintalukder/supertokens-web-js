@@ -464,7 +464,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/<tenantId>/user/email/verify/token": {
+    "/user/email/verify/token": {
         parameters: {
             query?: never;
             header?: never;
