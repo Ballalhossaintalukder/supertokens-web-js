@@ -35,4 +35,6 @@ type MergeManyPaths<T extends Record<string, any>[]> = T extends [infer First, .
         : never
     : {};
 
-export type paths = MergeManyPaths<[pathsV3_1, pathsV4_0, pathsV4_1]>;
+// TODO: Remove this once the new API spec is merged
+// export type paths = MergeManyPaths<[pathsV3_1, pathsV4_0, pathsV4_1]>;
+export type paths = pathsV4_1;

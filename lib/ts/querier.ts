@@ -51,6 +51,8 @@ export default class Querier {
         return new NormalisedURLPath(populated);
     };
 
+    private safelyStringifyBody = (body?: any) => (body ? JSON.stringify(body) : undefined);
+
     get = async <P extends keyof paths>(
         template: PathParam<P>,
         config: RequestInitWithInferredBody<P, "get">,
@@ -66,6 +68,7 @@ export default class Querier {
             {
                 method: "GET",
                 ...config,
+                body: this.safelyStringifyBody(config.body),
             },
             preAPIHook,
             postAPIHook
@@ -97,6 +100,7 @@ export default class Querier {
             {
                 method: "POST",
                 ...config,
+                body: this.safelyStringifyBody(config.body),
             },
             preAPIHook,
             postAPIHook
@@ -124,6 +128,7 @@ export default class Querier {
             {
                 method: "DELETE",
                 ...config,
+                body: this.safelyStringifyBody(config.body),
             },
             preAPIHook,
             postAPIHook
@@ -151,6 +156,7 @@ export default class Querier {
             {
                 method: "PUT",
                 ...config,
+                body: this.safelyStringifyBody(config.body),
             },
             preAPIHook,
             postAPIHook

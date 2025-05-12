@@ -59,24 +59,14 @@ export default function getRecipeImplementation(
                 userContext,
             });
 
-            const { jsonBody, fetchResponse } = await querier.post<
-                | {
-                      status: "OK";
-                  }
-                | {
-                      status: "RESET_PASSWORD_INVALID_TOKEN_ERROR";
-                  }
-                | {
-                      status: "FIELD_ERROR";
-                      formFields: {
-                          id: string;
-                          error: string;
-                      }[];
-                  }
-            >(
-                tenantId,
-                "/user/password/reset",
-                { body: JSON.stringify({ formFields, token, method: "token" }) },
+            const { jsonBody, fetchResponse } = await querier.post(
+                {
+                    path: "/<tenantId>/user/password/reset",
+                    params: {
+                        tenantId: tenantId || "public",
+                    },
+                },
+                { body: { formFields, token, method: "token" } },
                 Querier.preparePreAPIHook({
                     recipePreAPIHook: recipeImplInput.preAPIHook,
                     action: "SUBMIT_NEW_PASSWORD",
@@ -140,25 +130,16 @@ export default function getRecipeImplementation(
                   fetchResponse: Response;
               }
         > {
-            let { jsonBody, fetchResponse } = await querier.post<
-                | {
-                      status: "OK";
-                  }
-                | {
-                      status: "PASSWORD_RESET_NOT_ALLOWED";
-                      reason: string;
-                  }
-                | {
-                      status: "FIELD_ERROR";
-                      formFields: {
-                          id: string;
-                          error: string;
-                      }[];
-                  }
-            >(
-                await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({ userContext }),
-                "/user/password/reset/token",
-                { body: JSON.stringify({ formFields }) },
+            let { jsonBody, fetchResponse } = await querier.post(
+                {
+                    path: "/<tenantId>/user/password/reset/token",
+                    params: {
+                        tenantId: await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
+                            userContext,
+                        }) || "public",
+                    },
+                },
+                { body: { formFields } },
                 Querier.preparePreAPIHook({
                     recipePreAPIHook: recipeImplInput.preAPIHook,
                     action: "SEND_RESET_PASSWORD_EMAIL",
@@ -214,26 +195,16 @@ export default function getRecipeImplementation(
                   fetchResponse: Response;
               }
         > {
-            let { jsonBody, fetchResponse } = await querier.post<
-                | {
-                      status: "OK";
-                      user: User;
-                  }
-                | {
-                      status: "FIELD_ERROR";
-                      formFields: {
-                          id: string;
-                          error: string;
-                      }[];
-                  }
-                | {
-                      status: "SIGN_UP_NOT_ALLOWED";
-                      reason: string;
-                  }
-            >(
-                await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({ userContext }),
-                "/signup",
-                { body: JSON.stringify({ formFields, shouldTryLinkingWithSessionUser }) },
+            let { jsonBody, fetchResponse } = await querier.post(
+                {
+                    path: "/<tenantId>/signup",
+                    params: {
+                        tenantId: await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
+                            userContext,
+                        }) || "public",
+                    },
+                },
+                { body: { formFields, shouldTryLinkingWithSessionUser } },
                 Querier.preparePreAPIHook({
                     recipePreAPIHook: recipeImplInput.preAPIHook,
                     action: "EMAIL_PASSWORD_SIGN_UP",
@@ -293,29 +264,16 @@ export default function getRecipeImplementation(
                   fetchResponse: Response;
               }
         > {
-            let { jsonBody, fetchResponse } = await querier.post<
-                | {
-                      status: "OK";
-                      user: User;
-                  }
-                | {
-                      status: "FIELD_ERROR";
-                      formFields: {
-                          id: string;
-                          error: string;
-                      }[];
-                  }
-                | {
-                      status: "WRONG_CREDENTIALS_ERROR";
-                  }
-                | {
-                      status: "SIGN_IN_NOT_ALLOWED";
-                      reason: string;
-                  }
-            >(
-                await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({ userContext }),
-                "/signin",
-                { body: JSON.stringify({ formFields, shouldTryLinkingWithSessionUser }) },
+            let { jsonBody, fetchResponse } = await querier.post(
+                {
+                    path: "/<tenantId>/signin",
+                    params: {
+                        tenantId: await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
+                            userContext,
+                        }) || "public",
+                    },
+                },
+                { body: { formFields, shouldTryLinkingWithSessionUser } },
                 Querier.preparePreAPIHook({
                     recipePreAPIHook: recipeImplInput.preAPIHook,
                     action: "EMAIL_PASSWORD_SIGN_IN",
