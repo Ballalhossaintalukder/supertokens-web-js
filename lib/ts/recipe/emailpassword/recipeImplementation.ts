@@ -371,14 +371,16 @@ export default function getRecipeImplementation(
             doesExist: boolean;
             fetchResponse: Response;
         }> {
-            let { jsonBody, fetchResponse } = await querier.get<{
-                status: "OK";
-                exists: boolean;
-            }>(
-                await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({ userContext }),
-                "/emailpassword/email/exists",
+            let { jsonBody, fetchResponse } = await querier.get(
+                {
+                    path: "/<tenantId>/emailpassword/email/exists",
+                    params: {
+                        tenantId: await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
+                            userContext,
+                        }) || "public",
+                    },
+                },
                 {},
-                { email },
                 Querier.preparePreAPIHook({
                     recipePreAPIHook: recipeImplInput.preAPIHook,
                     action: "EMAIL_EXISTS",

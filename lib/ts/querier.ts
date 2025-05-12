@@ -23,6 +23,8 @@ import {
     RecipePreAPIHookFunction,
 } from "./recipe/recipeModule/types";
 import STGeneralError from "./error";
+import { paths } from "./sdk/paths";
+import { PathParam, RequestInitWithInferredBody, ResponseBody } from "./sdk/types";
 
 /**
  * When network calls are made the Querier calls .clone() on the response before:
@@ -37,19 +39,30 @@ import STGeneralError from "./error";
 export default class Querier {
     constructor(private readonly recipeId: string, private readonly appInfo: NormalisedAppInfo) {}
 
-    get = async <JsonBodyType>(
-        tenantId: string | undefined,
-        path: string,
-        config: RequestInit,
-        queryParams?: Record<string, string>,
+    private getPath = <P extends keyof paths>(path: PathParam<P>): NormalisedURLPath => {
+        const template = typeof path === "string" ? path : path.path;
+        const params = typeof path === "string" ? {} : path.params ?? {};
+
+        let populated = String(template);
+        for (const [key, value] of Object.entries(params)) {
+            populated = populated.replace(new RegExp(`<${key}>\\b`, "g"), String(value));
+        }
+
+        return new NormalisedURLPath(populated);
+    };
+
+    get = async <P extends keyof paths>(
+        template: PathParam<P>,
+        config: RequestInitWithInferredBody<P, "get">,
         preAPIHook?: PreAPIHookFunction,
         postAPIHook?: PostAPIHookFunction
     ): Promise<{
-        jsonBody: JsonBodyType;
+        jsonBody: ResponseBody<P, "get">;
         fetchResponse: Response;
     }> => {
+        const path = this.getFullUrl(template);
         const result = await this.fetch(
-            this.getFullUrl(tenantId, path, queryParams),
+            path,
             {
                 method: "GET",
                 ...config,
@@ -66,14 +79,13 @@ export default class Querier {
         };
     };
 
-    post = async <JsonBodyType>(
-        tenantId: string | undefined,
-        path: string,
-        config: RequestInit,
+    post = async <P extends keyof paths>(
+        template: PathParam<P>,
+        config: RequestInitWithInferredBody<P, "post">,
         preAPIHook?: PreAPIHookFunction,
         postAPIHook?: PostAPIHookFunction
     ): Promise<{
-        jsonBody: JsonBodyType;
+        jsonBody: ResponseBody<P, "post">;
         fetchResponse: Response;
     }> => {
         if (config.body === undefined) {
@@ -81,7 +93,7 @@ export default class Querier {
         }
 
         const result = await this.fetch(
-            this.getFullUrl(tenantId, path),
+            this.getFullUrl(template),
             {
                 method: "POST",
                 ...config,
@@ -98,18 +110,17 @@ export default class Querier {
         };
     };
 
-    delete = async <JsonBodyType>(
-        tenantId: string | undefined,
-        path: string,
-        config: RequestInit,
+    delete = async <P extends keyof paths>(
+        template: PathParam<P>,
+        config: RequestInitWithInferredBody<P, "delete">,
         preAPIHook?: PreAPIHookFunction,
         postAPIHook?: PostAPIHookFunction
     ): Promise<{
-        jsonBody: JsonBodyType;
+        jsonBody: ResponseBody<P, "delete">;
         fetchResponse: Response;
     }> => {
         const result = await this.fetch(
-            this.getFullUrl(tenantId, path),
+            this.getFullUrl(template),
             {
                 method: "DELETE",
                 ...config,
@@ -126,18 +137,17 @@ export default class Querier {
         };
     };
 
-    put = async <JsonBodyType>(
-        tenantId: string | undefined,
-        path: string,
-        config: RequestInit,
+    put = async <P extends keyof paths>(
+        template: PathParam<P>,
+        config: RequestInitWithInferredBody<P, "put">,
         preAPIHook?: PreAPIHookFunction,
         postAPIHook?: PostAPIHookFunction
     ): Promise<{
-        jsonBody: JsonBodyType;
+        jsonBody: ResponseBody<P, "put">;
         fetchResponse: Response;
     }> => {
         const result = await this.fetch(
-            this.getFullUrl(tenantId, path),
+            this.getFullUrl(template),
             {
                 method: "PUT",
                 ...config,
@@ -221,22 +231,11 @@ export default class Querier {
         return result;
     };
 
-    getFullUrl = (tenantId: string | undefined, pathStr: string, queryParams?: Record<string, string>): string => {
+    getFullUrl = <P extends keyof paths>(path: PathParam<P>): string => {
         let basePath = this.appInfo.apiBasePath.getAsStringDangerous();
-        if (tenantId !== undefined && tenantId !== "public") {
-            basePath = `${basePath}/${tenantId}`;
-        }
+        const normalisedPath = this.getPath(path);
 
-        const path = new NormalisedURLPath(pathStr);
-
-        const fullUrl = `${this.appInfo.apiDomain.getAsStringDangerous()}${basePath}${path.getAsStringDangerous()}`;
-
-        if (queryParams === undefined) {
-            return fullUrl;
-        }
-
-        // If query params, add.
-        return fullUrl + "?" + new URLSearchParams(queryParams);
+        return `${this.appInfo.apiDomain.getAsStringDangerous()}${basePath}${normalisedPath.getAsStringDangerous()}`;
     };
 
     getResponseJsonOrThrowGeneralError = async (response: Response): Promise<any> => {

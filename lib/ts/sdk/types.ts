@@ -45,8 +45,15 @@ export type UncleanedResponseBody<P extends keyof paths, M extends Method> = Ext
     ? R
     : unknown;
 
+
+// Type to remove object that contains `GENERAL_ERROR` from response body
+// as we are handling that in the querier methods directly.
+export type RemoveGeneralError<T> = T extends { status: "GENERAL_ERROR" } ? never : T;
+
 // Type to clean the response body from the method type
-export type ResponseBody<P extends keyof paths, M extends Method> = DeepRequireAllFields<UncleanedResponseBody<P, M>>;
+export type ResponseBody<P extends keyof paths, M extends Method> =
+  DeepRequireAllFields<RemoveGeneralError<UncleanedResponseBody<P, M>>>;
+
 
 // Type to extract the path parameters from the method type
 // and enforce them through inference
@@ -60,3 +67,9 @@ type PathParamsObject<T extends string> = ExtractPathParams<T> extends never
 
 // Type to handle the path parameter
 export type PathParam<P extends keyof paths> = P | { path: P; params: PathParamsObject<P> };
+
+// Custom type defined from RequestInit to ensure request body is inferred
+// from the path.
+export type RequestInitWithInferredBody<P extends keyof paths, M extends Method> = RequestInit & {
+    body?: ResponseBody<P, M>;
+};
