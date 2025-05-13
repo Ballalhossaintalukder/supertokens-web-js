@@ -227,7 +227,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/<tenantId>/passwordless/phoneNumber/exists": {
+    "/<tenantId>/passwordless/phonenumber/exists": {
         parameters: {
             query?: never;
             header?: never;
