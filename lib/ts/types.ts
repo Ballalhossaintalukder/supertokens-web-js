@@ -231,8 +231,8 @@ export type SuperTokensPlugin = {
     ) => { status: "OK"; pluginsToAdd?: SuperTokensPlugin[] } | { status: "ERROR"; message: string };
     overrideMap?: {
         [recipeId in keyof AllRecipeConfigs]?: RecipePluginOverride<recipeId> & {
-        recipeInitRequired?: boolean | ((sdkVersion: string) => boolean);
-    };
+            recipeInitRequired?: boolean | ((sdkVersion: string) => boolean);
+        };
     };
     config?: (config: Omit<SuperTokensConfig, "recipeList">) => Omit<SuperTokensConfig, "recipeList"> | undefined;
 };
