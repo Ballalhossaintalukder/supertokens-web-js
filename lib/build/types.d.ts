@@ -14,6 +14,7 @@ import type { UserInput as PasswordlessConfig } from "./recipe/passwordless/type
 import type { UserInput as SessionConfig } from "./recipe/session/types";
 import type { UserInput as ThirdPartyConfig } from "./recipe/thirdparty/types";
 import type { UserInput as TotpConfig } from "./recipe/totp/types";
+import type { UserInput as WebauthnConfig } from "./recipe/webauthn/types";
 /**
  * The configuration object to be passed when calling SuperTokens.init
  */
@@ -179,6 +180,7 @@ export declare type AllRecipeConfigs = {
     session: SessionConfig;
     thirdparty: ThirdPartyConfig;
     totp: TotpConfig;
+    webauthn: WebauthnConfig;
 };
 export declare type RecipePluginOverride<T extends keyof AllRecipeConfigs> = {
     functions?: NonNullable<AllRecipeConfigs[T]["override"]>["functions"];

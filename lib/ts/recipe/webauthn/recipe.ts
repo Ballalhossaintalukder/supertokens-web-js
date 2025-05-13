@@ -18,12 +18,12 @@ import { NormalisedInputType, RecipeInterface, InputType, UserInput, PreAndPostA
 import { normaliseUserInput } from "./utils";
 import OverrideableBuilder from "supertokens-js-override";
 import RecipeImplementation from "./recipeImplementation";
-import { CreateRecipeFunction, NormalisedAppInfo } from "../../types";
-import { checkForSSRErrorAndAppendIfNeeded, isTest } from "../../utils";
+import { CreateRecipeFunction } from "../../types";
+import { applyPlugins, checkForSSRErrorAndAppendIfNeeded, isTest } from "../../utils";
 
 export default class Recipe extends AuthRecipe<PreAndPostAPIHookAction, NormalisedInputType> {
     static instance?: Recipe;
-    static RECIPE_ID = "webauthn";
+    static RECIPE_ID = "webauthn" as const;
 
     recipeImplementation: RecipeInterface;
 
@@ -43,12 +43,12 @@ export default class Recipe extends AuthRecipe<PreAndPostAPIHookAction, Normalis
     }
 
     static init(config?: UserInput): CreateRecipeFunction<PreAndPostAPIHookAction> {
-        return (appInfo: NormalisedAppInfo, clientType: string | undefined) => {
+        return (appInfo, clientType, _enableDebugLogs, overrideMaps) => {
             Recipe.instance = new Recipe({
-                ...config,
+                ...applyPlugins(Recipe.RECIPE_ID, config as any, overrideMaps ?? []),
                 recipeId: Recipe.RECIPE_ID,
-                appInfo,
                 clientType,
+                appInfo,
             });
 
             return Recipe.instance;
