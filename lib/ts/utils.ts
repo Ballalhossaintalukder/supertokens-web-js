@@ -134,7 +134,7 @@ export function getGlobalClaimValidators({
 }
 
 export function normaliseUserResponse(
-    recipeId: "passwordless" | "emailpassword" | "thirdparty",
+    recipeId: "passwordless" | "emailpassword" | "thirdparty" | "webauthn",
     response:
         | { createdNewRecipeUser: boolean; user: User }
         | {
@@ -146,6 +146,9 @@ export function normaliseUserResponse(
                   thirdParty?: {
                       id: string;
                       userId: string;
+                  };
+                  webauthn?: {
+                      credentialIds: string[];
                   };
                   tenantIds: string[];
                   timeJoined: number;
@@ -162,7 +165,7 @@ export function normaliseUserResponse(
 }
 
 export function normaliseUser(
-    recipeId: "passwordless" | "emailpassword" | "thirdparty",
+    recipeId: "passwordless" | "emailpassword" | "thirdparty" | "webauthn",
     responseUser:
         | User
         | {
@@ -170,6 +173,7 @@ export function normaliseUser(
               email?: string | undefined;
               phoneNumber?: string | undefined;
               thirdParty?: { id: string; userId: string } | undefined;
+              webauthn?: { credentialIds: string[] } | undefined;
               tenantIds: string[];
               timeJoined: number;
           }
@@ -181,11 +185,13 @@ export function normaliseUser(
     const emails = responseUser.email !== undefined ? [responseUser.email] : [];
     const phoneNumbers = responseUser.phoneNumber !== undefined ? [responseUser.phoneNumber] : [];
     const thirdParty = responseUser.thirdParty !== undefined ? [responseUser.thirdParty] : [];
+    const webauthn = responseUser.webauthn !== undefined ? responseUser.webauthn : { credentialIds: [] };
     return {
         id: responseUser.id,
         emails,
         phoneNumbers,
         thirdParty,
+        webauthn,
         isPrimaryUser: false,
         tenantIds: responseUser.tenantIds,
         timeJoined: responseUser.timeJoined,
