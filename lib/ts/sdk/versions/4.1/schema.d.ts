@@ -682,7 +682,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/oauth/logininfo": {
+    "/oauth/login/info": {
         parameters: {
             query?: never;
             header?: never;
@@ -2961,7 +2961,7 @@ export interface operations {
                             /** @description The ID of the client. */
                             clientId: string;
                             /** @description The name of the client. */
-                            clientName?: string;
+                            clientName: string;
                             /** @description The URI of the client's terms of service. */
                             tosUri?: string;
                             /** @description The URI of the client's privacy policy. */

@@ -24,7 +24,7 @@ import {
 } from "./recipe/recipeModule/types";
 import STGeneralError from "./error";
 import { paths } from "./sdk/paths";
-import { PathParam, RequestInitWithInferredBody, ResponseBody } from "./sdk/types";
+import { PathParam, RequestInitWithInferredBody, ResponseBody, Method } from "./sdk/types";
 
 /**
  * When network calls are made the Querier calls .clone() on the response before:
@@ -39,7 +39,7 @@ import { PathParam, RequestInitWithInferredBody, ResponseBody } from "./sdk/type
 export default class Querier {
     constructor(private readonly recipeId: string, private readonly appInfo: NormalisedAppInfo) {}
 
-    private getPath = <P extends keyof paths>(path: PathParam<P>): NormalisedURLPath => {
+    private getPath = <P extends keyof paths, M extends Method>(path: PathParam<P, M>): NormalisedURLPath => {
         const template = typeof path === "string" ? path : path.path;
         const params = typeof path === "string" ? {} : path.params ?? {};
 
@@ -54,7 +54,7 @@ export default class Querier {
     private safelyStringifyBody = (body?: any) => (body ? JSON.stringify(body) : undefined);
 
     get = async <P extends keyof paths>(
-        template: PathParam<P>,
+        template: PathParam<P, "get">,
         config: RequestInitWithInferredBody<P, "get">,
         preAPIHook?: PreAPIHookFunction,
         postAPIHook?: PostAPIHookFunction
@@ -83,7 +83,7 @@ export default class Querier {
     };
 
     post = async <P extends keyof paths>(
-        template: PathParam<P>,
+        template: PathParam<P, "post">,
         config: RequestInitWithInferredBody<P, "post">,
         preAPIHook?: PreAPIHookFunction,
         postAPIHook?: PostAPIHookFunction
@@ -115,7 +115,7 @@ export default class Querier {
     };
 
     delete = async <P extends keyof paths>(
-        template: PathParam<P>,
+        template: PathParam<P, "delete">,
         config: RequestInitWithInferredBody<P, "delete">,
         preAPIHook?: PreAPIHookFunction,
         postAPIHook?: PostAPIHookFunction
@@ -143,7 +143,7 @@ export default class Querier {
     };
 
     put = async <P extends keyof paths>(
-        template: PathParam<P>,
+        template: PathParam<P, "put">,
         config: RequestInitWithInferredBody<P, "put">,
         preAPIHook?: PreAPIHookFunction,
         postAPIHook?: PostAPIHookFunction
@@ -237,7 +237,7 @@ export default class Querier {
         return result;
     };
 
-    getFullUrl = <P extends keyof paths>(path: PathParam<P>): string => {
+    getFullUrl = <P extends keyof paths, M extends Method>(path: PathParam<P, M>): string => {
         let basePath = this.appInfo.apiBasePath.getAsStringDangerous();
         const normalisedPath = this.getPath(path);
 

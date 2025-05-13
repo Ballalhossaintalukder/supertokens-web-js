@@ -26,18 +26,14 @@ export default function getRecipeImplementation(
 
     return {
         async getLoginChallengeInfo({ loginChallenge, options, userContext }) {
-            const queryParams: Record<string, string> = {
-                loginChallenge,
-            };
-
-            const { jsonBody, fetchResponse } = await querier.get<{
-                status: "OK";
-                info: LoginInfo;
-            }>(
-                await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({ userContext }),
-                "/oauth/login/info",
+            const { jsonBody, fetchResponse } = await querier.get(
+                {
+                    path: "/oauth/login/info",
+                    params: {
+                        loginChallenge
+                    },
+                },
                 {},
-                queryParams,
                 Querier.preparePreAPIHook({
                     recipePreAPIHook: recipeImplInput.preAPIHook,
                     action: "GET_LOGIN_CHALLENGE_INFO",
@@ -58,16 +54,14 @@ export default function getRecipeImplementation(
             };
         },
         async getRedirectURLToContinueOAuthFlow({ loginChallenge, options, userContext }) {
-            const { jsonBody, fetchResponse } = await querier.get<{
-                status: "OK";
-                frontendRedirectTo: string;
-            }>(
-                await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({ userContext }),
-                "/oauth/login",
-                {},
+            const { jsonBody, fetchResponse } = await querier.get(
                 {
-                    loginChallenge,
+                    path: "/oauth/login",
+                    params: {
+                        loginChallenge
+                    },
                 },
+                {},
                 Querier.preparePreAPIHook({
                     recipePreAPIHook: recipeImplInput.preAPIHook,
                     action: "GET_REDIRECT_URL_TO_CONTINUE_OAUTH_FLOW",
@@ -89,14 +83,10 @@ export default function getRecipeImplementation(
         },
 
         async logOut({ logoutChallenge, options, userContext }) {
-            const { jsonBody, fetchResponse } = await querier.post<{
-                status: "OK";
-                frontendRedirectTo: string;
-            }>(
-                await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({ userContext }),
+            const { jsonBody, fetchResponse } = await querier.post(
                 "/oauth/logout",
                 {
-                    body: JSON.stringify({ logoutChallenge }),
+                    body: { logoutChallenge },
                 },
                 Querier.preparePreAPIHook({
                     recipePreAPIHook: recipeImplInput.preAPIHook,

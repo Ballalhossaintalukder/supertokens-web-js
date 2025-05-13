@@ -57,16 +57,28 @@ export type ResponseBody<P extends keyof paths, M extends Method> =
 
 // Type to extract the path parameters from the method type
 // and enforce them through inference
-type ExtractPathParams<T extends string> = T extends `${string}<${infer Param}>${infer Rest}`
-    ? Param | ExtractPathParams<Rest>
-    : never;
+type ExtractPathParams<T extends string> =
+    T extends `${string}<${infer Param}>${infer Rest}`
+        ? Param | ExtractPathParams<Rest>
+        : never;
 
-type PathParamsObject<T extends string> = ExtractPathParams<T> extends never
-    ? undefined
-    : { [K in ExtractPathParams<T>]: string };
+type PathParamsObject<T extends string> =
+    ExtractPathParams<T> extends never
+        ? undefined
+        : { [K in ExtractPathParams<T>]: string };
 
-// Type to handle the path parameter
-export type PathParam<P extends keyof paths> = P | { path: P; params: PathParamsObject<P> };
+type ExtractQueryParams<P extends keyof paths, M extends Method> =
+    ExtractMethodType<P, M> extends { parameters?: { query?: infer Q } }
+        ? Q extends object ? Q : {}
+        : {};
+
+type MergedParams<P extends keyof paths, M extends Method> =
+    PathParamsObject<P> extends undefined
+        ? ExtractQueryParams<P, M>
+        : ExtractQueryParams<P, M> & PathParamsObject<P>;
+
+export type PathParam<P extends keyof paths, M extends Method> =
+    P | { path: P; params: MergedParams<P, M> };
 
 // Custom type defined from RequestInit to ensure request body is inferred
 // from the path.
