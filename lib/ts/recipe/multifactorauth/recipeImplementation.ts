@@ -25,13 +25,7 @@ export default function getRecipeImplementation(
 
     return {
         resyncSessionAndFetchMFAInfo: async function ({ options, userContext }) {
-            const { jsonBody, fetchResponse } = await querier.put<{
-                status: "OK";
-                factors: MFAFactorInfo;
-                emails: Record<string, string[] | undefined>;
-                phoneNumbers: Record<string, string[] | undefined>;
-            }>(
-                undefined,
+            const { jsonBody, fetchResponse } = await querier.put(
                 "/mfa/info",
                 {},
                 Querier.preparePreAPIHook({

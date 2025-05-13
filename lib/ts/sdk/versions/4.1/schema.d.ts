@@ -1251,9 +1251,9 @@ export interface operations {
                     "application/json": {
                         status: components["schemas"]["statusOK"];
                         factors?: {
-                            alreadySetup?: string[];
-                            allowedToSetup?: string[];
-                            next?: string[];
+                            alreadySetup: string[];
+                            allowedToSetup: string[];
+                            next: string[];
                         };
                         emails?: {
                             emailpassword?: string[];
@@ -2269,26 +2269,24 @@ export interface operations {
                 content: {
                     "application/json": {
                         status: components["schemas"]["statusOK"];
-                        recipes: {
-                            emailPassword: {
-                                /** @example true */
-                                enabled: boolean;
-                            };
-                            thirdParty: {
-                                /** @example true */
-                                enabled: boolean;
-                                providers: {
-                                    id: components["schemas"]["thirdPartyId"];
-                                    /** @example Google */
-                                    name?: string;
-                                }[];
-                            };
-                            passwordless: {
-                                /** @example true */
-                                enabled: boolean;
-                            };
-                            firstFactors: string[];
+                        emailPassword: {
+                            /** @example true */
+                            enabled: boolean;
                         };
+                        thirdParty: {
+                            /** @example true */
+                            enabled: boolean;
+                            providers: {
+                                id: components["schemas"]["thirdPartyId"];
+                                /** @example Google */
+                                name: string;
+                            }[];
+                        };
+                        passwordless: {
+                            /** @example true */
+                            enabled: boolean;
+                        };
+                        firstFactors: string[];
                     } | components["schemas"]["generalErrorResponse"];
                 };
             };
