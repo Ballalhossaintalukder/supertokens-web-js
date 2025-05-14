@@ -1081,15 +1081,17 @@ export interface components {
             /** @enum {string} */
             status: "WRONG_CREDENTIALS_ERROR";
         };
-        signinupErrorResponse: {
-            /** @enum {string} */
-            status: "NO_EMAIL_GIVEN_BY_PROVIDER";
-        } | {
-            /** @enum {string} */
-            status: "SIGN_IN_UP_NOT_ALLOWED";
-            /** @example Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_IN_ALLOWED_FALSE) */
-            reason?: string;
-        };
+        signinupErrorResponse:
+            | {
+                  /** @enum {string} */
+                  status: "NO_EMAIL_GIVEN_BY_PROVIDER";
+              }
+            | {
+                  /** @enum {string} */
+                  status: "SIGN_IN_UP_NOT_ALLOWED";
+                  /** @example Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_IN_ALLOWED_FALSE) */
+                  reason?: string;
+              };
         /** @enum {string} */
         internalError: "Internal Error";
         /** @enum {string} */
@@ -1200,29 +1202,31 @@ export interface components {
                 [name: string]: unknown;
             };
             content: {
-                "application/json": {
-                    /** @example invalid claim */
-                    message?: string;
-                    claimValidationErrors?: {
-                        /** @example st-ev */
-                        id?: string;
-                        /** @example {
-                         *       "message": "wrong value",
-                         *       "expectedValue": true,
-                         *       "actualValue": false
-                         *     } */
-                        reason?: Record<string, unknown>;
-                    }[];
-                } | {
-                    /** @example invalid claim */
-                    message?: string;
-                    claimValidationErrors?: {
-                        /** @example st-mfa */
-                        id?: string;
-                        /** @example Completed factors in the session does not satisfy the MFA requirements for auth */
-                        reason?: string;
-                    }[];
-                };
+                "application/json":
+                    | {
+                          /** @example invalid claim */
+                          message?: string;
+                          claimValidationErrors?: {
+                              /** @example st-ev */
+                              id?: string;
+                              /** @example {
+                               *       "message": "wrong value",
+                               *       "expectedValue": true,
+                               *       "actualValue": false
+                               *     } */
+                              reason?: Record<string, unknown>;
+                          }[];
+                      }
+                    | {
+                          /** @example invalid claim */
+                          message?: string;
+                          claimValidationErrors?: {
+                              /** @example st-mfa */
+                              id?: string;
+                              /** @example Completed factors in the session does not satisfy the MFA requirements for auth */
+                              reason?: string;
+                          }[];
+                      };
             };
         };
     };
@@ -1290,23 +1294,25 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                        factors?: {
-                            alreadySetup: string[];
-                            allowedToSetup: string[];
-                            next: string[];
-                        };
-                        emails?: {
-                            emailpassword?: string[];
-                            "otp-email"?: string[];
-                            "link-email"?: string[];
-                        };
-                        phoneNumbers?: {
-                            "otp-phone"?: string[];
-                            "link-phone"?: string[];
-                        };
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                              factors?: {
+                                  alreadySetup: string[];
+                                  allowedToSetup: string[];
+                                  next: string[];
+                              };
+                              emails?: {
+                                  emailpassword?: string[];
+                                  "otp-email"?: string[];
+                                  "link-email"?: string[];
+                              };
+                              phoneNumbers?: {
+                                  "otp-phone"?: string[];
+                                  "link-phone"?: string[];
+                              };
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             404: components["responses"]["404"];
@@ -1336,19 +1342,21 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                        devices?: {
-                            /** @example asdf123 */
-                            name: string;
-                            /** @example 30 */
-                            period: number;
-                            /** @example 30 */
-                            skew: number;
-                            /** @example false */
-                            verified: boolean;
-                        }[];
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                              devices?: {
+                                  /** @example asdf123 */
+                                  name: string;
+                                  /** @example 30 */
+                                  period: number;
+                                  /** @example 30 */
+                                  skew: number;
+                                  /** @example false */
+                                  verified: boolean;
+                              }[];
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             404: components["responses"]["404"];
@@ -1387,18 +1395,21 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                        /** @example asfd123 */
-                        deviceName?: string;
-                        /** @example otpauth://totp/Supertokens:alice@google.com?secret=JBSWY3DPEHPK3PXP&issuer=Supertokens */
-                        qrCodeString?: string;
-                        /** @example JBSWY3DPEHPK3PXP */
-                        secret?: string;
-                    } | {
-                        /** @enum {string} */
-                        status: "DEVICE_ALREADY_EXISTS_ERROR";
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                              /** @example asfd123 */
+                              deviceName?: string;
+                              /** @example otpauth://totp/Supertokens:alice@google.com?secret=JBSWY3DPEHPK3PXP&issuer=Supertokens */
+                              qrCodeString?: string;
+                              /** @example JBSWY3DPEHPK3PXP */
+                              secret?: string;
+                          }
+                        | {
+                              /** @enum {string} */
+                              status: "DEVICE_ALREADY_EXISTS_ERROR";
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             403: components["responses"]["403-factor-setup"];
@@ -1436,11 +1447,13 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                        /** @example true */
-                        didDeviceExist?: boolean;
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                              /** @example true */
+                              didDeviceExist?: boolean;
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             404: components["responses"]["404"];
@@ -1488,25 +1501,30 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                        wasAlreadyVerified: boolean;
-                    } | {
-                        /** @enum {string} */
-                        status: "UNKNOWN_DEVICE_ERROR";
-                    } | {
-                        /** @enum {string} */
-                        status: "INVALID_TOTP_ERROR";
-                        /** @example 2 */
-                        currentNumberOfFailedAttempts?: number;
-                        /** @example 5 */
-                        maxNumberOfFailedAttempts?: number;
-                    } | {
-                        /** @enum {string} */
-                        status: "LIMIT_REACHED_ERROR";
-                        /** @example 30000 */
-                        retryAfterMs?: number;
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                              wasAlreadyVerified: boolean;
+                          }
+                        | {
+                              /** @enum {string} */
+                              status: "UNKNOWN_DEVICE_ERROR";
+                          }
+                        | {
+                              /** @enum {string} */
+                              status: "INVALID_TOTP_ERROR";
+                              /** @example 2 */
+                              currentNumberOfFailedAttempts?: number;
+                              /** @example 5 */
+                              maxNumberOfFailedAttempts?: number;
+                          }
+                        | {
+                              /** @enum {string} */
+                              status: "LIMIT_REACHED_ERROR";
+                              /** @example 30000 */
+                              retryAfterMs?: number;
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             403: components["responses"]["403-factor-setup"];
@@ -1553,21 +1571,25 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                    } | {
-                        /** @enum {string} */
-                        status: "INVALID_TOTP_ERROR";
-                        /** @example 2 */
-                        currentNumberOfFailedAttempts?: number;
-                        /** @example 5 */
-                        maxNumberOfFailedAttempts?: number;
-                    } | {
-                        /** @enum {string} */
-                        status: "LIMIT_REACHED_ERROR";
-                        /** @example 30000 */
-                        retryAfterMs?: number;
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                          }
+                        | {
+                              /** @enum {string} */
+                              status: "INVALID_TOTP_ERROR";
+                              /** @example 2 */
+                              currentNumberOfFailedAttempts?: number;
+                              /** @example 5 */
+                              maxNumberOfFailedAttempts?: number;
+                          }
+                        | {
+                              /** @enum {string} */
+                              status: "LIMIT_REACHED_ERROR";
+                              /** @example 30000 */
+                              retryAfterMs?: number;
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             404: components["responses"]["404"];
@@ -1589,15 +1611,17 @@ export interface operations {
         };
         requestBody?: {
             content: {
-                "application/json": {
-                    email: components["schemas"]["email"];
-                    /** @example false */
-                    shouldTryLinkingWithSessionUser?: boolean;
-                } | {
-                    phoneNumber: components["schemas"]["phoneNumber"];
-                    /** @example false */
-                    shouldTryLinkingWithSessionUser?: boolean;
-                };
+                "application/json":
+                    | {
+                          email: components["schemas"]["email"];
+                          /** @example false */
+                          shouldTryLinkingWithSessionUser?: boolean;
+                      }
+                    | {
+                          phoneNumber: components["schemas"]["phoneNumber"];
+                          /** @example false */
+                          shouldTryLinkingWithSessionUser?: boolean;
+                      };
             };
         };
         responses: {
@@ -1607,18 +1631,21 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                        deviceId?: components["schemas"]["deviceId"];
-                        preAuthSessionId?: components["schemas"]["preAuthSessionId"];
-                        /** @enum {string} */
-                        flowType?: "MAGIC_LINK" | "USER_INPUT_CODE_AND_MAGIC_LINK" | "USER_INPUT_CODE";
-                    } | {
-                        /** @enum {string} */
-                        status: "SIGN_IN_UP_NOT_ALLOWED";
-                        /** @example Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_IN_ALLOWED_FALSE) */
-                        reason?: string;
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                              deviceId?: components["schemas"]["deviceId"];
+                              preAuthSessionId?: components["schemas"]["preAuthSessionId"];
+                              /** @enum {string} */
+                              flowType?: "MAGIC_LINK" | "USER_INPUT_CODE_AND_MAGIC_LINK" | "USER_INPUT_CODE";
+                          }
+                        | {
+                              /** @enum {string} */
+                              status: "SIGN_IN_UP_NOT_ALLOWED";
+                              /** @example Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_IN_ALLOWED_FALSE) */
+                              reason?: string;
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             403: components["responses"]["403-factor-setup"];
@@ -1656,10 +1683,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        /** @enum {string} */
-                        status: "OK" | "RESTART_FLOW_ERROR";
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              /** @enum {string} */
+                              status: "OK" | "RESTART_FLOW_ERROR";
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             404: components["responses"]["404"];
@@ -1681,20 +1710,22 @@ export interface operations {
         };
         requestBody?: {
             content: {
-                "application/json": {
-                    preAuthSessionId: components["schemas"]["preAuthSessionId"];
-                    /** @example false */
-                    shouldTryLinkingWithSessionUser?: boolean;
-                    /** @example b10lbT_SnDC4flA6Fn7pE5TtG5k5NfigLef4QMBeGA8 */
-                    linkCode: string;
-                } | {
-                    preAuthSessionId: components["schemas"]["preAuthSessionId"];
-                    /** @example false */
-                    shouldTryLinkingWithSessionUser?: boolean;
-                    deviceId: components["schemas"]["deviceId"];
-                    /** @example 432123 */
-                    userInputCode: string;
-                };
+                "application/json":
+                    | {
+                          preAuthSessionId: components["schemas"]["preAuthSessionId"];
+                          /** @example false */
+                          shouldTryLinkingWithSessionUser?: boolean;
+                          /** @example b10lbT_SnDC4flA6Fn7pE5TtG5k5NfigLef4QMBeGA8 */
+                          linkCode: string;
+                      }
+                    | {
+                          preAuthSessionId: components["schemas"]["preAuthSessionId"];
+                          /** @example false */
+                          shouldTryLinkingWithSessionUser?: boolean;
+                          deviceId: components["schemas"]["deviceId"];
+                          /** @example 432123 */
+                          userInputCode: string;
+                      };
             };
         };
         responses: {
@@ -1714,27 +1745,32 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                        /** @example true */
-                        createdNewRecipeUser?: boolean;
-                        user?: components["schemas"]["user"];
-                    } | {
-                        /** @enum {string} */
-                        status: "INCORRECT_USER_INPUT_CODE_ERROR" | "EXPIRED_USER_INPUT_CODE_ERROR";
-                        /** @example 2 */
-                        failedCodeInputAttemptCount?: number;
-                        /** @example 5 */
-                        maximumCodeInputAttempts?: number;
-                    } | {
-                        /** @enum {string} */
-                        status: "RESTART_FLOW_ERROR";
-                    } | {
-                        /** @enum {string} */
-                        status: "SIGN_IN_UP_NOT_ALLOWED";
-                        /** @example Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_IN_ALLOWED_FALSE) */
-                        reason?: string;
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                              /** @example true */
+                              createdNewRecipeUser?: boolean;
+                              user?: components["schemas"]["user"];
+                          }
+                        | {
+                              /** @enum {string} */
+                              status: "INCORRECT_USER_INPUT_CODE_ERROR" | "EXPIRED_USER_INPUT_CODE_ERROR";
+                              /** @example 2 */
+                              failedCodeInputAttemptCount?: number;
+                              /** @example 5 */
+                              maximumCodeInputAttempts?: number;
+                          }
+                        | {
+                              /** @enum {string} */
+                              status: "RESTART_FLOW_ERROR";
+                          }
+                        | {
+                              /** @enum {string} */
+                              status: "SIGN_IN_UP_NOT_ALLOWED";
+                              /** @example Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_IN_ALLOWED_FALSE) */
+                              reason?: string;
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             403: components["responses"]["403-factor-setup"];
@@ -1765,10 +1801,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                        exists?: components["schemas"]["exists"];
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                              exists?: components["schemas"]["exists"];
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             404: components["responses"]["404"];
@@ -1798,10 +1836,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                        exists?: components["schemas"]["exists"];
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                              exists?: components["schemas"]["exists"];
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             404: components["responses"]["404"];
@@ -1831,10 +1871,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                        exists?: components["schemas"]["exists"];
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                              exists?: components["schemas"]["exists"];
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             404: components["responses"]["404"];
@@ -1864,10 +1906,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                        exists?: components["schemas"]["exists"];
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                              exists?: components["schemas"]["exists"];
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             404: components["responses"]["404"];
@@ -1908,9 +1952,11 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             404: components["responses"]["404"];
@@ -1994,7 +2040,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["signInResponse"] | components["schemas"]["signInNotAllowedResponse"] | components["schemas"]["fieldErrorResponse"] | components["schemas"]["wrongCredentialsResponse"] | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | components["schemas"]["signInResponse"]
+                        | components["schemas"]["signInNotAllowedResponse"]
+                        | components["schemas"]["fieldErrorResponse"]
+                        | components["schemas"]["wrongCredentialsResponse"]
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             403: components["responses"]["403-factor-setup"];
@@ -2041,7 +2092,11 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["signupResponse"] | components["schemas"]["signUpNotAllowedResponse"] | components["schemas"]["fieldErrorResponse"] | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | components["schemas"]["signupResponse"]
+                        | components["schemas"]["signUpNotAllowedResponse"]
+                        | components["schemas"]["fieldErrorResponse"]
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             403: components["responses"]["403-factor-setup"];
@@ -2072,10 +2127,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                        exists?: components["schemas"]["exists"];
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                              exists?: components["schemas"]["exists"];
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             404: components["responses"]["404"];
@@ -2105,10 +2162,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                        exists?: components["schemas"]["exists"];
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                              exists?: components["schemas"]["exists"];
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             404: components["responses"]["404"];
@@ -2142,7 +2201,11 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["passwordResetTokenResponse"] | components["schemas"]["passwordResetNotAllowedResponse"] | components["schemas"]["fieldErrorResponse"] | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | components["schemas"]["passwordResetTokenResponse"]
+                        | components["schemas"]["passwordResetNotAllowedResponse"]
+                        | components["schemas"]["fieldErrorResponse"]
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             404: components["responses"]["404"];
@@ -2178,7 +2241,11 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["passwordResetResponse"] | components["schemas"]["passwordResetErrorResponse"] | components["schemas"]["fieldErrorResponse"] | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | components["schemas"]["passwordResetResponse"]
+                        | components["schemas"]["passwordResetErrorResponse"]
+                        | components["schemas"]["fieldErrorResponse"]
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             404: components["responses"]["404"];
@@ -2200,28 +2267,30 @@ export interface operations {
         };
         requestBody?: {
             content: {
-                "application/json": {
-                    thirdPartyId: components["schemas"]["thirdPartyId"];
-                    clientType?: components["schemas"]["clientType"];
-                    redirectURIInfo: {
-                        redirectURIOnProviderDashboard: components["schemas"]["redirectURI"];
-                        /** @example {
-                         *       "code": "neqmpdsfuqe141m5lk437867masdf",
-                         *       "state": "ljayfgqewertbh13245njw0"
-                         *     } */
-                        redirectURIQueryParams: Record<string, unknown>;
-                        /** @example abcd1234 */
-                        pkceCodeVerifier?: string;
-                    };
-                    /** @example false */
-                    shouldTryLinkingWithSessionUser?: boolean;
-                } | {
-                    thirdPartyId: components["schemas"]["thirdPartyId"];
-                    clientType?: components["schemas"]["clientType"];
-                    oAuthTokens: components["schemas"]["oAuthTokens"];
-                    /** @example false */
-                    shouldTryLinkingWithSessionUser?: boolean;
-                };
+                "application/json":
+                    | {
+                          thirdPartyId: components["schemas"]["thirdPartyId"];
+                          clientType?: components["schemas"]["clientType"];
+                          redirectURIInfo: {
+                              redirectURIOnProviderDashboard: components["schemas"]["redirectURI"];
+                              /** @example {
+                               *       "code": "neqmpdsfuqe141m5lk437867masdf",
+                               *       "state": "ljayfgqewertbh13245njw0"
+                               *     } */
+                              redirectURIQueryParams: Record<string, unknown>;
+                              /** @example abcd1234 */
+                              pkceCodeVerifier?: string;
+                          };
+                          /** @example false */
+                          shouldTryLinkingWithSessionUser?: boolean;
+                      }
+                    | {
+                          thirdPartyId: components["schemas"]["thirdPartyId"];
+                          clientType?: components["schemas"]["clientType"];
+                          oAuthTokens: components["schemas"]["oAuthTokens"];
+                          /** @example false */
+                          shouldTryLinkingWithSessionUser?: boolean;
+                      };
             };
         };
         responses: {
@@ -2241,7 +2310,10 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["signinupResponse"] | components["schemas"]["signinupErrorResponse"] | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | components["schemas"]["signinupResponse"]
+                        | components["schemas"]["signinupErrorResponse"]
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             403: components["responses"]["403-factor-setup"];
@@ -2274,13 +2346,15 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                        /** @example https://providerdomain.com/authorize?client_id=..&scope=..&access_type=.. */
-                        urlWithQueryParams?: string;
-                        /** @example abcd1234 */
-                        pkceCodeVerifier?: string;
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                              /** @example https://providerdomain.com/authorize?client_id=..&scope=..&access_type=.. */
+                              urlWithQueryParams?: string;
+                              /** @example abcd1234 */
+                              pkceCodeVerifier?: string;
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             404: components["responses"]["404"];
@@ -2310,27 +2384,29 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                        emailPassword: {
-                            /** @example true */
-                            enabled: boolean;
-                        };
-                        thirdParty: {
-                            /** @example true */
-                            enabled: boolean;
-                            providers: {
-                                id: components["schemas"]["thirdPartyId"];
-                                /** @example Google */
-                                name: string;
-                            }[];
-                        };
-                        passwordless: {
-                            /** @example true */
-                            enabled: boolean;
-                        };
-                        firstFactors: string[];
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                              emailPassword: {
+                                  /** @example true */
+                                  enabled: boolean;
+                              };
+                              thirdParty: {
+                                  /** @example true */
+                                  enabled: boolean;
+                                  providers: {
+                                      id: components["schemas"]["thirdPartyId"];
+                                      /** @example Google */
+                                      name: string;
+                                  }[];
+                              };
+                              passwordless: {
+                                  /** @example true */
+                                  enabled: boolean;
+                              };
+                              firstFactors: string[];
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             404: components["responses"]["404"];
@@ -2392,10 +2468,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        /** @enum {string} */
-                        status: "OK" | "EMAIL_ALREADY_VERIFIED_ERROR";
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              /** @enum {string} */
+                              status: "OK" | "EMAIL_ALREADY_VERIFIED_ERROR";
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             404: components["responses"]["404"];
@@ -2430,10 +2508,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        /** @enum {string} */
-                        status: "OK" | "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR";
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              /** @enum {string} */
+                              status: "OK" | "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR";
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             404: components["responses"]["404"];
@@ -2472,11 +2552,13 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                        /** @example true */
-                        isVerified?: boolean;
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                              /** @example true */
+                              isVerified?: boolean;
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             404: components["responses"]["404"];
@@ -2501,25 +2583,27 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        keys?: {
-                            /**
-                             * @description The algorithm to use when creating the JWT.
-                             * @enum {string}
-                             */
-                            alg?: "RS256";
-                            /** @example RSA */
-                            kty?: string;
-                            /** @example sig */
-                            use?: string;
-                            /** @description Unique identifier for the JWK */
-                            kid?: string;
-                            /** @description Modulus for the key */
-                            n?: string;
-                            /** @description Exponent for the key */
-                            e?: string;
-                        }[];
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              keys?: {
+                                  /**
+                                   * @description The algorithm to use when creating the JWT.
+                                   * @enum {string}
+                                   */
+                                  alg?: "RS256";
+                                  /** @example RSA */
+                                  kty?: string;
+                                  /** @example sig */
+                                  use?: string;
+                                  /** @description Unique identifier for the JWK */
+                                  kid?: string;
+                                  /** @description Modulus for the key */
+                                  n?: string;
+                                  /** @description Exponent for the key */
+                                  e?: string;
+                              }[];
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             400: components["responses"]["400"];
@@ -2545,51 +2629,53 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        /**
-                         * @description URL using the https scheme with no query or fragment component that the OP asserts as its Issuer Identifier (https://openid.net/specs/openid-connect-discovery-1_0.html section 3)
-                         * @example https://api.example.com/auth
-                         */
-                        issuer?: string;
-                        /**
-                         * @description URL for fetching a list JsonWebKey, used for JWT signature verification. Refer to /jwt/jwks.json API in the JWT recipe for JWK details
-                         * @example https://api.example.com/auth/jwt/jwks.json
-                         */
-                        jwks_uri?: string;
-                        /**
-                         * @description URL of the authorization endpoint
-                         * @example https://api.example.com/auth/oauth/authorize
-                         */
-                        authorization_endpoint?: string;
-                        /**
-                         * @description URL of the token endpoint
-                         * @example https://api.example.com/auth/oauth/token
-                         */
-                        token_endpoint?: string;
-                        /**
-                         * @description URL of the userinfo endpoint
-                         * @example https://api.example.com/auth/oauth/userinfo
-                         */
-                        userinfo_endpoint?: string;
-                        /**
-                         * @description URL of the token revocation endpoint
-                         * @example https://api.example.com/auth/oauth/revoke
-                         */
-                        revocation_endpoint?: string;
-                        /**
-                         * @description URL of the token introspection endpoint
-                         * @example https://api.example.com/auth/oauth/introspect
-                         */
-                        token_introspection_endpoint?: string;
-                        /**
-                         * @description URL of the end session endpoint
-                         * @example https://api.example.com/auth/oauth/end_session
-                         */
-                        end_session_endpoint?: string;
-                        subject_types_supported?: "public"[];
-                        id_token_signing_alg_values_supported?: "RS256"[];
-                        response_types_supported?: ("code" | "id_token" | "id_token token")[];
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              /**
+                               * @description URL using the https scheme with no query or fragment component that the OP asserts as its Issuer Identifier (https://openid.net/specs/openid-connect-discovery-1_0.html section 3)
+                               * @example https://api.example.com/auth
+                               */
+                              issuer?: string;
+                              /**
+                               * @description URL for fetching a list JsonWebKey, used for JWT signature verification. Refer to /jwt/jwks.json API in the JWT recipe for JWK details
+                               * @example https://api.example.com/auth/jwt/jwks.json
+                               */
+                              jwks_uri?: string;
+                              /**
+                               * @description URL of the authorization endpoint
+                               * @example https://api.example.com/auth/oauth/authorize
+                               */
+                              authorization_endpoint?: string;
+                              /**
+                               * @description URL of the token endpoint
+                               * @example https://api.example.com/auth/oauth/token
+                               */
+                              token_endpoint?: string;
+                              /**
+                               * @description URL of the userinfo endpoint
+                               * @example https://api.example.com/auth/oauth/userinfo
+                               */
+                              userinfo_endpoint?: string;
+                              /**
+                               * @description URL of the token revocation endpoint
+                               * @example https://api.example.com/auth/oauth/revoke
+                               */
+                              revocation_endpoint?: string;
+                              /**
+                               * @description URL of the token introspection endpoint
+                               * @example https://api.example.com/auth/oauth/introspect
+                               */
+                              token_introspection_endpoint?: string;
+                              /**
+                               * @description URL of the end session endpoint
+                               * @example https://api.example.com/auth/oauth/end_session
+                               */
+                              end_session_endpoint?: string;
+                              subject_types_supported?: "public"[];
+                              id_token_signing_alg_values_supported?: "RS256"[];
+                              response_types_supported?: ("code" | "id_token" | "id_token token")[];
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             400: components["responses"]["400"];
@@ -2617,13 +2703,15 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        /**
-                         * @description The URL to redirect the user to
-                         * @example https://client.com/callback?code=asdf1234567890&status=asdf1234
-                         */
-                        frontendRedirectTo?: string;
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              /**
+                               * @description The URL to redirect the user to
+                               * @example https://client.com/callback?code=asdf1234567890&status=asdf1234
+                               */
+                              frontendRedirectTo?: string;
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             400: components["responses"]["400-oauth-error"];
@@ -2683,20 +2771,22 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        /** @description The access token issued by the authorization server. */
-                        access_token?: string;
-                        /** @description The lifetime in seconds of the access token (integer). For example, the value "3600" denotes that the access token will expire in one hour from the time the response was generated. */
-                        expires_in: number;
-                        /** @description To retrieve a refresh token request the id_token scope. */
-                        id_token?: string;
-                        /** @description The refresh token, which can be used to obtain new access tokens. To retrieve it add the scope "offline" to your access token request. */
-                        refresh_token?: string;
-                        /** @description The scope of the access token */
-                        scope: string;
-                        /** @description The type of the token issued */
-                        token_type: string;
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              /** @description The access token issued by the authorization server. */
+                              access_token?: string;
+                              /** @description The lifetime in seconds of the access token (integer). For example, the value "3600" denotes that the access token will expire in one hour from the time the response was generated. */
+                              expires_in: number;
+                              /** @description To retrieve a refresh token request the id_token scope. */
+                              id_token?: string;
+                              /** @description The refresh token, which can be used to obtain new access tokens. To retrieve it add the scope "offline" to your access token request. */
+                              refresh_token?: string;
+                              /** @description The scope of the access token */
+                              scope: string;
+                              /** @description The type of the token issued */
+                              token_type: string;
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             400: components["responses"]["400-oauth-error"];
@@ -2722,33 +2812,35 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        sub: components["schemas"]["userId"];
-                        /**
-                         * @description The email of the user
-                         * @example johndoe@gmail.com
-                         */
-                        email?: string;
-                        /**
-                         * @description Whether the email is verified
-                         * @example true
-                         */
-                        email_verified?: boolean;
-                        emails?: string[];
-                        /**
-                         * @description The phoneNumber of the user
-                         * @example 0036701234567
-                         */
-                        phoneNumber?: string;
-                        /**
-                         * @description Whether the phoneNumber is verified
-                         * @example true
-                         */
-                        phoneNumber_verified?: boolean;
-                        phoneNumbers?: string[];
-                        roles?: string[];
-                        permissions?: string[];
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              sub: components["schemas"]["userId"];
+                              /**
+                               * @description The email of the user
+                               * @example johndoe@gmail.com
+                               */
+                              email?: string;
+                              /**
+                               * @description Whether the email is verified
+                               * @example true
+                               */
+                              email_verified?: boolean;
+                              emails?: string[];
+                              /**
+                               * @description The phoneNumber of the user
+                               * @example 0036701234567
+                               */
+                              phoneNumber?: string;
+                              /**
+                               * @description Whether the phoneNumber is verified
+                               * @example true
+                               */
+                              phoneNumber_verified?: boolean;
+                              phoneNumbers?: string[];
+                              roles?: string[];
+                              permissions?: string[];
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             /** @description The access token is expired, revoked or malformed */
@@ -2803,9 +2895,11 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             400: components["responses"]["400-oauth-error"];
@@ -2840,48 +2934,50 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        /**
-                         * @description Whether the token is active or not
-                         * @example true
-                         */
-                        active: boolean;
-                        /**
-                         * @description The type of the token
-                         * @example Bearer
-                         */
-                        token_type?: string;
-                        /**
-                         * @description The use of the token
-                         * @example access_token
-                         */
-                        token_use?: string;
-                        sub?: components["schemas"]["userId"];
-                        /**
-                         * @description The email of the user
-                         * @example johndoe@gmail.com
-                         */
-                        email?: string;
-                        /**
-                         * @description Whether the email is verified
-                         * @example true
-                         */
-                        email_verified?: boolean;
-                        emails?: string[];
-                        /**
-                         * @description The phoneNumber of the user
-                         * @example 0036701234567
-                         */
-                        phoneNumber?: string;
-                        /**
-                         * @description Whether the phoneNumber is verified
-                         * @example true
-                         */
-                        phoneNumber_verified?: boolean;
-                        phoneNumbers?: string[];
-                        roles?: string[];
-                        permissions?: string[];
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              /**
+                               * @description Whether the token is active or not
+                               * @example true
+                               */
+                              active: boolean;
+                              /**
+                               * @description The type of the token
+                               * @example Bearer
+                               */
+                              token_type?: string;
+                              /**
+                               * @description The use of the token
+                               * @example access_token
+                               */
+                              token_use?: string;
+                              sub?: components["schemas"]["userId"];
+                              /**
+                               * @description The email of the user
+                               * @example johndoe@gmail.com
+                               */
+                              email?: string;
+                              /**
+                               * @description Whether the email is verified
+                               * @example true
+                               */
+                              email_verified?: boolean;
+                              emails?: string[];
+                              /**
+                               * @description The phoneNumber of the user
+                               * @example 0036701234567
+                               */
+                              phoneNumber?: string;
+                              /**
+                               * @description Whether the phoneNumber is verified
+                               * @example true
+                               */
+                              phoneNumber_verified?: boolean;
+                              phoneNumbers?: string[];
+                              roles?: string[];
+                              permissions?: string[];
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             404: components["responses"]["404"];
@@ -2997,24 +3093,26 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                        /** @description Information about the current login flow */
-                        info: {
-                            /** @description The ID of the client. */
-                            clientId: string;
-                            /** @description The name of the client. */
-                            clientName: string;
-                            /** @description The URI of the client's terms of service. */
-                            tosUri?: string;
-                            /** @description The URI of the client's privacy policy. */
-                            policyUri?: string;
-                            /** @description The URI of the client's logo. */
-                            logoUri?: string;
-                            /** @description The URI of the client we can link to on the login page */
-                            clientUri?: string;
-                        };
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                              /** @description Information about the current login flow */
+                              info: {
+                                  /** @description The ID of the client. */
+                                  clientId: string;
+                                  /** @description The name of the client. */
+                                  clientName: string;
+                                  /** @description The URI of the client's terms of service. */
+                                  tosUri?: string;
+                                  /** @description The URI of the client's privacy policy. */
+                                  policyUri?: string;
+                                  /** @description The URI of the client's logo. */
+                                  logoUri?: string;
+                                  /** @description The URI of the client we can link to on the login page */
+                                  clientUri?: string;
+                              };
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             400: components["responses"]["400-oauth-error"];
@@ -3049,13 +3147,15 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        /**
-                         * @description The URL to redirect the user to
-                         * @example https://auth.example.com/auth/oauth/logout?logoutChallenge=1234567890
-                         */
-                        frontendRedirectTo?: string;
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              /**
+                               * @description The URL to redirect the user to
+                               * @example https://auth.example.com/auth/oauth/logout?logoutChallenge=1234567890
+                               */
+                              frontendRedirectTo?: string;
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             400: components["responses"]["400-oauth-error"];
@@ -3136,14 +3236,16 @@ export interface operations {
         };
         requestBody?: {
             content: {
-                "application/json": {
-                    email: components["schemas"]["email"];
-                    /** @example John Doe */
-                    displayName?: string;
-                } | {
-                    /** @example abc123... */
-                    recoverAccountToken: string;
-                };
+                "application/json":
+                    | {
+                          email: components["schemas"]["email"];
+                          /** @example John Doe */
+                          displayName?: string;
+                      }
+                    | {
+                          /** @example abc123... */
+                          recoverAccountToken: string;
+                      };
             };
         };
         responses: {
@@ -3153,62 +3255,66 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                        /** @example opt_123... */
-                        webauthnGeneratedOptionsId: string;
-                        /** @example 2024-03-20T10:00:00Z */
-                        createdAt: string;
-                        /** @example 2024-03-20T10:05:00Z */
-                        expiresAt: string;
-                        rp: {
-                            /** @example example.com */
-                            id: string;
-                            /** @example Example Site */
-                            name: string;
-                        };
-                        user: {
-                            /** @example user_123... */
-                            id: string;
-                            /** @example john@example.com */
-                            name: string;
-                            /** @example John Doe */
-                            displayName: string;
-                        };
-                        /** @example base64challenge... */
-                        challenge: string;
-                        /** @example 300000 */
-                        timeout: number;
-                        excludeCredentials: {
-                            id: string;
-                            /** @enum {string} */
-                            type: "public-key";
-                            transports: ("ble" | "hybrid" | "internal" | "nfc" | "usb")[];
-                        }[];
-                        /** @enum {string} */
-                        attestation: "none" | "indirect" | "direct" | "enterprise";
-                        pubKeyCredParams: {
-                            /** @example -7 */
-                            alg: number;
-                            /** @enum {string} */
-                            type: "public-key";
-                        }[];
-                        authenticatorSelection: {
-                            requireResidentKey: boolean;
-                            /** @enum {string} */
-                            residentKey: "required" | "preferred" | "discouraged";
-                            /** @enum {string} */
-                            userVerification: "required" | "preferred" | "discouraged";
-                        };
-                    } | components["schemas"]["generalErrorResponse"] | {
-                        /** @enum {string} */
-                        status: "INVALID_OPTIONS_ERROR" | "RECOVER_ACCOUNT_TOKEN_INVALID_ERROR";
-                    } | {
-                        /** @enum {string} */
-                        status: "INVALID_EMAIL_ERROR";
-                        /** @example Invalid email */
-                        err?: string;
-                    };
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                              /** @example opt_123... */
+                              webauthnGeneratedOptionsId: string;
+                              /** @example 2024-03-20T10:00:00Z */
+                              createdAt: string;
+                              /** @example 2024-03-20T10:05:00Z */
+                              expiresAt: string;
+                              rp: {
+                                  /** @example example.com */
+                                  id: string;
+                                  /** @example Example Site */
+                                  name: string;
+                              };
+                              user: {
+                                  /** @example user_123... */
+                                  id: string;
+                                  /** @example john@example.com */
+                                  name: string;
+                                  /** @example John Doe */
+                                  displayName: string;
+                              };
+                              /** @example base64challenge... */
+                              challenge: string;
+                              /** @example 300000 */
+                              timeout: number;
+                              excludeCredentials: {
+                                  id: string;
+                                  /** @enum {string} */
+                                  type: "public-key";
+                                  transports: ("ble" | "hybrid" | "internal" | "nfc" | "usb")[];
+                              }[];
+                              /** @enum {string} */
+                              attestation: "none" | "indirect" | "direct" | "enterprise";
+                              pubKeyCredParams: {
+                                  /** @example -7 */
+                                  alg: number;
+                                  /** @enum {string} */
+                                  type: "public-key";
+                              }[];
+                              authenticatorSelection: {
+                                  requireResidentKey: boolean;
+                                  /** @enum {string} */
+                                  residentKey: "required" | "preferred" | "discouraged";
+                                  /** @enum {string} */
+                                  userVerification: "required" | "preferred" | "discouraged";
+                              };
+                          }
+                        | components["schemas"]["generalErrorResponse"]
+                        | {
+                              /** @enum {string} */
+                              status: "INVALID_OPTIONS_ERROR" | "RECOVER_ACCOUNT_TOKEN_INVALID_ERROR";
+                          }
+                        | {
+                              /** @enum {string} */
+                              status: "INVALID_EMAIL_ERROR";
+                              /** @example Invalid email */
+                              err?: string;
+                          };
                 };
             };
             404: components["responses"]["404"];
@@ -3236,26 +3342,29 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                        /** @example opt_123... */
-                        webauthnGeneratedOptionsId?: string;
-                        /** @example 2024-03-20T10:00:00Z */
-                        createdAt?: string;
-                        /** @example 2024-03-20T10:05:00Z */
-                        expiresAt?: string;
-                        /** @example example.com */
-                        rpId?: string;
-                        /** @example base64challenge... */
-                        challenge?: string;
-                        /** @example 300000 */
-                        timeout?: number;
-                        /** @enum {string} */
-                        userVerification?: "required" | "preferred" | "discouraged";
-                    } | components["schemas"]["generalErrorResponse"] | {
-                        /** @enum {string} */
-                        status: "INVALID_OPTIONS_ERROR";
-                    };
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                              /** @example opt_123... */
+                              webauthnGeneratedOptionsId?: string;
+                              /** @example 2024-03-20T10:00:00Z */
+                              createdAt?: string;
+                              /** @example 2024-03-20T10:05:00Z */
+                              expiresAt?: string;
+                              /** @example example.com */
+                              rpId?: string;
+                              /** @example base64challenge... */
+                              challenge?: string;
+                              /** @example 300000 */
+                              timeout?: number;
+                              /** @enum {string} */
+                              userVerification?: "required" | "preferred" | "discouraged";
+                          }
+                        | components["schemas"]["generalErrorResponse"]
+                        | {
+                              /** @enum {string} */
+                              status: "INVALID_OPTIONS_ERROR";
+                          };
                 };
             };
             404: components["responses"]["404"];
@@ -3303,13 +3412,16 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                        user?: components["schemas"]["user"];
-                    } | components["schemas"]["generalErrorResponse"] | {
-                        /** @enum {string} */
-                        status: "INVALID_CREDENTIALS_ERROR" | "EMAIL_ALREADY_EXISTS_ERROR";
-                    };
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                              user?: components["schemas"]["user"];
+                          }
+                        | components["schemas"]["generalErrorResponse"]
+                        | {
+                              /** @enum {string} */
+                              status: "INVALID_CREDENTIALS_ERROR" | "EMAIL_ALREADY_EXISTS_ERROR";
+                          };
                 };
             };
             404: components["responses"]["404"];
@@ -3357,18 +3469,22 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                        user?: components["schemas"]["user"];
-                    } | components["schemas"]["generalErrorResponse"] | {
-                        /** @enum {string} */
-                        status: "INVALID_CREDENTIALS_ERROR";
-                    } | {
-                        /** @enum {string} */
-                        status: "SIGN_IN_NOT_ALLOWED";
-                        /** @example Sign in not allowed */
-                        reason?: string;
-                    };
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                              user?: components["schemas"]["user"];
+                          }
+                        | components["schemas"]["generalErrorResponse"]
+                        | {
+                              /** @enum {string} */
+                              status: "INVALID_CREDENTIALS_ERROR";
+                          }
+                        | {
+                              /** @enum {string} */
+                              status: "SIGN_IN_NOT_ALLOWED";
+                              /** @example Sign in not allowed */
+                              reason?: string;
+                          };
                 };
             };
             404: components["responses"]["404"];
@@ -3402,14 +3518,17 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                    } | components["schemas"]["generalErrorResponse"] | {
-                        /** @enum {string} */
-                        status: "RECOVER_ACCOUNT_NOT_ALLOWED";
-                        /** @example Recover account not allowed */
-                        reason?: string;
-                    };
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                          }
+                        | components["schemas"]["generalErrorResponse"]
+                        | {
+                              /** @enum {string} */
+                              status: "RECOVER_ACCOUNT_NOT_ALLOWED";
+                              /** @example Recover account not allowed */
+                              reason?: string;
+                          };
                 };
             };
             404: components["responses"]["404"];
@@ -3447,19 +3566,27 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                        user?: components["schemas"]["user"];
-                        email?: components["schemas"]["email"];
-                    } | components["schemas"]["generalErrorResponse"] | {
-                        /** @enum {string} */
-                        status: "INVALID_CREDENTIALS_ERROR" | "RECOVER_ACCOUNT_TOKEN_INVALID_ERROR" | "OPTIONS_NOT_FOUND_ERROR" | "INVALID_OPTIONS_ERROR";
-                    } | {
-                        /** @enum {string} */
-                        status: "INVALID_AUTHENTICATOR_ERROR";
-                        /** @example Invalid authenticator */
-                        reason?: string;
-                    };
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                              user?: components["schemas"]["user"];
+                              email?: components["schemas"]["email"];
+                          }
+                        | components["schemas"]["generalErrorResponse"]
+                        | {
+                              /** @enum {string} */
+                              status:
+                                  | "INVALID_CREDENTIALS_ERROR"
+                                  | "RECOVER_ACCOUNT_TOKEN_INVALID_ERROR"
+                                  | "OPTIONS_NOT_FOUND_ERROR"
+                                  | "INVALID_OPTIONS_ERROR";
+                          }
+                        | {
+                              /** @enum {string} */
+                              status: "INVALID_AUTHENTICATOR_ERROR";
+                              /** @example Invalid authenticator */
+                              reason?: string;
+                          };
                 };
             };
             404: components["responses"]["404"];
@@ -3497,17 +3624,25 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                    } | components["schemas"]["generalErrorResponse"] | {
-                        /** @enum {string} */
-                        status: "INVALID_CREDENTIALS_ERROR" | "OPTIONS_NOT_FOUND_ERROR" | "INVALID_OPTIONS_ERROR" | "INVALID_AUTHENTICATOR_ERROR";
-                    } | {
-                        /** @enum {string} */
-                        status: "REGISTER_CREDENTIAL_NOT_ALLOWED" | "INVALID_AUTHENTICATOR_ERRORp";
-                        /** @example Register credential not allowed */
-                        reason?: string;
-                    };
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                          }
+                        | components["schemas"]["generalErrorResponse"]
+                        | {
+                              /** @enum {string} */
+                              status:
+                                  | "INVALID_CREDENTIALS_ERROR"
+                                  | "OPTIONS_NOT_FOUND_ERROR"
+                                  | "INVALID_OPTIONS_ERROR"
+                                  | "INVALID_AUTHENTICATOR_ERROR";
+                          }
+                        | {
+                              /** @enum {string} */
+                              status: "REGISTER_CREDENTIAL_NOT_ALLOWED" | "INVALID_AUTHENTICATOR_ERRORp";
+                              /** @example Register credential not allowed */
+                              reason?: string;
+                          };
                 };
             };
             404: components["responses"]["404"];
@@ -3537,11 +3672,13 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                        /** @example true */
-                        exists?: boolean;
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                              /** @example true */
+                              exists?: boolean;
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             404: components["responses"]["404"];
@@ -3575,18 +3712,21 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        /** @enum {string} */
-                        status: "OK";
-                    } | {
-                        /** @enum {string} */
-                        status: "GENERAL_ERROR";
-                        message: string;
-                    } | {
-                        /** @enum {string} */
-                        status: "RECOVER_ACCOUNT_NOT_ALLOWED";
-                        reason: string;
-                    };
+                    "application/json":
+                        | {
+                              /** @enum {string} */
+                              status: "OK";
+                          }
+                        | {
+                              /** @enum {string} */
+                              status: "GENERAL_ERROR";
+                              message: string;
+                          }
+                        | {
+                              /** @enum {string} */
+                              status: "RECOVER_ACCOUNT_NOT_ALLOWED";
+                              reason: string;
+                          };
                 };
             };
             404: components["responses"]["404"];
@@ -3622,23 +3762,31 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        /** @enum {string} */
-                        status: "OK";
-                        user: components["schemas"]["user"];
-                        email: string;
-                    } | {
-                        /** @enum {string} */
-                        status: "GENERAL_ERROR";
-                        message: string;
-                    } | {
-                        /** @enum {string} */
-                        status: "RECOVER_ACCOUNT_TOKEN_INVALID_ERROR" | "INVALID_CREDENTIALS_ERROR" | "OPTIONS_NOT_FOUND_ERROR" | "INVALID_OPTIONS_ERROR";
-                    } | {
-                        /** @enum {string} */
-                        status: "INVALID_AUTHENTICATOR_ERROR";
-                        reason: string;
-                    };
+                    "application/json":
+                        | {
+                              /** @enum {string} */
+                              status: "OK";
+                              user: components["schemas"]["user"];
+                              email: string;
+                          }
+                        | {
+                              /** @enum {string} */
+                              status: "GENERAL_ERROR";
+                              message: string;
+                          }
+                        | {
+                              /** @enum {string} */
+                              status:
+                                  | "RECOVER_ACCOUNT_TOKEN_INVALID_ERROR"
+                                  | "INVALID_CREDENTIALS_ERROR"
+                                  | "OPTIONS_NOT_FOUND_ERROR"
+                                  | "INVALID_OPTIONS_ERROR";
+                          }
+                        | {
+                              /** @enum {string} */
+                              status: "INVALID_AUTHENTICATOR_ERROR";
+                              reason: string;
+                          };
                 };
             };
             404: components["responses"]["404"];

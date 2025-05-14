@@ -17,7 +17,6 @@ import Querier from "../../querier";
 import { appendQueryParamsToURL, getAllQueryParams, getQueryParams, normaliseUserResponse } from "../../utils";
 import { RecipeInterface, StateObject } from "./types";
 import { RecipeFunctionOptions, RecipeImplementationInput } from "../recipeModule/types";
-import STGeneralError from "../../error";
 import { PreAndPostAPIHookAction } from "./types";
 import { WindowHandlerReference } from "../../windowHandler";
 import { User } from "../../types";

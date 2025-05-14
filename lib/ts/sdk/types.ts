@@ -45,40 +45,38 @@ export type UncleanedResponseBody<P extends keyof paths, M extends Method> = Ext
     ? R
     : unknown;
 
-
 // Type to remove object that contains `GENERAL_ERROR` from response body
 // as we are handling that in the querier methods directly.
 export type RemoveGeneralError<T> = T extends { status: "GENERAL_ERROR" } ? never : T;
 
 // Type to clean the response body from the method type
-export type ResponseBody<P extends keyof paths, M extends Method> =
-  DeepRequireAllFields<RemoveGeneralError<UncleanedResponseBody<P, M>>>;
-
+export type ResponseBody<P extends keyof paths, M extends Method> = DeepRequireAllFields<
+    RemoveGeneralError<UncleanedResponseBody<P, M>>
+>;
 
 // Type to extract the path parameters from the method type
 // and enforce them through inference
-type ExtractPathParams<T extends string> =
-    T extends `${string}<${infer Param}>${infer Rest}`
-        ? Param | ExtractPathParams<Rest>
-        : never;
+type ExtractPathParams<T extends string> = T extends `${string}<${infer Param}>${infer Rest}`
+    ? Param | ExtractPathParams<Rest>
+    : never;
 
-type PathParamsObject<T extends string> =
-    ExtractPathParams<T> extends never
-        ? undefined
-        : { [K in ExtractPathParams<T>]: string };
+type PathParamsObject<T extends string> = ExtractPathParams<T> extends never
+    ? undefined
+    : { [K in ExtractPathParams<T>]: string };
 
-type ExtractQueryParams<P extends keyof paths, M extends Method> =
-    ExtractMethodType<P, M> extends { parameters?: { query?: infer Q } }
-        ? Q extends object ? Q : {}
-        : {};
+type ExtractQueryParams<P extends keyof paths, M extends Method> = ExtractMethodType<P, M> extends {
+    parameters?: { query?: infer Q };
+}
+    ? Q extends object
+        ? Q
+        : {}
+    : {};
 
-type MergedParams<P extends keyof paths, M extends Method> =
-    PathParamsObject<P> extends undefined
-        ? ExtractQueryParams<P, M>
-        : ExtractQueryParams<P, M> & PathParamsObject<P>;
+type MergedParams<P extends keyof paths, M extends Method> = PathParamsObject<P> extends undefined
+    ? ExtractQueryParams<P, M>
+    : ExtractQueryParams<P, M> & PathParamsObject<P>;
 
-export type PathParam<P extends keyof paths, M extends Method> =
-    P | { path: P; params: MergedParams<P, M> };
+export type PathParam<P extends keyof paths, M extends Method> = P | { path: P; params: MergedParams<P, M> };
 
 // Custom type defined from RequestInit to ensure request body is inferred
 // from the path.

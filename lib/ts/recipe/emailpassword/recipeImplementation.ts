@@ -134,9 +134,10 @@ export default function getRecipeImplementation(
                 {
                     path: "/<tenantId>/user/password/reset/token",
                     params: {
-                        tenantId: await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
-                            userContext,
-                        }) || "public",
+                        tenantId:
+                            (await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
+                                userContext,
+                            })) || "public",
                     },
                 },
                 { body: { formFields } },
@@ -199,9 +200,10 @@ export default function getRecipeImplementation(
                 {
                     path: "/<tenantId>/signup",
                     params: {
-                        tenantId: await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
-                            userContext,
-                        }) || "public",
+                        tenantId:
+                            (await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
+                                userContext,
+                            })) || "public",
                     },
                 },
                 { body: { formFields, shouldTryLinkingWithSessionUser } },
@@ -268,9 +270,10 @@ export default function getRecipeImplementation(
                 {
                     path: "/<tenantId>/signin",
                     params: {
-                        tenantId: await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
-                            userContext,
-                        }) || "public",
+                        tenantId:
+                            (await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
+                                userContext,
+                            })) || "public",
                     },
                 },
                 { body: { formFields, shouldTryLinkingWithSessionUser } },
@@ -333,9 +336,11 @@ export default function getRecipeImplementation(
                 {
                     path: "/<tenantId>/emailpassword/email/exists",
                     params: {
-                        tenantId: await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
-                            userContext,
-                        }) || "public",
+                        tenantId:
+                            (await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
+                                userContext,
+                            })) || "public",
+                        email,
                     },
                 },
                 {},

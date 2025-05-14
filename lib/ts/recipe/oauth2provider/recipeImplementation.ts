@@ -14,8 +14,7 @@
  */
 
 import Querier from "../../querier";
-import Multitenancy from "../multitenancy/recipe";
-import { LoginInfo, RecipeInterface } from "./types";
+import { RecipeInterface } from "./types";
 import { RecipeImplementationInput } from "../recipeModule/types";
 import { PreAndPostAPIHookAction } from "./types";
 
@@ -30,7 +29,7 @@ export default function getRecipeImplementation(
                 {
                     path: "/oauth/login/info",
                     params: {
-                        loginChallenge
+                        loginChallenge,
                     },
                 },
                 {},
@@ -58,7 +57,7 @@ export default function getRecipeImplementation(
                 {
                     path: "/oauth/login",
                     params: {
-                        loginChallenge
+                        loginChallenge,
                     },
                 },
                 {},

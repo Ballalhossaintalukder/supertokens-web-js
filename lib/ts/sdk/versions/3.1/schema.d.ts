@@ -734,15 +734,17 @@ export interface components {
             /** @enum {string} */
             status: "WRONG_CREDENTIALS_ERROR";
         };
-        signinupErrorResponse: {
-            /** @enum {string} */
-            status: "NO_EMAIL_GIVEN_BY_PROVIDER";
-        } | {
-            /** @enum {string} */
-            status: "SIGN_IN_UP_NOT_ALLOWED";
-            /** @example Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_IN_ALLOWED_FALSE) */
-            reason?: string;
-        };
+        signinupErrorResponse:
+            | {
+                  /** @enum {string} */
+                  status: "NO_EMAIL_GIVEN_BY_PROVIDER";
+              }
+            | {
+                  /** @enum {string} */
+                  status: "SIGN_IN_UP_NOT_ALLOWED";
+                  /** @example Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_IN_ALLOWED_FALSE) */
+                  reason?: string;
+              };
         /** @enum {string} */
         internalError: "Internal Error";
         /** @enum {string} */
@@ -784,29 +786,31 @@ export interface components {
                 [name: string]: unknown;
             };
             content: {
-                "application/json": {
-                    /** @example invalid claim */
-                    message?: string;
-                    claimValidationErrors?: {
-                        /** @example st-ev */
-                        id?: string;
-                        /** @example {
-                         *       "message": "wrong value",
-                         *       "expectedValue": true,
-                         *       "actualValue": false
-                         *     } */
-                        reason?: Record<string, unknown>;
-                    }[];
-                } | {
-                    /** @example invalid claim */
-                    message?: string;
-                    claimValidationErrors?: {
-                        /** @example st-mfa */
-                        id?: string;
-                        /** @example Completed factors in the session does not satisfy the MFA requirements for auth */
-                        reason?: string;
-                    }[];
-                };
+                "application/json":
+                    | {
+                          /** @example invalid claim */
+                          message?: string;
+                          claimValidationErrors?: {
+                              /** @example st-ev */
+                              id?: string;
+                              /** @example {
+                               *       "message": "wrong value",
+                               *       "expectedValue": true,
+                               *       "actualValue": false
+                               *     } */
+                              reason?: Record<string, unknown>;
+                          }[];
+                      }
+                    | {
+                          /** @example invalid claim */
+                          message?: string;
+                          claimValidationErrors?: {
+                              /** @example st-mfa */
+                              id?: string;
+                              /** @example Completed factors in the session does not satisfy the MFA requirements for auth */
+                              reason?: string;
+                          }[];
+                      };
             };
         };
     };
@@ -872,23 +876,25 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                        factors?: {
-                            alreadySetup?: string[];
-                            allowedToSetup?: string[];
-                            next?: string[];
-                        };
-                        emails?: {
-                            emailpassword?: string[];
-                            "otp-email"?: string[];
-                            "link-email"?: string[];
-                        };
-                        phoneNumbers?: {
-                            "otp-phone"?: string[];
-                            "link-phone"?: string[];
-                        };
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                              factors?: {
+                                  alreadySetup?: string[];
+                                  allowedToSetup?: string[];
+                                  next?: string[];
+                              };
+                              emails?: {
+                                  emailpassword?: string[];
+                                  "otp-email"?: string[];
+                                  "link-email"?: string[];
+                              };
+                              phoneNumbers?: {
+                                  "otp-phone"?: string[];
+                                  "link-phone"?: string[];
+                              };
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             404: components["responses"]["404"];
@@ -918,19 +924,21 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                        devices?: {
-                            /** @example asdf123 */
-                            name?: string;
-                            /** @example 30 */
-                            period?: number;
-                            /** @example 30 */
-                            skew?: number;
-                            /** @example false */
-                            verified?: boolean;
-                        }[];
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                              devices?: {
+                                  /** @example asdf123 */
+                                  name?: string;
+                                  /** @example 30 */
+                                  period?: number;
+                                  /** @example 30 */
+                                  skew?: number;
+                                  /** @example false */
+                                  verified?: boolean;
+                              }[];
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             404: components["responses"]["404"];
@@ -969,18 +977,21 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                        /** @example asfd123 */
-                        deviceName?: string;
-                        /** @example otpauth://totp/Supertokens:alice@google.com?secret=JBSWY3DPEHPK3PXP&issuer=Supertokens */
-                        qrCodeString?: string;
-                        /** @example JBSWY3DPEHPK3PXP */
-                        secret?: string;
-                    } | {
-                        /** @enum {string} */
-                        status: "DEVICE_ALREADY_EXISTS_ERROR";
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                              /** @example asfd123 */
+                              deviceName?: string;
+                              /** @example otpauth://totp/Supertokens:alice@google.com?secret=JBSWY3DPEHPK3PXP&issuer=Supertokens */
+                              qrCodeString?: string;
+                              /** @example JBSWY3DPEHPK3PXP */
+                              secret?: string;
+                          }
+                        | {
+                              /** @enum {string} */
+                              status: "DEVICE_ALREADY_EXISTS_ERROR";
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             403: components["responses"]["403-factor-setup"];
@@ -1018,11 +1029,13 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                        /** @example true */
-                        didDeviceExist?: boolean;
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                              /** @example true */
+                              didDeviceExist?: boolean;
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             404: components["responses"]["404"];
@@ -1070,24 +1083,29 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                    } | {
-                        /** @enum {string} */
-                        status: "UNKNOWN_DEVICE_ERROR";
-                    } | {
-                        /** @enum {string} */
-                        status: "INVALID_TOTP_ERROR";
-                        /** @example 2 */
-                        currentNumberOfFailedAttempts?: number;
-                        /** @example 5 */
-                        maxNumberOfFailedAttempts?: number;
-                    } | {
-                        /** @enum {string} */
-                        status: "LIMIT_REACHED_ERROR";
-                        /** @example 30000 */
-                        retryAfterMs?: number;
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                          }
+                        | {
+                              /** @enum {string} */
+                              status: "UNKNOWN_DEVICE_ERROR";
+                          }
+                        | {
+                              /** @enum {string} */
+                              status: "INVALID_TOTP_ERROR";
+                              /** @example 2 */
+                              currentNumberOfFailedAttempts?: number;
+                              /** @example 5 */
+                              maxNumberOfFailedAttempts?: number;
+                          }
+                        | {
+                              /** @enum {string} */
+                              status: "LIMIT_REACHED_ERROR";
+                              /** @example 30000 */
+                              retryAfterMs?: number;
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             403: components["responses"]["403-factor-setup"];
@@ -1134,21 +1152,25 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                    } | {
-                        /** @enum {string} */
-                        status: "INVALID_TOTP_ERROR";
-                        /** @example 2 */
-                        currentNumberOfFailedAttempts?: number;
-                        /** @example 5 */
-                        maxNumberOfFailedAttempts?: number;
-                    } | {
-                        /** @enum {string} */
-                        status: "LIMIT_REACHED_ERROR";
-                        /** @example 30000 */
-                        retryAfterMs?: number;
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                          }
+                        | {
+                              /** @enum {string} */
+                              status: "INVALID_TOTP_ERROR";
+                              /** @example 2 */
+                              currentNumberOfFailedAttempts?: number;
+                              /** @example 5 */
+                              maxNumberOfFailedAttempts?: number;
+                          }
+                        | {
+                              /** @enum {string} */
+                              status: "LIMIT_REACHED_ERROR";
+                              /** @example 30000 */
+                              retryAfterMs?: number;
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             404: components["responses"]["404"];
@@ -1170,15 +1192,17 @@ export interface operations {
         };
         requestBody?: {
             content: {
-                "application/json": {
-                    email: components["schemas"]["email"];
-                    /** @example false */
-                    shouldTryLinkingWithSessionUser?: boolean;
-                } | {
-                    phoneNumber: components["schemas"]["phoneNumber"];
-                    /** @example false */
-                    shouldTryLinkingWithSessionUser?: boolean;
-                };
+                "application/json":
+                    | {
+                          email: components["schemas"]["email"];
+                          /** @example false */
+                          shouldTryLinkingWithSessionUser?: boolean;
+                      }
+                    | {
+                          phoneNumber: components["schemas"]["phoneNumber"];
+                          /** @example false */
+                          shouldTryLinkingWithSessionUser?: boolean;
+                      };
             };
         };
         responses: {
@@ -1188,18 +1212,21 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                        deviceId?: components["schemas"]["deviceId"];
-                        preAuthSessionId?: components["schemas"]["preAuthSessionId"];
-                        /** @enum {string} */
-                        flowType?: "MAGIC_LINK" | "USER_INPUT_CODE_AND_MAGIC_LINK" | "USER_INPUT_CODE";
-                    } | {
-                        /** @enum {string} */
-                        status: "SIGN_IN_UP_NOT_ALLOWED";
-                        /** @example Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_IN_ALLOWED_FALSE) */
-                        reason?: string;
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                              deviceId?: components["schemas"]["deviceId"];
+                              preAuthSessionId?: components["schemas"]["preAuthSessionId"];
+                              /** @enum {string} */
+                              flowType?: "MAGIC_LINK" | "USER_INPUT_CODE_AND_MAGIC_LINK" | "USER_INPUT_CODE";
+                          }
+                        | {
+                              /** @enum {string} */
+                              status: "SIGN_IN_UP_NOT_ALLOWED";
+                              /** @example Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_IN_ALLOWED_FALSE) */
+                              reason?: string;
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             403: components["responses"]["403-factor-setup"];
@@ -1237,10 +1264,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        /** @enum {string} */
-                        status: "OK" | "RESTART_FLOW_ERROR";
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              /** @enum {string} */
+                              status: "OK" | "RESTART_FLOW_ERROR";
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             404: components["responses"]["404"];
@@ -1262,20 +1291,22 @@ export interface operations {
         };
         requestBody?: {
             content: {
-                "application/json": {
-                    preAuthSessionId: components["schemas"]["preAuthSessionId"];
-                    /** @example false */
-                    shouldTryLinkingWithSessionUser?: boolean;
-                    /** @example b10lbT_SnDC4flA6Fn7pE5TtG5k5NfigLef4QMBeGA8 */
-                    linkCode: string;
-                } | {
-                    preAuthSessionId: components["schemas"]["preAuthSessionId"];
-                    /** @example false */
-                    shouldTryLinkingWithSessionUser?: boolean;
-                    deviceId: components["schemas"]["deviceId"];
-                    /** @example 432123 */
-                    userInputCode: string;
-                };
+                "application/json":
+                    | {
+                          preAuthSessionId: components["schemas"]["preAuthSessionId"];
+                          /** @example false */
+                          shouldTryLinkingWithSessionUser?: boolean;
+                          /** @example b10lbT_SnDC4flA6Fn7pE5TtG5k5NfigLef4QMBeGA8 */
+                          linkCode: string;
+                      }
+                    | {
+                          preAuthSessionId: components["schemas"]["preAuthSessionId"];
+                          /** @example false */
+                          shouldTryLinkingWithSessionUser?: boolean;
+                          deviceId: components["schemas"]["deviceId"];
+                          /** @example 432123 */
+                          userInputCode: string;
+                      };
             };
         };
         responses: {
@@ -1295,27 +1326,32 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                        /** @example true */
-                        createdNewRecipeUser?: boolean;
-                        user?: components["schemas"]["user"];
-                    } | {
-                        /** @enum {string} */
-                        status: "INCORRECT_USER_INPUT_CODE_ERROR" | "EXPIRED_USER_INPUT_CODE_ERROR";
-                        /** @example 2 */
-                        failedCodeInputAttemptCount?: number;
-                        /** @example 5 */
-                        maximumCodeInputAttempts?: number;
-                    } | {
-                        /** @enum {string} */
-                        status: "RESTART_FLOW_ERROR";
-                    } | {
-                        /** @enum {string} */
-                        status: "SIGN_IN_UP_NOT_ALLOWED";
-                        /** @example Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_IN_ALLOWED_FALSE) */
-                        reason?: string;
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                              /** @example true */
+                              createdNewRecipeUser?: boolean;
+                              user?: components["schemas"]["user"];
+                          }
+                        | {
+                              /** @enum {string} */
+                              status: "INCORRECT_USER_INPUT_CODE_ERROR" | "EXPIRED_USER_INPUT_CODE_ERROR";
+                              /** @example 2 */
+                              failedCodeInputAttemptCount?: number;
+                              /** @example 5 */
+                              maximumCodeInputAttempts?: number;
+                          }
+                        | {
+                              /** @enum {string} */
+                              status: "RESTART_FLOW_ERROR";
+                          }
+                        | {
+                              /** @enum {string} */
+                              status: "SIGN_IN_UP_NOT_ALLOWED";
+                              /** @example Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_IN_ALLOWED_FALSE) */
+                              reason?: string;
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             403: components["responses"]["403-factor-setup"];
@@ -1346,10 +1382,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                        exists?: components["schemas"]["exists"];
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                              exists?: components["schemas"]["exists"];
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             404: components["responses"]["404"];
@@ -1379,10 +1417,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                        exists?: components["schemas"]["exists"];
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                              exists?: components["schemas"]["exists"];
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             404: components["responses"]["404"];
@@ -1412,10 +1452,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                        exists?: components["schemas"]["exists"];
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                              exists?: components["schemas"]["exists"];
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             404: components["responses"]["404"];
@@ -1445,10 +1487,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                        exists?: components["schemas"]["exists"];
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                              exists?: components["schemas"]["exists"];
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             404: components["responses"]["404"];
@@ -1489,9 +1533,11 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             404: components["responses"]["404"];
@@ -1575,7 +1621,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["signInResponse"] | components["schemas"]["signInNotAllowedResponse"] | components["schemas"]["fieldErrorResponse"] | components["schemas"]["wrongCredentialsResponse"] | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | components["schemas"]["signInResponse"]
+                        | components["schemas"]["signInNotAllowedResponse"]
+                        | components["schemas"]["fieldErrorResponse"]
+                        | components["schemas"]["wrongCredentialsResponse"]
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             403: components["responses"]["403-factor-setup"];
@@ -1622,7 +1673,11 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["signupResponse"] | components["schemas"]["signUpNotAllowedResponse"] | components["schemas"]["fieldErrorResponse"] | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | components["schemas"]["signupResponse"]
+                        | components["schemas"]["signUpNotAllowedResponse"]
+                        | components["schemas"]["fieldErrorResponse"]
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             403: components["responses"]["403-factor-setup"];
@@ -1653,10 +1708,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                        exists?: components["schemas"]["exists"];
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                              exists?: components["schemas"]["exists"];
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             404: components["responses"]["404"];
@@ -1686,10 +1743,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                        exists?: components["schemas"]["exists"];
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                              exists?: components["schemas"]["exists"];
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             404: components["responses"]["404"];
@@ -1723,7 +1782,11 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["passwordResetTokenResponse"] | components["schemas"]["passwordResetNotAllowedResponse"] | components["schemas"]["fieldErrorResponse"] | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | components["schemas"]["passwordResetTokenResponse"]
+                        | components["schemas"]["passwordResetNotAllowedResponse"]
+                        | components["schemas"]["fieldErrorResponse"]
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             404: components["responses"]["404"];
@@ -1759,7 +1822,11 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["passwordResetResponse"] | components["schemas"]["passwordResetErrorResponse"] | components["schemas"]["fieldErrorResponse"] | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | components["schemas"]["passwordResetResponse"]
+                        | components["schemas"]["passwordResetErrorResponse"]
+                        | components["schemas"]["fieldErrorResponse"]
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             404: components["responses"]["404"];
@@ -1781,28 +1848,30 @@ export interface operations {
         };
         requestBody?: {
             content: {
-                "application/json": {
-                    thirdPartyId: components["schemas"]["thirdPartyId"];
-                    clientType?: components["schemas"]["clientType"];
-                    redirectURIInfo: {
-                        redirectURIOnProviderDashboard: components["schemas"]["redirectURI"];
-                        /** @example {
-                         *       "code": "neqmpdsfuqe141m5lk437867masdf",
-                         *       "state": "ljayfgqewertbh13245njw0"
-                         *     } */
-                        redirectURIQueryParams: Record<string, unknown>;
-                        /** @example abcd1234 */
-                        pkceCodeVerifier?: string;
-                    };
-                    /** @example false */
-                    shouldTryLinkingWithSessionUser?: boolean;
-                } | {
-                    thirdPartyId: components["schemas"]["thirdPartyId"];
-                    clientType?: components["schemas"]["clientType"];
-                    oAuthTokens: components["schemas"]["oAuthTokens"];
-                    /** @example false */
-                    shouldTryLinkingWithSessionUser?: boolean;
-                };
+                "application/json":
+                    | {
+                          thirdPartyId: components["schemas"]["thirdPartyId"];
+                          clientType?: components["schemas"]["clientType"];
+                          redirectURIInfo: {
+                              redirectURIOnProviderDashboard: components["schemas"]["redirectURI"];
+                              /** @example {
+                               *       "code": "neqmpdsfuqe141m5lk437867masdf",
+                               *       "state": "ljayfgqewertbh13245njw0"
+                               *     } */
+                              redirectURIQueryParams: Record<string, unknown>;
+                              /** @example abcd1234 */
+                              pkceCodeVerifier?: string;
+                          };
+                          /** @example false */
+                          shouldTryLinkingWithSessionUser?: boolean;
+                      }
+                    | {
+                          thirdPartyId: components["schemas"]["thirdPartyId"];
+                          clientType?: components["schemas"]["clientType"];
+                          oAuthTokens: components["schemas"]["oAuthTokens"];
+                          /** @example false */
+                          shouldTryLinkingWithSessionUser?: boolean;
+                      };
             };
         };
         responses: {
@@ -1822,7 +1891,10 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["signinupResponse"] | components["schemas"]["signinupErrorResponse"] | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | components["schemas"]["signinupResponse"]
+                        | components["schemas"]["signinupErrorResponse"]
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             403: components["responses"]["403-factor-setup"];
@@ -1855,13 +1927,15 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                        /** @example https://providerdomain.com/authorize?client_id=..&scope=..&access_type=.. */
-                        urlWithQueryParams?: string;
-                        /** @example abcd1234 */
-                        pkceCodeVerifier?: string;
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                              /** @example https://providerdomain.com/authorize?client_id=..&scope=..&access_type=.. */
+                              urlWithQueryParams?: string;
+                              /** @example abcd1234 */
+                              pkceCodeVerifier?: string;
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             404: components["responses"]["404"];
@@ -1891,29 +1965,31 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                        recipes: {
-                            emailPassword: {
-                                /** @example true */
-                                enabled: boolean;
-                            };
-                            thirdParty: {
-                                /** @example true */
-                                enabled: boolean;
-                                providers: {
-                                    id: components["schemas"]["thirdPartyId"];
-                                    /** @example Google */
-                                    name?: string;
-                                }[];
-                            };
-                            passwordless: {
-                                /** @example true */
-                                enabled: boolean;
-                            };
-                            firstFactors: string[];
-                        };
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                              recipes: {
+                                  emailPassword: {
+                                      /** @example true */
+                                      enabled: boolean;
+                                  };
+                                  thirdParty: {
+                                      /** @example true */
+                                      enabled: boolean;
+                                      providers: {
+                                          id: components["schemas"]["thirdPartyId"];
+                                          /** @example Google */
+                                          name?: string;
+                                      }[];
+                                  };
+                                  passwordless: {
+                                      /** @example true */
+                                      enabled: boolean;
+                                  };
+                                  firstFactors: string[];
+                              };
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             404: components["responses"]["404"];
@@ -1975,10 +2051,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        /** @enum {string} */
-                        status: "OK" | "EMAIL_ALREADY_VERIFIED_ERROR";
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              /** @enum {string} */
+                              status: "OK" | "EMAIL_ALREADY_VERIFIED_ERROR";
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             404: components["responses"]["404"];
@@ -2013,10 +2091,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        /** @enum {string} */
-                        status: "OK" | "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR";
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              /** @enum {string} */
+                              status: "OK" | "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR";
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             404: components["responses"]["404"];
@@ -2055,11 +2135,13 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        status: components["schemas"]["statusOK"];
-                        /** @example true */
-                        isVerified?: boolean;
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                              /** @example true */
+                              isVerified?: boolean;
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             404: components["responses"]["404"];
@@ -2084,25 +2166,27 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        keys?: {
-                            /**
-                             * @description The algorithm to use when creating the JWT.
-                             * @enum {string}
-                             */
-                            alg?: "RS256";
-                            /** @example RSA */
-                            kty?: string;
-                            /** @example sig */
-                            use?: string;
-                            /** @description Unique identifier for the JWK */
-                            kid?: string;
-                            /** @description Modulus for the key */
-                            n?: string;
-                            /** @description Exponent for the key */
-                            e?: string;
-                        }[];
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              keys?: {
+                                  /**
+                                   * @description The algorithm to use when creating the JWT.
+                                   * @enum {string}
+                                   */
+                                  alg?: "RS256";
+                                  /** @example RSA */
+                                  kty?: string;
+                                  /** @example sig */
+                                  use?: string;
+                                  /** @description Unique identifier for the JWK */
+                                  kid?: string;
+                                  /** @description Modulus for the key */
+                                  n?: string;
+                                  /** @description Exponent for the key */
+                                  e?: string;
+                              }[];
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             400: components["responses"]["400"];
@@ -2128,18 +2212,20 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        /**
-                         * @description URL using the https scheme with no query or fragment component that the OP asserts as its Issuer Identifier (https://openid.net/specs/openid-connect-discovery-1_0.html section 3)
-                         * @example https://api.example.com/auth
-                         */
-                        issuer?: string;
-                        /**
-                         * @description URL for fetching a list JsonWebKey, used for JWT signature verification. Refer to /jwt/jwks.json API in the JWT recipe for JWK details
-                         * @example https://api.example.com/auth/jwt/jwks.json
-                         */
-                        jwks_uri?: string;
-                    } | components["schemas"]["generalErrorResponse"];
+                    "application/json":
+                        | {
+                              /**
+                               * @description URL using the https scheme with no query or fragment component that the OP asserts as its Issuer Identifier (https://openid.net/specs/openid-connect-discovery-1_0.html section 3)
+                               * @example https://api.example.com/auth
+                               */
+                              issuer?: string;
+                              /**
+                               * @description URL for fetching a list JsonWebKey, used for JWT signature verification. Refer to /jwt/jwks.json API in the JWT recipe for JWK details
+                               * @example https://api.example.com/auth/jwt/jwks.json
+                               */
+                              jwks_uri?: string;
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             400: components["responses"]["400"];

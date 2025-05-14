@@ -14,7 +14,7 @@
  */
 
 import Querier from "../../querier";
-import { MFAFactorInfo, RecipeInterface } from "./types";
+import { RecipeInterface } from "./types";
 import { RecipeImplementationInput } from "../recipeModule/types";
 import { PreAndPostAPIHookAction } from "./types";
 

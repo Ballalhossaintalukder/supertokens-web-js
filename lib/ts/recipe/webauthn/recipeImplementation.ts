@@ -14,10 +14,9 @@
  */
 
 import Querier from "../../querier";
-import { RecipeInterface, ResidentKey, UserVerification } from "./types";
+import { RecipeInterface } from "./types";
 import { RecipeFunctionOptions, RecipeImplementationInput } from "../recipeModule/types";
 import { PreAndPostAPIHookAction } from "./types";
-import { GeneralErrorResponse, User } from "../../types";
 import Multitenancy from "../multitenancy/recipe";
 import {
     AuthenticationResponseJSON,
@@ -47,9 +46,10 @@ export default function getRecipeImplementation(
                 {
                     path: "/<tenantId>/webauthn/options/register",
                     params: {
-                        tenantId: await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
-                            userContext: userContext,
-                        }) || "public",
+                        tenantId:
+                            (await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
+                                userContext: userContext,
+                            })) || "public",
                     },
                 },
                 {
@@ -78,9 +78,10 @@ export default function getRecipeImplementation(
                 {
                     path: "/<tenantId>/webauthn/options/signin",
                     params: {
-                        tenantId: await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
-                            userContext: userContext,
-                        }) || "public",
+                        tenantId:
+                            (await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
+                                userContext: userContext,
+                            })) || "public",
                     },
                 },
                 {},
@@ -107,9 +108,10 @@ export default function getRecipeImplementation(
                 {
                     path: "/<tenantId>/webauthn/signup",
                     params: {
-                        tenantId: await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
-                            userContext: userContext,
-                        }) || "public",
+                        tenantId:
+                            (await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
+                                userContext: userContext,
+                            })) || "public",
                     },
                 },
                 {
@@ -141,9 +143,10 @@ export default function getRecipeImplementation(
                 {
                     path: "/<tenantId>/webauthn/signin",
                     params: {
-                        tenantId: await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
-                            userContext: userContext,
-                        }) || "public",
+                        tenantId:
+                            (await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
+                                userContext: userContext,
+                            })) || "public",
                     },
                 },
                 {
@@ -175,9 +178,10 @@ export default function getRecipeImplementation(
                 {
                     path: "/<tenantId>/webauthn/email/exists",
                     params: {
-                        tenantId: await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
-                            userContext: userContext,
-                        }) || "public",
+                        tenantId:
+                            (await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
+                                userContext: userContext,
+                            })) || "public",
                         email: email,
                     },
                 },
@@ -205,9 +209,10 @@ export default function getRecipeImplementation(
                 {
                     path: "/<tenantId>/user/webauthn/reset/token",
                     params: {
-                        tenantId: await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
-                            userContext: userContext,
-                        }) || "public",
+                        tenantId:
+                            (await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
+                                userContext: userContext,
+                            })) || "public",
                     },
                 },
                 {
@@ -238,9 +243,10 @@ export default function getRecipeImplementation(
                 {
                     path: "/<tenantId>/user/webauthn/reset",
                     params: {
-                        tenantId: await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
-                            userContext: userContext,
-                        }) || "public",
+                        tenantId:
+                            (await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
+                                userContext: userContext,
+                            })) || "public",
                     },
                 },
                 {

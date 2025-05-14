@@ -62,9 +62,10 @@ export default function getRecipeImplementation(
                 {
                     path: "/<tenantId>/signinup/code",
                     params: {
-                        tenantId: await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
-                            userContext: input.userContext,
-                        }) || "public",
+                        tenantId:
+                            (await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
+                                userContext: input.userContext,
+                            })) || "public",
                     },
                 },
                 { body: bodyObj },
@@ -161,20 +162,6 @@ export default function getRecipeImplementation(
                 };
             }
 
-            type ResponseType =
-                | {
-                      status: "OK";
-                      createdNewRecipeUser: boolean;
-                      user: User;
-                  }
-                | {
-                      status: "INCORRECT_USER_INPUT_CODE_ERROR" | "EXPIRED_USER_INPUT_CODE_ERROR";
-                      failedCodeInputAttemptCount: number;
-                      maximumCodeInputAttempts: number;
-                  }
-                | { status: "RESTART_FLOW_ERROR" }
-                | { status: "SIGN_IN_UP_NOT_ALLOWED"; reason: string };
-
             const { jsonBody, fetchResponse } = await querier.post(
                 {
                     path: "/<tenantId>/signinup/code/consume",
@@ -237,9 +224,10 @@ export default function getRecipeImplementation(
                 {
                     path: "/<tenantId>/passwordless/email/exists",
                     params: {
-                        tenantId: await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
-                            userContext: input.userContext,
-                        }) || "public",
+                        tenantId:
+                            (await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
+                                userContext: input.userContext,
+                            })) || "public",
                         email: input.email,
                     },
                 },
@@ -276,9 +264,10 @@ export default function getRecipeImplementation(
                 {
                     path: "/<tenantId>/passwordless/phonenumber/exists",
                     params: {
-                        tenantId: await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
-                            userContext: input.userContext,
-                        }) || "public",
+                        tenantId:
+                            (await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
+                                userContext: input.userContext,
+                            })) || "public",
                         phoneNumber: input.phoneNumber,
                     },
                 },
