@@ -736,7 +736,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/<tenantId>/webauthn/register/options": {
+    "/<tenantId>/webauthn/options/register": {
         parameters: {
             query?: never;
             header?: never;
@@ -754,7 +754,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/<tenantId>/webauthn/signin/options": {
+    "/<tenantId>/webauthn/options/signin": {
         parameters: {
             query?: never;
             header?: never;
@@ -874,6 +874,42 @@ export interface paths {
         get: operations["webauthnEmailExists"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/<tenantId>/user/webauthn/reset/token": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Reset a WebAuthn account
+         *      */
+        post: operations["webauthnResetToken"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/<tenantId>/user/webauthn/reset": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Reset a WebAuthn account
+         *      */
+        post: operations["webauthnReset"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1060,6 +1096,16 @@ export interface components {
         badRequest: "Bad request";
         /** @enum {string} */
         notFound: "Not Found";
+        clientExtensionResults: {
+            /** @example true */
+            appid?: boolean;
+            credProps?: {
+                /** @example true */
+                rk?: boolean;
+            };
+            /** @example true */
+            hmacCreateSecret?: boolean;
+        };
         registrationPayload: {
             /** @example cred_123... */
             id: string;
@@ -1067,9 +1113,7 @@ export interface components {
             rawId: string;
             /** @enum {string} */
             authenticatorAttachment?: "platform" | "cross-platform";
-            clientExtensionResults?: {
-                [key: string]: unknown;
-            };
+            clientExtensionResults?: components["schemas"]["clientExtensionResults"];
             response: {
                 /** @example base64clientdata... */
                 clientDataJSON: string;
@@ -1093,9 +1137,7 @@ export interface components {
             rawId: string;
             /** @enum {string} */
             authenticatorAttachment?: "platform" | "cross-platform";
-            clientExtensionResults?: {
-                [key: string]: unknown;
-            };
+            clientExtensionResults?: components["schemas"]["clientExtensionResults"];
             response: {
                 /** @example base64clientdata... */
                 clientDataJSON: string;
@@ -3114,49 +3156,49 @@ export interface operations {
                     "application/json": {
                         status: components["schemas"]["statusOK"];
                         /** @example opt_123... */
-                        webauthnGeneratedOptionsId?: string;
+                        webauthnGeneratedOptionsId: string;
                         /** @example 2024-03-20T10:00:00Z */
-                        createdAt?: string;
+                        createdAt: string;
                         /** @example 2024-03-20T10:05:00Z */
-                        expiresAt?: string;
-                        rp?: {
+                        expiresAt: string;
+                        rp: {
                             /** @example example.com */
-                            id?: string;
+                            id: string;
                             /** @example Example Site */
-                            name?: string;
+                            name: string;
                         };
-                        user?: {
+                        user: {
                             /** @example user_123... */
-                            id?: string;
+                            id: string;
                             /** @example john@example.com */
-                            name?: string;
+                            name: string;
                             /** @example John Doe */
-                            displayName?: string;
+                            displayName: string;
                         };
                         /** @example base64challenge... */
-                        challenge?: string;
+                        challenge: string;
                         /** @example 300000 */
-                        timeout?: number;
-                        excludeCredentials?: {
-                            id?: string;
+                        timeout: number;
+                        excludeCredentials: {
+                            id: string;
                             /** @enum {string} */
-                            type?: "public-key";
-                            transports?: ("ble" | "hybrid" | "internal" | "nfc" | "usb")[];
+                            type: "public-key";
+                            transports: ("ble" | "hybrid" | "internal" | "nfc" | "usb")[];
                         }[];
                         /** @enum {string} */
-                        attestation?: "none" | "indirect" | "direct" | "enterprise";
-                        pubKeyCredParams?: {
+                        attestation: "none" | "indirect" | "direct" | "enterprise";
+                        pubKeyCredParams: {
                             /** @example -7 */
-                            alg?: number;
-                            /** @example public-key */
-                            type?: string;
+                            alg: number;
+                            /** @enum {string} */
+                            type: "public-key";
                         }[];
-                        authenticatorSelection?: {
-                            requireResidentKey?: boolean;
+                        authenticatorSelection: {
+                            requireResidentKey: boolean;
                             /** @enum {string} */
-                            residentKey?: "required" | "preferred" | "discouraged";
+                            residentKey: "required" | "preferred" | "discouraged";
                             /** @enum {string} */
-                            userVerification?: "required" | "preferred" | "discouraged";
+                            userVerification: "required" | "preferred" | "discouraged";
                         };
                     } | components["schemas"]["generalErrorResponse"] | {
                         /** @enum {string} */
@@ -3500,6 +3542,103 @@ export interface operations {
                         /** @example true */
                         exists?: boolean;
                     } | components["schemas"]["generalErrorResponse"];
+                };
+            };
+            404: components["responses"]["404"];
+            500: components["responses"]["500"];
+        };
+    };
+    webauthnResetToken: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @example webauthn */
+                rid?: components["parameters"]["webauthnRid"];
+            };
+            path: {
+                /** @description Its value depends on the apiBasePath set by the user */
+                apiBasePath: components["parameters"]["apiBasePath"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    email: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Reset token response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @enum {string} */
+                        status: "OK";
+                    } | {
+                        /** @enum {string} */
+                        status: "GENERAL_ERROR";
+                        message: string;
+                    } | {
+                        /** @enum {string} */
+                        status: "RECOVER_ACCOUNT_NOT_ALLOWED";
+                        reason: string;
+                    };
+                };
+            };
+            404: components["responses"]["404"];
+            500: components["responses"]["500"];
+        };
+    };
+    webauthnReset: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @example webauthn */
+                rid?: components["parameters"]["webauthnRid"];
+            };
+            path: {
+                /** @description Its value depends on the apiBasePath set by the user */
+                apiBasePath: components["parameters"]["apiBasePath"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    token: string;
+                    webauthnGeneratedOptionsId: string;
+                    credential: components["schemas"]["registrationPayload"];
+                };
+            };
+        };
+        responses: {
+            /** @description WebAuthn account reset response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @enum {string} */
+                        status: "OK";
+                        user: components["schemas"]["user"];
+                        email: string;
+                    } | {
+                        /** @enum {string} */
+                        status: "GENERAL_ERROR";
+                        message: string;
+                    } | {
+                        /** @enum {string} */
+                        status: "RECOVER_ACCOUNT_TOKEN_INVALID_ERROR" | "INVALID_CREDENTIALS_ERROR" | "OPTIONS_NOT_FOUND_ERROR" | "INVALID_OPTIONS_ERROR";
+                    } | {
+                        /** @enum {string} */
+                        status: "INVALID_AUTHENTICATOR_ERROR";
+                        reason: string;
+                    };
                 };
             };
             404: components["responses"]["404"];
