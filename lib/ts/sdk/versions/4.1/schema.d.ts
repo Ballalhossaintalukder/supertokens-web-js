@@ -1298,13 +1298,13 @@ export interface operations {
                         status: components["schemas"]["statusOK"];
                         devices?: {
                             /** @example asdf123 */
-                            name?: string;
+                            name: string;
                             /** @example 30 */
-                            period?: number;
+                            period: number;
                             /** @example 30 */
-                            skew?: number;
+                            skew: number;
                             /** @example false */
-                            verified?: boolean;
+                            verified: boolean;
                         }[];
                     } | components["schemas"]["generalErrorResponse"];
                 };
@@ -1448,6 +1448,7 @@ export interface operations {
                 content: {
                     "application/json": {
                         status: components["schemas"]["statusOK"];
+                        wasAlreadyVerified: boolean;
                     } | {
                         /** @enum {string} */
                         status: "UNKNOWN_DEVICE_ERROR";
