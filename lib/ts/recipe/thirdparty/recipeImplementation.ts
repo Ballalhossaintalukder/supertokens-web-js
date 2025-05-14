@@ -131,24 +131,17 @@ export default function getRecipeImplementation(
             pkceCodeVerifier?: string;
             fetchResponse: Response;
         }> {
-            const queryParams: Record<string, string> = {
-                thirdPartyId: input.thirdPartyId,
-                redirectURIOnProviderDashboard: input.redirectURIOnProviderDashboard,
-            };
-
-            if (recipeImplInput.clientType !== undefined) {
-                queryParams.clientType = recipeImplInput.clientType;
-            }
-
-            const { jsonBody, fetchResponse } = await querier.get<{
-                status: "OK";
-                urlWithQueryParams: string;
-                pkceCodeVerifier?: string;
-            }>(
-                input.tenantId,
-                "/authorisationurl",
+            const { jsonBody, fetchResponse } = await querier.get(
+                {
+                    path: "/<tenantId>/authorisationurl",
+                    params: {
+                        tenantId: input.tenantId || "public",
+                        thirdPartyId: input.thirdPartyId,
+                        redirectURIOnProviderDashboard: input.redirectURIOnProviderDashboard,
+                        ...(recipeImplInput.clientType !== undefined ? { clientType: recipeImplInput.clientType } : {}),
+                    },
+                },
                 {},
-                queryParams,
                 Querier.preparePreAPIHook({
                     recipePreAPIHook: recipeImplInput.preAPIHook,
                     action: "GET_AUTHORISATION_URL",
@@ -224,28 +217,15 @@ export default function getRecipeImplementation(
             const queryParams = getAllQueryParams();
             const queryParamsObj: any = Object.fromEntries(queryParams);
 
-            const { jsonBody, fetchResponse } = await querier.post<
-                | {
-                      status: "OK";
-                      createdNewRecipeUser: boolean;
-                      user: User;
-                  }
-                | {
-                      status: "NO_EMAIL_GIVEN_BY_PROVIDER";
-                  }
-                | {
-                      status: "SIGN_IN_UP_NOT_ALLOWED";
-                      reason: string;
-                  }
-                | {
-                      status: "FIELD_ERROR";
-                      error: string;
-                  }
-            >(
-                verifiedState.tenantId,
-                "/signinup",
+            const { jsonBody, fetchResponse } = await querier.post(
                 {
-                    body: JSON.stringify({
+                    path: "/<tenantId>/signinup",
+                    params: {
+                        tenantId: verifiedState.tenantId || "public",
+                    },
+                },
+                {
+                    body: {
                         thirdPartyId: verifiedState.thirdPartyId,
                         clientType: recipeImplInput.clientType,
                         redirectURIInfo: {
@@ -254,7 +234,7 @@ export default function getRecipeImplementation(
                             pkceCodeVerifier: verifiedState.pkceCodeVerifier,
                         },
                         shouldTryLinkingWithSessionUser: verifiedState.shouldTryLinkingWithSessionUser,
-                    }),
+                    },
                 },
                 Querier.preparePreAPIHook({
                     recipePreAPIHook: recipeImplInput.preAPIHook,
@@ -269,9 +249,10 @@ export default function getRecipeImplementation(
                 })
             );
 
-            if (jsonBody.status === "FIELD_ERROR") {
-                throw new STGeneralError(jsonBody.error);
-            }
+            // TODO: Verify that this is not used anymore for other SDK versions
+            // if (jsonBody.status === "FIELD_ERROR") {
+            //     throw new STGeneralError(jsonBody.error);
+            // }
             if (jsonBody.status !== "OK") {
                 return {
                     ...jsonBody,
