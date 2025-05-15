@@ -2,6 +2,7 @@
  * This file provides one path type that merges all paths from different
  * versions of the schemas generated based on supported interface versions.
  */
+import { paths as pathsV3_1 } from "./versions/3.1/schema";
 import { paths as pathsV4_0 } from "./versions/4.0/schema";
 import { paths as pathsV4_1 } from "./versions/4.1/schema";
 declare type MergeMethods<M1, M2> = {
@@ -29,5 +30,5 @@ declare type MergeManyPaths<T extends Record<string, any>[]> = T extends [infer 
             : First
         : never
     : {};
-export declare type paths = MergeManyPaths<[pathsV4_0, pathsV4_1]>;
+export declare type paths = MergeManyPaths<[pathsV3_1, pathsV4_0, pathsV4_1]>;
 export {};

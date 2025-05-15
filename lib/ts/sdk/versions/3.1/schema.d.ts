@@ -227,7 +227,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/<tenantId>/passwordless/phoneNumber/exists": {
+    "/<tenantId>/passwordless/phonenumber/exists": {
         parameters: {
             query?: never;
             header?: never;
@@ -464,7 +464,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/<tenantId>/user/email/verify/token": {
+    "/user/email/verify/token": {
         parameters: {
             query?: never;
             header?: never;
@@ -592,38 +592,38 @@ export interface components {
         /** @example fa7a0841-b533-4478-95533-0fde890c3483 */
         userId: string;
         user: {
-            id?: components["schemas"]["userId"];
+            id: components["schemas"]["userId"];
             /** @example 1638433545183 */
-            timeJoined?: number;
+            timeJoined: number;
             /** @example true */
-            isPrimaryUser?: boolean;
-            tenantIds?: string[];
-            emails?: string[];
-            phoneNumbers?: string[];
-            thirdParty?: {
+            isPrimaryUser: boolean;
+            tenantIds: string[];
+            emails: string[];
+            phoneNumbers: string[];
+            thirdParty: {
                 /** @example google */
-                id?: string;
+                id: string;
                 /** @example rq238mrq2389rvq123213 */
-                userId?: string;
+                userId: string;
             }[];
-            loginMethods?: {
+            loginMethods: {
                 /** @enum {string} */
-                recipeId?: "emailpassword" | "thirdparty" | "passwordless";
-                recipeUserId?: components["schemas"]["userId"];
+                recipeId: "emailpassword" | "thirdparty" | "passwordless";
+                recipeUserId: components["schemas"]["userId"];
                 /** @example true */
                 verified?: boolean;
-                tenantIds?: string[];
+                tenantIds: string[];
                 /** @example 1638433545183 */
-                timeJoined?: number;
+                timeJoined: number;
                 /** @example johndoe@gmail.com */
                 email?: string;
                 /** @example 36201234123 */
                 phoneNumber?: string;
                 thirdParty?: {
                     /** @example google */
-                    id?: string;
+                    id: string;
                     /** @example rq238mrq2389rvq123213 */
-                    userId?: string;
+                    userId: string;
                 };
             }[];
         };
@@ -674,7 +674,7 @@ export interface components {
          *       }
          *     ] */
         formFields: {
-            id: components["schemas"]["id"];
+            id?: components["schemas"]["id"];
             value?: string;
         }[];
         signInResponse: {
@@ -880,9 +880,9 @@ export interface operations {
                         | {
                               status: components["schemas"]["statusOK"];
                               factors?: {
-                                  alreadySetup?: string[];
-                                  allowedToSetup?: string[];
-                                  next?: string[];
+                                  alreadySetup: string[];
+                                  allowedToSetup: string[];
+                                  next: string[];
                               };
                               emails?: {
                                   emailpassword?: string[];
@@ -929,13 +929,13 @@ export interface operations {
                               status: components["schemas"]["statusOK"];
                               devices?: {
                                   /** @example asdf123 */
-                                  name?: string;
+                                  name: string;
                                   /** @example 30 */
-                                  period?: number;
+                                  period: number;
                                   /** @example 30 */
-                                  skew?: number;
+                                  skew: number;
                                   /** @example false */
-                                  verified?: boolean;
+                                  verified: boolean;
                               }[];
                           }
                         | components["schemas"]["generalErrorResponse"];
@@ -1086,6 +1086,7 @@ export interface operations {
                     "application/json":
                         | {
                               status: components["schemas"]["statusOK"];
+                              wasAlreadyVerified: boolean;
                           }
                         | {
                               /** @enum {string} */
@@ -1968,26 +1969,24 @@ export interface operations {
                     "application/json":
                         | {
                               status: components["schemas"]["statusOK"];
-                              recipes: {
-                                  emailPassword: {
-                                      /** @example true */
-                                      enabled: boolean;
-                                  };
-                                  thirdParty: {
-                                      /** @example true */
-                                      enabled: boolean;
-                                      providers: {
-                                          id: components["schemas"]["thirdPartyId"];
-                                          /** @example Google */
-                                          name?: string;
-                                      }[];
-                                  };
-                                  passwordless: {
-                                      /** @example true */
-                                      enabled: boolean;
-                                  };
-                                  firstFactors: string[];
+                              emailPassword: {
+                                  /** @example true */
+                                  enabled: boolean;
                               };
+                              thirdParty: {
+                                  /** @example true */
+                                  enabled: boolean;
+                                  providers: {
+                                      id: components["schemas"]["thirdPartyId"];
+                                      /** @example Google */
+                                      name: string;
+                                  }[];
+                              };
+                              passwordless: {
+                                  /** @example true */
+                                  enabled: boolean;
+                              };
+                              firstFactors: string[];
                           }
                         | components["schemas"]["generalErrorResponse"];
                 };

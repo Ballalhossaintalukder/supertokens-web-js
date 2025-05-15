@@ -248,10 +248,6 @@ export default function getRecipeImplementation(
                 })
             );
 
-            // TODO: Verify that this is not used anymore for other SDK versions
-            // if (jsonBody.status === "FIELD_ERROR") {
-            //     throw new STGeneralError(jsonBody.error);
-            // }
             if (jsonBody.status !== "OK") {
                 return {
                     ...jsonBody,
