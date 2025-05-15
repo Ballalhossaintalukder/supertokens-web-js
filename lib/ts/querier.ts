@@ -45,7 +45,7 @@ export default class Querier {
 
         let populated = String(template);
         for (const [key, value] of Object.entries(params)) {
-            populated = populated.replace(new RegExp(`<${key}>\\b`, "g"), String(value));
+            populated = populated.replace(new RegExp(`<${key}>`, "g"), String(value));
         }
 
         return new NormalisedURLPath(populated);
