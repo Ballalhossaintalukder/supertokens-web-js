@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.16.0] - 2025-05-16
+
+-   Added support for auto inference of request/response body types along with query parameter types in querier methods.
+-   Adds a script to generate the types based on the FDI openapi spec.
+
 ## [0.15.0] - 2025-03-20
 
 -   Added `Webauthn` recipe to support logins using WebAuthN (Passkeys)
