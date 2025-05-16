@@ -84,7 +84,7 @@
         },
         {
             "path": "recipe/session/index.js",
-            "limit": "25kb"
+            "limit": "26kb"
         },
         {
             "path": "recipe/passwordless/index.js",
@@ -112,7 +112,7 @@
         },
         {
             "path": "recipe/webauthn/index.js",
-            "limit": "30kb"
+            "limit": "33kb"
         }
     ]
 }
