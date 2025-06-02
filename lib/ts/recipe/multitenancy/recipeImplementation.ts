@@ -45,6 +45,7 @@ export default function getRecipeImplementation(
                     path: "/<tenantId>/loginmethods",
                     params: {
                         tenantId: tenantId || "public",
+                        ...queryParams,
                     },
                 },
                 {},
