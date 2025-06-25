@@ -14,8 +14,14 @@
  */
 
 import RecipeModule from "./recipe/recipeModule";
-import { NormalisedAppInfo, SuperTokensConfig, SuperTokensPlugin } from "./types";
-import { checkForSSRErrorAndAppendIfNeeded, isTest, normaliseInputAppInfoOrThrowError } from "./utils";
+import { NormalisedAppInfo, SuperTokensConfig, SuperTokensPlugin, SuperTokensPublicPlugin } from "./types";
+import {
+    checkForSSRErrorAndAppendIfNeeded,
+    getPublicConfig,
+    getPublicPlugin,
+    isTest,
+    normaliseInputAppInfoOrThrowError,
+} from "./utils";
 import { CookieHandlerReference } from "./cookieHandler";
 import { WindowHandlerReference } from "./windowHandler";
 import { PostSuperTokensInitCallbacks } from "./postSuperTokensInitCallbacks";
@@ -34,6 +40,7 @@ export default class SuperTokens {
      */
     appInfo: NormalisedAppInfo;
     recipeList: RecipeModule<any, any>[] = [];
+    pluginList: SuperTokensPublicPlugin[] = [];
 
     constructor(config: SuperTokensConfig) {
         this.appInfo = normaliseInputAppInfoOrThrowError(config.appInfo);
@@ -57,7 +64,11 @@ export default class SuperTokens {
                     }
                 }
                 if (plugin.dependencies) {
-                    const result = plugin.dependencies(finalPluginList, package_version);
+                    const result = plugin.dependencies(
+                        getPublicConfig(config),
+                        finalPluginList.map(getPublicPlugin),
+                        package_version
+                    );
                     if (result.status === "ERROR") {
                         throw new Error(result.message);
                     }
@@ -69,9 +80,20 @@ export default class SuperTokens {
             }
         }
 
-        for (const plugin of finalPluginList) {
-            if (plugin.config) {
-                config = { ...config, ...plugin.config(config) };
+        this.pluginList = finalPluginList.map(getPublicPlugin);
+
+        for (let pluginIndex = 0; pluginIndex < this.pluginList.length; pluginIndex += 1) {
+            const pluginConfig = finalPluginList[pluginIndex].config;
+            if (pluginConfig) {
+                config = { ...config, ...pluginConfig(getPublicConfig(config)) };
+            }
+
+            const pluginInit = finalPluginList[pluginIndex].init;
+            if (pluginInit) {
+                PostSuperTokensInitCallbacks.addPostInitCallback(() => {
+                    pluginInit(config, this.pluginList, package_version);
+                    this.pluginList[pluginIndex].initialized = true;
+                });
             }
         }
 

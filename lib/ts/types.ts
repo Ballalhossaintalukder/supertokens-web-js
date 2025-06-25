@@ -227,7 +227,8 @@ export type SuperTokensPlugin = {
     version?: string;
     compatibleWebJSSDKVersions?: string | string[]; // match the syntax of the engines field in package.json
     dependencies?: (
-        pluginsAbove: Pick<SuperTokensPlugin, "id" | "version" | "exports">[],
+        config: SuperTokensPublicConfig,
+        pluginsAbove: SuperTokensPublicPlugin[],
         sdkVersion: string
     ) => { status: "OK"; pluginsToAdd?: SuperTokensPlugin[] } | { status: "ERROR"; message: string };
     overrideMap?: {
@@ -235,6 +236,14 @@ export type SuperTokensPlugin = {
             recipeInitRequired?: boolean | ((sdkVersion: string) => boolean);
         };
     };
-    exports?: Record<string, any> | (() => Record<string, any>);
-    config?: (config: Omit<SuperTokensConfig, "recipeList">) => Omit<SuperTokensConfig, "recipeList"> | undefined;
+    init?: (config: SuperTokensPublicConfig, plugins: SuperTokensPublicPlugin[], sdkVersion: string) => void;
+    exports?: Record<string, any>;
+    config?: (config: SuperTokensPublicConfig) => SuperTokensPublicConfig | undefined;
 };
+
+export type SuperTokensPublicPlugin = Pick<
+    SuperTokensPlugin,
+    "id" | "version" | "exports" | "compatibleWebJSSDKVersions"
+> & { initialized: boolean };
+
+export type SuperTokensPublicConfig = Omit<SuperTokensConfig, "experimental" | "recipeList">;
