@@ -238,7 +238,7 @@ export type SuperTokensPlugin = {
     };
     init?: (config: SuperTokensPublicConfig, plugins: SuperTokensPublicPlugin[], sdkVersion: string) => void;
     exports?: Record<string, any>;
-    config?: (config: SuperTokensPublicConfig) => SuperTokensPublicConfig | undefined;
+    config?: (config: SuperTokensPublicConfig) => Omit<SuperTokensPublicConfig, "appInfo"> | undefined;
 };
 
 export type SuperTokensPublicPlugin = Pick<
@@ -246,4 +246,6 @@ export type SuperTokensPublicPlugin = Pick<
     "id" | "version" | "exports" | "compatibleWebJSSDKVersions"
 > & { initialized: boolean };
 
-export type SuperTokensPublicConfig = Omit<SuperTokensConfig, "experimental" | "recipeList">;
+export type SuperTokensPublicConfig = Omit<SuperTokensConfig, "experimental" | "appInfo"> & {
+    appInfo: NormalisedAppInfo;
+};

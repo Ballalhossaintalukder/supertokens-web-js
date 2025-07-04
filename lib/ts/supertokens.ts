@@ -83,15 +83,21 @@ export default class SuperTokens {
         this.pluginList = finalPluginList.map(getPublicPlugin);
 
         for (let pluginIndex = 0; pluginIndex < this.pluginList.length; pluginIndex += 1) {
-            const pluginConfig = finalPluginList[pluginIndex].config;
-            if (pluginConfig) {
-                config = { ...config, ...pluginConfig(getPublicConfig(config)) };
+            const plugin = finalPluginList[pluginIndex];
+            if (plugin.config) {
+                const pluginConfig = plugin.config(getPublicConfig(config)) || {};
+                // doing it like this because we don't want to override the appInfo and we can't make sure the plugin won't return it
+                if ("appInfo" in pluginConfig) {
+                    // @ts-ignore
+                    delete pluginConfig.appInfo;
+                }
+                config = { ...config, ...pluginConfig };
             }
 
             const pluginInit = finalPluginList[pluginIndex].init;
             if (pluginInit) {
                 PostSuperTokensInitCallbacks.addPostInitCallback(() => {
-                    pluginInit(config, this.pluginList, package_version);
+                    pluginInit(getPublicConfig(config), this.pluginList, package_version);
                     this.pluginList[pluginIndex].initialized = true;
                 });
             }
