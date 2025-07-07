@@ -198,7 +198,7 @@ describe("Querier", () => {
 
         it(".get() should prepend tenantId if defined", async () => {
             // when
-            await querier.get({ path: "/<tenantId>/path", params: { tenantId: "testTenant" } }, {}, mockPreAPIHook);
+            await querier.get({ path: "/<tenantId>/path", pathParams: { tenantId: "testTenant" } }, {}, mockPreAPIHook);
 
             assert.deepEqual(callAPIParams["preAPIHook"], mockPreAPIHook);
             // ? added to url due to possible query param input
@@ -214,7 +214,7 @@ describe("Querier", () => {
 
         it(".post() should prepend tenantId if defined", async () => {
             await querier.post(
-                { path: "/<tenantId>/path", params: { tenantId: "testTenant" } },
+                { path: "/<tenantId>/path", pathParams: { tenantId: "testTenant" } },
                 { body: {} },
                 mockPreAPIHook
             );
@@ -233,7 +233,7 @@ describe("Querier", () => {
 
         it(".delete() should prepend tenantId if defined", async () => {
             await querier.delete(
-                { path: "/<tenantId>/path", params: { tenantId: "testTenant" } },
+                { path: "/<tenantId>/path", pathParams: { tenantId: "testTenant" } },
                 { body: {} },
                 mockPreAPIHook
             );
@@ -252,7 +252,7 @@ describe("Querier", () => {
 
         it(".put() should prepend tenantId if defined", async () => {
             await querier.put(
-                { path: "/<tenantId>/path", params: { tenantId: "testTenant" } },
+                { path: "/<tenantId>/path", pathParams: { tenantId: "testTenant" } },
                 { body: {} },
                 mockPreAPIHook
             );
