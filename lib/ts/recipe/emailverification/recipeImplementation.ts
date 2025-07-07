@@ -42,7 +42,7 @@ export default function getRecipeImplementation(
             const { jsonBody, fetchResponse } = await querier.post(
                 {
                     path: "/<tenantId>/user/email/verify",
-                    params: {
+                    pathParams: {
                         tenantId: tenantId || "public",
                     },
                 },

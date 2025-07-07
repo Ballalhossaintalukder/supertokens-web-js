@@ -65,14 +65,12 @@ declare type ExtractQueryParams<P extends keyof paths, M extends Method> = Extra
         ? Q
         : {}
     : {};
-declare type MergedParams<P extends keyof paths, M extends Method> = PathParamsObject<P> extends undefined
-    ? ExtractQueryParams<P, M>
-    : ExtractQueryParams<P, M> & PathParamsObject<P>;
 export declare type PathParam<P extends keyof paths, M extends Method> =
     | P
     | {
           path: P;
-          params: MergedParams<P, M>;
+          pathParams: PathParamsObject<P>;
+          queryParams?: ExtractQueryParams<P, M>;
       };
 export declare type RequestInitWithInferredBody<P extends keyof paths, M extends Method> = Omit<RequestInit, "body"> & {
     body?: RequestBody<P, M>;

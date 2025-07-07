@@ -61,7 +61,7 @@ export default function getRecipeImplementation(
             const { jsonBody, fetchResponse } = await querier.post(
                 {
                     path: "/<tenantId>/signinup/code",
-                    params: {
+                    pathParams: {
                         tenantId:
                             (await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
                                 userContext: input.userContext,
@@ -107,7 +107,7 @@ export default function getRecipeImplementation(
             const { jsonBody, fetchResponse } = await querier.post(
                 {
                     path: "/<tenantId>/signinup/code/resend",
-                    params: {
+                    pathParams: {
                         tenantId: input.tenantId || "public",
                     },
                 },
@@ -165,7 +165,7 @@ export default function getRecipeImplementation(
             const { jsonBody, fetchResponse } = await querier.post(
                 {
                     path: "/<tenantId>/signinup/code/consume",
-                    params: {
+                    pathParams: {
                         tenantId: input.tenantId || "public",
                     },
                 },
@@ -223,11 +223,13 @@ export default function getRecipeImplementation(
             const { jsonBody, fetchResponse } = await querier.get(
                 {
                     path: "/<tenantId>/passwordless/email/exists",
-                    params: {
+                    pathParams: {
                         tenantId:
                             (await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
                                 userContext: input.userContext,
                             })) || "public",
+                    },
+                    queryParams: {
                         email: input.email,
                     },
                 },
@@ -263,11 +265,13 @@ export default function getRecipeImplementation(
             const { jsonBody, fetchResponse } = await querier.get(
                 {
                     path: "/<tenantId>/passwordless/phonenumber/exists",
-                    params: {
+                    pathParams: {
                         tenantId:
                             (await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
                                 userContext: input.userContext,
                             })) || "public",
+                    },
+                    queryParams: {
                         phoneNumber: input.phoneNumber,
                     },
                 },

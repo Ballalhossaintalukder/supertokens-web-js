@@ -28,7 +28,8 @@ export default function getRecipeImplementation(
             const { jsonBody, fetchResponse } = await querier.get(
                 {
                     path: "/oauth/login/info",
-                    params: {
+                    pathParams: undefined,
+                    queryParams: {
                         loginChallenge,
                     },
                 },
@@ -56,7 +57,8 @@ export default function getRecipeImplementation(
             const { jsonBody, fetchResponse } = await querier.get(
                 {
                     path: "/oauth/login",
-                    params: {
+                    pathParams: undefined,
+                    queryParams: {
                         loginChallenge,
                     },
                 },

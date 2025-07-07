@@ -133,8 +133,10 @@ export default function getRecipeImplementation(
             const { jsonBody, fetchResponse } = await querier.get(
                 {
                     path: "/<tenantId>/authorisationurl",
-                    params: {
+                    pathParams: {
                         tenantId: input.tenantId || "public",
+                    },
+                    queryParams: {
                         thirdPartyId: input.thirdPartyId,
                         redirectURIOnProviderDashboard: input.redirectURIOnProviderDashboard,
                         ...(recipeImplInput.clientType !== undefined ? { clientType: recipeImplInput.clientType } : {}),
@@ -219,7 +221,7 @@ export default function getRecipeImplementation(
             const { jsonBody, fetchResponse } = await querier.post(
                 {
                     path: "/<tenantId>/signinup",
-                    params: {
+                    pathParams: {
                         tenantId: verifiedState.tenantId || "public",
                     },
                 },

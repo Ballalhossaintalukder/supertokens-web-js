@@ -72,11 +72,9 @@ type ExtractQueryParams<P extends keyof paths, M extends Method> = ExtractMethod
         : {}
     : {};
 
-type MergedParams<P extends keyof paths, M extends Method> = PathParamsObject<P> extends undefined
-    ? ExtractQueryParams<P, M>
-    : ExtractQueryParams<P, M> & PathParamsObject<P>;
-
-export type PathParam<P extends keyof paths, M extends Method> = P | { path: P; params: MergedParams<P, M> };
+export type PathParam<P extends keyof paths, M extends Method> =
+    | P
+    | { path: P; pathParams: PathParamsObject<P>; queryParams?: ExtractQueryParams<P, M> };
 
 // Custom type defined from RequestInit to ensure request body is inferred
 // from the path.

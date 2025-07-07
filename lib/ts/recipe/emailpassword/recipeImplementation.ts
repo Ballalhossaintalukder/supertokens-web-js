@@ -62,7 +62,7 @@ export default function getRecipeImplementation(
             const { jsonBody, fetchResponse } = await querier.post(
                 {
                     path: "/<tenantId>/user/password/reset",
-                    params: {
+                    pathParams: {
                         tenantId: tenantId || "public",
                     },
                 },
@@ -133,7 +133,7 @@ export default function getRecipeImplementation(
             let { jsonBody, fetchResponse } = await querier.post(
                 {
                     path: "/<tenantId>/user/password/reset/token",
-                    params: {
+                    pathParams: {
                         tenantId:
                             (await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
                                 userContext,
@@ -199,7 +199,7 @@ export default function getRecipeImplementation(
             let { jsonBody, fetchResponse } = await querier.post(
                 {
                     path: "/<tenantId>/signup",
-                    params: {
+                    pathParams: {
                         tenantId:
                             (await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
                                 userContext,
@@ -269,7 +269,7 @@ export default function getRecipeImplementation(
             let { jsonBody, fetchResponse } = await querier.post(
                 {
                     path: "/<tenantId>/signin",
-                    params: {
+                    pathParams: {
                         tenantId:
                             (await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
                                 userContext,
@@ -335,11 +335,13 @@ export default function getRecipeImplementation(
             let { jsonBody, fetchResponse } = await querier.get(
                 {
                     path: "/<tenantId>/emailpassword/email/exists",
-                    params: {
+                    pathParams: {
                         tenantId:
                             (await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
                                 userContext,
                             })) || "public",
+                    },
+                    queryParams: {
                         email,
                     },
                 },

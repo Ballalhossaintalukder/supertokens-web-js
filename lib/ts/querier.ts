@@ -41,12 +41,17 @@ export default class Querier {
 
     private getPath = <P extends keyof paths, M extends Method>(path: PathParam<P, M>): NormalisedURLPath => {
         const template = typeof path === "string" ? path : path.path;
-        const params = typeof path === "string" ? {} : path.params ?? {};
+        const pathParams = typeof path === "string" ? {} : path.pathParams ?? {};
+        const queryParams = typeof path === "string" ? {} : path.queryParams ?? {};
 
         let populated = String(template);
-        for (const [key, value] of Object.entries(params)) {
+        for (const [key, value] of Object.entries(pathParams)) {
             populated = populated.replace(new RegExp(`<${key}>`, "g"), String(value));
         }
+
+        // Create a new URLSearchParams object with the query params and add it to the path
+        const searchParams = new URLSearchParams(queryParams);
+        populated += "?" + searchParams.toString();
 
         return new NormalisedURLPath(populated);
     };

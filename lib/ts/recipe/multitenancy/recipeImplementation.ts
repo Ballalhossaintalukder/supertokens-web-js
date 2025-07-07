@@ -43,10 +43,10 @@ export default function getRecipeImplementation(
             const { jsonBody, fetchResponse } = await querier.get(
                 {
                     path: "/<tenantId>/loginmethods",
-                    params: {
+                    pathParams: {
                         tenantId: tenantId || "public",
-                        ...queryParams,
                     },
+                    queryParams: queryParams,
                 },
                 {},
                 Querier.preparePreAPIHook({

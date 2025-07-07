@@ -45,7 +45,7 @@ export default function getRecipeImplementation(
             const { jsonBody, fetchResponse } = await querier.post(
                 {
                     path: "/<tenantId>/webauthn/options/register",
-                    params: {
+                    pathParams: {
                         tenantId:
                             (await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
                                 userContext: userContext,
@@ -77,7 +77,7 @@ export default function getRecipeImplementation(
             const { jsonBody, fetchResponse } = await querier.post(
                 {
                     path: "/<tenantId>/webauthn/options/signin",
-                    params: {
+                    pathParams: {
                         tenantId:
                             (await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
                                 userContext: userContext,
@@ -107,7 +107,7 @@ export default function getRecipeImplementation(
             const { jsonBody, fetchResponse } = await querier.post(
                 {
                     path: "/<tenantId>/webauthn/signup",
-                    params: {
+                    pathParams: {
                         tenantId:
                             (await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
                                 userContext: userContext,
@@ -142,7 +142,7 @@ export default function getRecipeImplementation(
             const { jsonBody, fetchResponse } = await querier.post(
                 {
                     path: "/<tenantId>/webauthn/signin",
-                    params: {
+                    pathParams: {
                         tenantId:
                             (await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
                                 userContext: userContext,
@@ -177,11 +177,13 @@ export default function getRecipeImplementation(
             const { jsonBody, fetchResponse } = await querier.get(
                 {
                     path: "/<tenantId>/webauthn/email/exists",
-                    params: {
+                    pathParams: {
                         tenantId:
                             (await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
                                 userContext: userContext,
                             })) || "public",
+                    },
+                    queryParams: {
                         email: email,
                     },
                 },
@@ -208,7 +210,7 @@ export default function getRecipeImplementation(
             const { jsonBody, fetchResponse } = await querier.post(
                 {
                     path: "/<tenantId>/user/webauthn/reset/token",
-                    params: {
+                    pathParams: {
                         tenantId:
                             (await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
                                 userContext: userContext,
@@ -242,7 +244,7 @@ export default function getRecipeImplementation(
             const { jsonBody, fetchResponse } = await querier.post(
                 {
                     path: "/<tenantId>/user/webauthn/reset",
-                    params: {
+                    pathParams: {
                         tenantId:
                             (await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
                                 userContext: userContext,
