@@ -223,7 +223,7 @@ export type RecipePluginOverride<T extends keyof AllRecipeConfigs> = {
 };
 
 export type SuperTokensPlugin = {
-    id: string; // TODO: validate that no two plugins have the same id
+    id: string;
     version?: string;
     compatibleWebJSSDKVersions?: string | string[]; // match the syntax of the engines field in package.json
     dependencies?: (

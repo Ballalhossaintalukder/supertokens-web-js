@@ -60,7 +60,11 @@ export default class SuperTokens {
                         : [plugin.compatibleWebJSSDKVersions];
                     if (!versionContraints.includes(package_version)) {
                         // TODO: better checks
-                        throw new Error("Plugin version mismatch");
+                        throw new Error(
+                            `Plugin version mismatch. Version ${package_version} not found in compatible versions: ${versionContraints.join(
+                                ", "
+                            )}`
+                        );
                     }
                 }
                 if (plugin.dependencies) {
@@ -78,6 +82,13 @@ export default class SuperTokens {
                 }
                 finalPluginList.push(plugin);
             }
+        }
+
+        const duplicatePluginIds = finalPluginList.filter((plugin, index) =>
+            finalPluginList.some((elem, idx) => elem.id === plugin.id && idx !== index)
+        );
+        if (duplicatePluginIds.length > 0) {
+            throw new Error(`Duplicate plugin IDs: ${duplicatePluginIds.map((plugin) => plugin.id).join(", ")}`);
         }
 
         this.pluginList = finalPluginList.map(getPublicPlugin);
