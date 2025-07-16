@@ -60,7 +60,11 @@ export default class SuperTokens {
                         : [plugin.compatibleWebJSSDKVersions];
                     if (!versionContraints.includes(package_version)) {
                         // TODO: better checks
-                        throw new Error("Plugin version mismatch");
+                        throw new Error(
+                            `Plugin version mismatch. Version ${package_version} not found in compatible versions: ${versionContraints.join(
+                                ", "
+                            )}`
+                        );
                     }
                 }
                 if (plugin.dependencies) {
@@ -80,18 +84,31 @@ export default class SuperTokens {
             }
         }
 
+        const duplicatePluginIds = finalPluginList.filter((plugin, index) =>
+            finalPluginList.some((elem, idx) => elem.id === plugin.id && idx !== index)
+        );
+        if (duplicatePluginIds.length > 0) {
+            throw new Error(`Duplicate plugin IDs: ${duplicatePluginIds.map((plugin) => plugin.id).join(", ")}`);
+        }
+
         this.pluginList = finalPluginList.map(getPublicPlugin);
 
         for (let pluginIndex = 0; pluginIndex < this.pluginList.length; pluginIndex += 1) {
-            const pluginConfig = finalPluginList[pluginIndex].config;
-            if (pluginConfig) {
-                config = { ...config, ...pluginConfig(getPublicConfig(config)) };
+            const plugin = finalPluginList[pluginIndex];
+            if (plugin.config) {
+                const pluginConfig = plugin.config(getPublicConfig(config)) || {};
+                // doing it like this because we don't want to override the appInfo and we can't make sure the plugin won't return it
+                if ("appInfo" in pluginConfig) {
+                    // @ts-ignore
+                    delete pluginConfig.appInfo;
+                }
+                config = { ...config, ...pluginConfig };
             }
 
             const pluginInit = finalPluginList[pluginIndex].init;
             if (pluginInit) {
                 PostSuperTokensInitCallbacks.addPostInitCallback(() => {
-                    pluginInit(config, this.pluginList, package_version);
+                    pluginInit(getPublicConfig(config), this.pluginList, package_version);
                     this.pluginList[pluginIndex].initialized = true;
                 });
             }

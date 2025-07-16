@@ -210,7 +210,7 @@ export declare type SuperTokensPlugin = {
     };
     init?: (config: SuperTokensPublicConfig, plugins: SuperTokensPublicPlugin[], sdkVersion: string) => void;
     exports?: Record<string, any>;
-    config?: (config: SuperTokensPublicConfig) => SuperTokensPublicConfig | undefined;
+    config?: (config: SuperTokensPublicConfig) => Omit<SuperTokensPublicConfig, "appInfo"> | undefined;
 };
 export declare type SuperTokensPublicPlugin = Pick<
     SuperTokensPlugin,
@@ -218,4 +218,6 @@ export declare type SuperTokensPublicPlugin = Pick<
 > & {
     initialized: boolean;
 };
-export declare type SuperTokensPublicConfig = Omit<SuperTokensConfig, "experimental" | "recipeList">;
+export declare type SuperTokensPublicConfig = Omit<SuperTokensConfig, "experimental" | "appInfo"> & {
+    appInfo: NormalisedAppInfo;
+};

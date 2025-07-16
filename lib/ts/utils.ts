@@ -261,6 +261,6 @@ export function getPublicPlugin(plugin: SuperTokensPlugin): SuperTokensPublicPlu
 }
 
 export function getPublicConfig(config: SuperTokensConfig): SuperTokensPublicConfig {
-    // const { experimental, recipeList, ...publicConfig } = config;
-    return config;
+    const { experimental, ...publicConfig } = config;
+    return { ...publicConfig, appInfo: normaliseInputAppInfoOrThrowError(config.appInfo) };
 }

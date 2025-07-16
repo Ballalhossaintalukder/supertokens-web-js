@@ -223,7 +223,7 @@ export type RecipePluginOverride<T extends keyof AllRecipeConfigs> = {
 };
 
 export type SuperTokensPlugin = {
-    id: string; // TODO: validate that no two plugins have the same id
+    id: string;
     version?: string;
     compatibleWebJSSDKVersions?: string | string[]; // match the syntax of the engines field in package.json
     dependencies?: (
@@ -238,7 +238,7 @@ export type SuperTokensPlugin = {
     };
     init?: (config: SuperTokensPublicConfig, plugins: SuperTokensPublicPlugin[], sdkVersion: string) => void;
     exports?: Record<string, any>;
-    config?: (config: SuperTokensPublicConfig) => SuperTokensPublicConfig | undefined;
+    config?: (config: SuperTokensPublicConfig) => Omit<SuperTokensPublicConfig, "appInfo"> | undefined;
 };
 
 export type SuperTokensPublicPlugin = Pick<
@@ -246,4 +246,6 @@ export type SuperTokensPublicPlugin = Pick<
     "id" | "version" | "exports" | "compatibleWebJSSDKVersions"
 > & { initialized: boolean };
 
-export type SuperTokensPublicConfig = Omit<SuperTokensConfig, "experimental" | "recipeList">;
+export type SuperTokensPublicConfig = Omit<SuperTokensConfig, "experimental" | "appInfo"> & {
+    appInfo: NormalisedAppInfo;
+};
