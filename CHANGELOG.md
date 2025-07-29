@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+-   Include the `shouldTryLinkingToSessionUser` flag in the `Webauthn` recipe methods
+
 ## [0.15.0] - 2025-03-20
 
 -   Added `Webauthn` recipe to support logins using WebAuthN (Passkeys)
