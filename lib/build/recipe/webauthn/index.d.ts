@@ -533,6 +533,60 @@ export default class RecipeWrapper {
               error: any;
           }
     >;
+    static listCredentials(input: { options?: RecipeFunctionOptions; userContext: any }): Promise<
+        | {
+              status: "OK";
+              credentials: {
+                  webauthnCredentialId: string;
+                  relyingPartyId: string;
+                  createdAt: number;
+                  recipeUserId: string;
+              }[];
+          }
+        | GeneralErrorResponse
+    >;
+    static removeCredential(input: {
+        webauthnCredentialId: string;
+        options?: RecipeFunctionOptions;
+        userContext: any;
+    }): Promise<
+        | {
+              status: "OK";
+          }
+        | GeneralErrorResponse
+        | {
+              status: "CREDENTIAL_NOT_FOUND_ERROR";
+              fetchResponse: Response;
+          }
+    >;
+    static registerCredential2(input: {
+        webauthnGeneratedOptionsId: string;
+        credential: RegistrationResponseJSON;
+        options?: RecipeFunctionOptions;
+        userContext: any;
+    }): Promise<
+        | {
+              status: "OK";
+          }
+        | GeneralErrorResponse
+        | {
+              status: "REGISTER_CREDENTIAL_NOT_ALLOWED";
+              reason: string;
+          }
+        | {
+              status: "INVALID_CREDENTIALS_ERROR";
+          }
+        | {
+              status: "OPTIONS_NOT_FOUND_ERROR";
+          }
+        | {
+              status: "INVALID_OPTIONS_ERROR";
+          }
+        | {
+              status: "INVALID_AUTHENTICATOR_ERROR";
+              reason: string;
+          }
+    >;
     static doesBrowserSupportWebAuthn(input: { userContext: any }): Promise<
         | {
               status: "OK";
@@ -559,6 +613,9 @@ declare const registerCredentialWithRecoverAccount: typeof RecipeWrapper.registe
 declare const registerCredential: typeof RecipeWrapper.registerCredential;
 declare const authenticateCredential: typeof RecipeWrapper.authenticateCredential;
 declare const doesBrowserSupportWebAuthn: typeof RecipeWrapper.doesBrowserSupportWebAuthn;
+declare const listCredentials: typeof RecipeWrapper.listCredentials;
+declare const removeCredential: typeof RecipeWrapper.removeCredential;
+declare const registerCredential2: typeof RecipeWrapper.registerCredential2;
 export {
     init,
     getRegisterOptions,
@@ -575,4 +632,7 @@ export {
     authenticateCredential,
     doesBrowserSupportWebAuthn,
     RecipeInterface,
+    listCredentials,
+    removeCredential,
+    registerCredential2,
 };
