@@ -497,6 +497,118 @@ export default function getRecipeImplementation(
                 userContext,
             });
         },
+        listCredentials: async function ({ options, userContext }) {
+            const { jsonBody, fetchResponse } = await querier.get<
+                | {
+                      status: "OK";
+                      credentials: {
+                          webauthnCredentialId: string;
+                          relyingPartyId: string;
+                          createdAt: number;
+                          recipeUserId: string;
+                      }[];
+                  }
+                | GeneralErrorResponse
+            >(
+                await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
+                    userContext: userContext,
+                }),
+                "/webauthn/credential/list",
+                {},
+                {},
+                Querier.preparePreAPIHook({
+                    recipePreAPIHook: recipeImplInput.preAPIHook,
+                    action: "LIST_CREDENTIALS",
+                    options: options,
+                    userContext: userContext,
+                }),
+                Querier.preparePostAPIHook({
+                    recipePostAPIHook: recipeImplInput.postAPIHook,
+                    action: "LIST_CREDENTIALS",
+                    userContext: userContext,
+                })
+            );
+
+            return {
+                ...jsonBody,
+                fetchResponse,
+            };
+        },
+        removeCredential: async function ({ webauthnCredentialId, options, userContext }) {
+            const { jsonBody, fetchResponse } = await querier.post<
+                | {
+                      status: "OK";
+                  }
+                | GeneralErrorResponse
+            >(
+                await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({ userContext }),
+                "/webauthn/credential/remove",
+                {
+                    body: JSON.stringify({
+                        webauthnCredentialId,
+                    }),
+                },
+                Querier.preparePreAPIHook({
+                    recipePreAPIHook: recipeImplInput.preAPIHook,
+                    action: "REMOVE_CREDENTIAL",
+                    options: options,
+                    userContext: userContext,
+                }),
+                Querier.preparePostAPIHook({
+                    recipePostAPIHook: recipeImplInput.postAPIHook,
+                    action: "REMOVE_CREDENTIAL",
+                    userContext: userContext,
+                })
+            );
+
+            return {
+                ...jsonBody,
+                fetchResponse,
+            };
+        },
+        registerCredential2: async function ({ webauthnGeneratedOptionsId, credential, options, userContext }) {
+            const { jsonBody, fetchResponse } = await querier.post<
+                | {
+                      status: "OK";
+                  }
+                | GeneralErrorResponse
+                | {
+                      status: "REGISTER_CREDENTIAL_NOT_ALLOWED";
+                      reason: string;
+                  }
+                | { status: "INVALID_CREDENTIALS_ERROR" }
+                | { status: "OPTIONS_NOT_FOUND_ERROR" }
+                | { status: "INVALID_OPTIONS_ERROR" }
+                | { status: "INVALID_AUTHENTICATOR_ERROR"; reason: string }
+            >(
+                await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
+                    userContext: userContext,
+                }),
+                "/webauthn/credential",
+                {
+                    body: JSON.stringify({
+                        webauthnGeneratedOptionsId,
+                        credential,
+                    }),
+                },
+                Querier.preparePreAPIHook({
+                    recipePreAPIHook: recipeImplInput.preAPIHook,
+                    action: "REGISTER_CREDENTIAL",
+                    options: options,
+                    userContext: userContext,
+                }),
+                Querier.preparePostAPIHook({
+                    recipePostAPIHook: recipeImplInput.postAPIHook,
+                    action: "REGISTER_CREDENTIAL",
+                    userContext: userContext,
+                })
+            );
+
+            return {
+                ...jsonBody,
+                fetchResponse,
+            };
+        },
         doesBrowserSupportWebAuthn: async () => {
             try {
                 const isPlatformAuthenticatorAvailable = await platformAuthenticatorIsAvailable();

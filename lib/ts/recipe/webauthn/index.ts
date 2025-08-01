@@ -501,6 +501,54 @@ export default class RecipeWrapper {
         });
     }
 
+    static listCredentials(input: { options?: RecipeFunctionOptions; userContext: any }): Promise<
+        | {
+              status: "OK";
+              credentials: {
+                  webauthnCredentialId: string;
+                  relyingPartyId: string;
+                  createdAt: number;
+                  recipeUserId: string;
+              }[];
+          }
+        | GeneralErrorResponse
+    > {
+        return Recipe.getInstanceOrThrow().recipeImplementation.listCredentials({
+            ...input,
+            userContext: input?.userContext,
+        });
+    }
+
+    static removeCredential(input: {
+        webauthnCredentialId: string;
+        options?: RecipeFunctionOptions;
+        userContext: any;
+    }): Promise<
+        { status: "OK" } | GeneralErrorResponse | { status: "CREDENTIAL_NOT_FOUND_ERROR"; fetchResponse: Response }
+    > {
+        return Recipe.getInstanceOrThrow().recipeImplementation.removeCredential({
+            ...input,
+            userContext: input?.userContext,
+        });
+    }
+
+    static registerCredential2(input: {
+        webauthnGeneratedOptionsId: string;
+        credential: RegistrationResponseJSON;
+        options?: RecipeFunctionOptions;
+        userContext: any;
+    }): Promise<
+        | { status: "OK" }
+        | GeneralErrorResponse
+        | { status: "REGISTER_CREDENTIAL_NOT_ALLOWED"; reason: string }
+        | { status: "INVALID_CREDENTIALS_ERROR" }
+        | { status: "OPTIONS_NOT_FOUND_ERROR" }
+        | { status: "INVALID_OPTIONS_ERROR" }
+        | { status: "INVALID_AUTHENTICATOR_ERROR"; reason: string }
+    > {
+        return Recipe.getInstanceOrThrow().recipeImplementation.registerCredential2(input);
+    }
+
     static doesBrowserSupportWebAuthn(input: { userContext: any }): Promise<
         | {
               status: "OK";
@@ -530,6 +578,9 @@ const registerCredentialWithRecoverAccount = RecipeWrapper.registerCredentialWit
 const registerCredential = RecipeWrapper.registerCredential;
 const authenticateCredential = RecipeWrapper.authenticateCredential;
 const doesBrowserSupportWebAuthn = RecipeWrapper.doesBrowserSupportWebAuthn;
+const listCredentials = RecipeWrapper.listCredentials;
+const removeCredential = RecipeWrapper.removeCredential;
+const registerCredential2 = RecipeWrapper.registerCredential2;
 
 export {
     init,
@@ -547,4 +598,7 @@ export {
     authenticateCredential,
     doesBrowserSupportWebAuthn,
     RecipeInterface,
+    listCredentials,
+    removeCredential,
+    registerCredential2,
 };
