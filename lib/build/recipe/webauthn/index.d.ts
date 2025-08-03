@@ -561,6 +561,7 @@ export default class RecipeWrapper {
     >;
     static registerCredential2(input: {
         webauthnGeneratedOptionsId: string;
+        recipeUserId: string;
         credential: RegistrationResponseJSON;
         options?: RecipeFunctionOptions;
         userContext: any;

@@ -566,7 +566,13 @@ export default function getRecipeImplementation(
                 fetchResponse,
             };
         },
-        registerCredential2: async function ({ webauthnGeneratedOptionsId, credential, options, userContext }) {
+        registerCredential2: async function ({
+            webauthnGeneratedOptionsId,
+            recipeUserId,
+            credential,
+            options,
+            userContext,
+        }) {
             const { jsonBody, fetchResponse } = await querier.post<
                 | {
                       status: "OK";
@@ -588,6 +594,7 @@ export default function getRecipeImplementation(
                 {
                     body: JSON.stringify({
                         webauthnGeneratedOptionsId,
+                        recipeUserId,
                         credential,
                     }),
                 },
