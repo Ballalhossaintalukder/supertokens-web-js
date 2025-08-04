@@ -28,6 +28,7 @@ import { PostSuperTokensInitCallbacks } from "./postSuperTokensInitCallbacks";
 import { Recipe as MultitenancyRecipe } from "./recipe/multitenancy/recipe";
 import { DateProviderReference } from "./dateProvider";
 import { package_version } from "./version";
+import { isVersionCompatible } from "./versionChecker";
 
 export default class SuperTokens {
     /*
@@ -55,18 +56,18 @@ export default class SuperTokens {
         if (config.experimental?.plugins) {
             for (const plugin of config.experimental.plugins) {
                 if (plugin.compatibleWebJSSDKVersions) {
-                    const versionContraints = Array.isArray(plugin.compatibleWebJSSDKVersions)
-                        ? plugin.compatibleWebJSSDKVersions
-                        : [plugin.compatibleWebJSSDKVersions];
-                    if (!versionContraints.includes(package_version)) {
-                        // TODO: better checks
+                    const versionCheck = isVersionCompatible(package_version, plugin.compatibleWebJSSDKVersions);
+                    if (!versionCheck) {
                         throw new Error(
-                            `Plugin version mismatch. Version ${package_version} not found in compatible versions: ${versionContraints.join(
-                                ", "
+                            `Incompatible SDK version for plugin ${
+                                plugin.id
+                            }. Version "${package_version}" not found in compatible versions: ${JSON.stringify(
+                                plugin.compatibleWebJSSDKVersions
                             )}`
                         );
                     }
                 }
+
                 if (plugin.dependencies) {
                     const result = plugin.dependencies(
                         getPublicConfig({ ...config, appInfo: this.appInfo }),
