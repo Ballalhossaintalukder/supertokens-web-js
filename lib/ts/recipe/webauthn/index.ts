@@ -335,7 +335,7 @@ export default class RecipeWrapper {
         | { status: "FAILED_TO_REGISTER_USER"; error: any }
         | { status: "WEBAUTHN_NOT_SUPPORTED"; error: any }
     > {
-        return Recipe.getInstanceOrThrow().recipeImplementation.registerCredential(input);
+        return Recipe.getInstanceOrThrow().recipeImplementation.createCredential(input);
     }
 
     /**
@@ -547,7 +547,7 @@ export default class RecipeWrapper {
         | { status: "INVALID_OPTIONS_ERROR" }
         | { status: "INVALID_AUTHENTICATOR_ERROR"; reason: string }
     > {
-        return Recipe.getInstanceOrThrow().recipeImplementation.registerCredential2(input);
+        return Recipe.getInstanceOrThrow().recipeImplementation.registerCredential(input);
     }
 
     static doesBrowserSupportWebAuthn(input: { userContext: any }): Promise<

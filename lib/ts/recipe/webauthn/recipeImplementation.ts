@@ -356,7 +356,7 @@ export default function getRecipeImplementation(
                 fetchResponse,
             };
         },
-        registerCredential: async function ({ registrationOptions }) {
+        createCredential: async function ({ registrationOptions }) {
             let registrationResponse: RegistrationResponseJSON;
             try {
                 registrationResponse = await startRegistration({ optionsJSON: registrationOptions });
@@ -400,16 +400,16 @@ export default function getRecipeImplementation(
             }
 
             // We should have received a valid registration options response.
-            const registerCredentialResponse = await this.registerCredential({ registrationOptions, userContext });
-            if (registerCredentialResponse.status !== "OK") {
-                return registerCredentialResponse;
+            const createCredentialResponse = await this.createCredential({ registrationOptions, userContext });
+            if (createCredentialResponse.status !== "OK") {
+                return createCredentialResponse;
             }
 
             // We should have a valid registration response for the passed credentials
             // and we are good to go ahead and verify them.
             return await this.signUp({
                 webauthnGeneratedOptionsId: registrationOptions.webauthnGeneratedOptionsId,
-                credential: registerCredentialResponse.registrationResponse,
+                credential: createCredentialResponse.registrationResponse,
                 options,
                 userContext,
             });
@@ -481,18 +481,50 @@ export default function getRecipeImplementation(
             }
 
             // We should have received a valid registration options response.
-            const registerCredentialResponse = await this.registerCredential({
+            const createCredentialResponse = await this.createCredential({
                 registrationOptions,
                 userContext,
             });
-            if (registerCredentialResponse.status !== "OK") {
-                return registerCredentialResponse;
+            if (createCredentialResponse.status !== "OK") {
+                return createCredentialResponse;
             }
 
             return await this.recoverAccount({
                 token: recoverAccountToken,
                 webauthnGeneratedOptionsId: registrationOptions.webauthnGeneratedOptionsId,
-                credential: registerCredentialResponse.registrationResponse,
+                credential: createCredentialResponse.registrationResponse,
+                options,
+                userContext,
+            });
+        },
+        registerCredentialWithUser: async function ({ recipeUserId, email, options, userContext }) {
+            // Get the registration options by using the passed email ID.
+            const registrationOptions = await this.getRegisterOptions({ options, userContext, email });
+            if (registrationOptions?.status !== "OK") {
+                // If we did not get an OK status, we need to return the error as is.
+
+                // If the `status` is `RECOVER_ACCOUNT_TOKEN_INVALID_ERROR`, we need to throw an
+                // error since that should never happen as we are registering with an email
+                // and not a token.
+                if (registrationOptions?.status === "RECOVER_ACCOUNT_TOKEN_INVALID_ERROR") {
+                    throw new Error("Got `RECOVER_ACCOUNT_TOKEN_INVALID_ERROR` status that should never happen");
+                }
+
+                return registrationOptions;
+            }
+
+            // We should have received a valid registration options response.
+            const createCredentialResponse = await this.createCredential({ registrationOptions, userContext });
+            if (createCredentialResponse.status !== "OK") {
+                return createCredentialResponse;
+            }
+
+            // We should have a valid registration response for the passed credentials
+            // and we are good to go ahead and verify them.
+            return await this.registerCredential({
+                webauthnGeneratedOptionsId: registrationOptions.webauthnGeneratedOptionsId,
+                recipeUserId,
+                credential: createCredentialResponse.registrationResponse,
                 options,
                 userContext,
             });
@@ -566,7 +598,7 @@ export default function getRecipeImplementation(
                 fetchResponse,
             };
         },
-        registerCredential2: async function ({
+        registerCredential: async function ({
             webauthnGeneratedOptionsId,
             recipeUserId,
             credential,
