@@ -255,7 +255,7 @@ export declare type RecipeInterface = {
               fetchResponse: Response;
           }
     >;
-    registerCredential: (input: {
+    createCredential: (input: {
         registrationOptions: Omit<RegistrationOptions, "fetchResponse" | "status">;
         userContext: any;
     }) => Promise<
@@ -424,6 +424,50 @@ export declare type RecipeInterface = {
               error: any;
           }
     >;
+    registerCredentialWithUser: (input: {
+        recipeUserId: string;
+        email: string;
+        options?: RecipeFunctionOptions;
+        userContext: any;
+    }) => Promise<
+        | {
+              status: "OK";
+              fetchResponse: Response;
+          }
+        | GeneralErrorResponse
+        | {
+              status: "REGISTER_CREDENTIAL_NOT_ALLOWED";
+              reason: string;
+          }
+        | {
+              status: "INVALID_EMAIL_ERROR";
+              err: string;
+          }
+        | {
+              status: "INVALID_CREDENTIALS_ERROR";
+          }
+        | {
+              status: "OPTIONS_NOT_FOUND_ERROR";
+          }
+        | {
+              status: "INVALID_OPTIONS_ERROR";
+          }
+        | {
+              status: "INVALID_AUTHENTICATOR_ERROR";
+              reason: string;
+          }
+        | {
+              status: "AUTHENTICATOR_ALREADY_REGISTERED";
+          }
+        | {
+              status: "FAILED_TO_REGISTER_USER";
+              error: any;
+          }
+        | {
+              status: "WEBAUTHN_NOT_SUPPORTED";
+              error: any;
+          }
+    >;
     listCredentials: (input: { options?: RecipeFunctionOptions; userContext: any }) => Promise<
         | {
               status: "OK";
@@ -450,7 +494,7 @@ export declare type RecipeInterface = {
               fetchResponse: Response;
           }
     >;
-    registerCredential2: (input: {
+    registerCredential: (input: {
         webauthnGeneratedOptionsId: string;
         recipeUserId: string;
         credential: RegistrationResponseJSON;
