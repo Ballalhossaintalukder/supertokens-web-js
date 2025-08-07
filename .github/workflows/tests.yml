@@ -53,7 +53,7 @@ jobs:
                   echo "Node Branch: ${{ github.event.inputs.nodeBranchName }}"
             - name: Make git use https instead of ssh
               run: git config --global url."https://github.com/".insteadOf ssh://git@github.com/
-            - uses: actions/checkout@v2
+            - uses: actions/checkout@v4
               with:
                   persist-credentials: false
             - run: npm i || true
