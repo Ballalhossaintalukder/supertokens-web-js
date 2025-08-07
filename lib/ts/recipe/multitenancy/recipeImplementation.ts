@@ -40,27 +40,15 @@ export default function getRecipeImplementation(
                 queryParams.clientType = recipeImplInput.clientType;
             }
 
-            const { jsonBody, fetchResponse } = await querier.get<{
-                status: "OK";
-                emailPassword: {
-                    enabled: boolean;
-                };
-                passwordless: {
-                    enabled: boolean;
-                };
-                thirdParty: {
-                    enabled: boolean;
-                    providers: {
-                        id: string;
-                        name: string;
-                    }[];
-                };
-                firstFactors?: string[];
-            }>(
-                tenantId,
-                "/loginmethods",
+            const { jsonBody, fetchResponse } = await querier.get(
+                {
+                    path: "/<tenantId>/loginmethods",
+                    pathParams: {
+                        tenantId: tenantId || "public",
+                    },
+                    queryParams: queryParams,
+                },
                 {},
-                queryParams,
                 Querier.preparePreAPIHook({
                     recipePreAPIHook: recipeImplInput.preAPIHook,
                     action: "GET_LOGIN_METHODS",

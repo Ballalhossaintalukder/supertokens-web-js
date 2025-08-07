@@ -17,7 +17,6 @@ import Querier from "../../querier";
 import { appendQueryParamsToURL, getAllQueryParams, getQueryParams, normaliseUserResponse } from "../../utils";
 import { RecipeInterface, StateObject } from "./types";
 import { RecipeFunctionOptions, RecipeImplementationInput } from "../recipeModule/types";
-import STGeneralError from "../../error";
 import { PreAndPostAPIHookAction } from "./types";
 import { WindowHandlerReference } from "../../windowHandler";
 import { User } from "../../types";
@@ -131,24 +130,19 @@ export default function getRecipeImplementation(
             pkceCodeVerifier?: string;
             fetchResponse: Response;
         }> {
-            const queryParams: Record<string, string> = {
-                thirdPartyId: input.thirdPartyId,
-                redirectURIOnProviderDashboard: input.redirectURIOnProviderDashboard,
-            };
-
-            if (recipeImplInput.clientType !== undefined) {
-                queryParams.clientType = recipeImplInput.clientType;
-            }
-
-            const { jsonBody, fetchResponse } = await querier.get<{
-                status: "OK";
-                urlWithQueryParams: string;
-                pkceCodeVerifier?: string;
-            }>(
-                input.tenantId,
-                "/authorisationurl",
+            const { jsonBody, fetchResponse } = await querier.get(
+                {
+                    path: "/<tenantId>/authorisationurl",
+                    pathParams: {
+                        tenantId: input.tenantId || "public",
+                    },
+                    queryParams: {
+                        thirdPartyId: input.thirdPartyId,
+                        redirectURIOnProviderDashboard: input.redirectURIOnProviderDashboard,
+                        ...(recipeImplInput.clientType !== undefined ? { clientType: recipeImplInput.clientType } : {}),
+                    },
+                },
                 {},
-                queryParams,
                 Querier.preparePreAPIHook({
                     recipePreAPIHook: recipeImplInput.preAPIHook,
                     action: "GET_AUTHORISATION_URL",
@@ -224,28 +218,15 @@ export default function getRecipeImplementation(
             const queryParams = getAllQueryParams();
             const queryParamsObj: any = Object.fromEntries(queryParams);
 
-            const { jsonBody, fetchResponse } = await querier.post<
-                | {
-                      status: "OK";
-                      createdNewRecipeUser: boolean;
-                      user: User;
-                  }
-                | {
-                      status: "NO_EMAIL_GIVEN_BY_PROVIDER";
-                  }
-                | {
-                      status: "SIGN_IN_UP_NOT_ALLOWED";
-                      reason: string;
-                  }
-                | {
-                      status: "FIELD_ERROR";
-                      error: string;
-                  }
-            >(
-                verifiedState.tenantId,
-                "/signinup",
+            const { jsonBody, fetchResponse } = await querier.post(
                 {
-                    body: JSON.stringify({
+                    path: "/<tenantId>/signinup",
+                    pathParams: {
+                        tenantId: verifiedState.tenantId || "public",
+                    },
+                },
+                {
+                    body: {
                         thirdPartyId: verifiedState.thirdPartyId,
                         clientType: recipeImplInput.clientType,
                         redirectURIInfo: {
@@ -254,7 +235,7 @@ export default function getRecipeImplementation(
                             pkceCodeVerifier: verifiedState.pkceCodeVerifier,
                         },
                         shouldTryLinkingWithSessionUser: verifiedState.shouldTryLinkingWithSessionUser,
-                    }),
+                    },
                 },
                 Querier.preparePreAPIHook({
                     recipePreAPIHook: recipeImplInput.preAPIHook,
@@ -269,9 +250,6 @@ export default function getRecipeImplementation(
                 })
             );
 
-            if (jsonBody.status === "FIELD_ERROR") {
-                throw new STGeneralError(jsonBody.error);
-            }
             if (jsonBody.status !== "OK") {
                 return {
                     ...jsonBody,

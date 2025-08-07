@@ -14,10 +14,9 @@
  */
 
 import Querier from "../../querier";
-import { RecipeInterface, ResidentKey, UserVerification } from "./types";
+import { RecipeInterface } from "./types";
 import { RecipeFunctionOptions, RecipeImplementationInput } from "../recipeModule/types";
 import { PreAndPostAPIHookAction } from "./types";
-import { GeneralErrorResponse, User } from "../../types";
 import Multitenancy from "../multitenancy/recipe";
 import {
     AuthenticationResponseJSON,
@@ -43,63 +42,18 @@ export default function getRecipeImplementation(
             | { email: string; recoverAccountToken?: never }
             | { recoverAccountToken: string; email?: never }
         )) {
-            const { jsonBody, fetchResponse } = await querier.post<
-                | {
-                      status: "OK";
-                      webauthnGeneratedOptionsId: string;
-                      createdAt: string;
-                      expiresAt: string;
-                      rp: {
-                          id: string;
-                          name: string;
-                      };
-                      user: {
-                          id: string;
-                          name: string;
-                          displayName: string;
-                      };
-                      challenge: string;
-                      timeout: number;
-                      excludeCredentials: {
-                          id: string;
-                          type: "public-key";
-                          transports: ("ble" | "hybrid" | "internal" | "nfc" | "usb")[];
-                      }[];
-                      attestation: "none" | "indirect" | "direct" | "enterprise";
-                      pubKeyCredParams: {
-                          alg: number;
-                          type: "public-key";
-                      }[];
-                      authenticatorSelection: {
-                          requireResidentKey: boolean;
-                          residentKey: ResidentKey;
-                          userVerification: UserVerification;
-                      };
-                      fetchResponse: Response;
-                  }
-                | {
-                      status: "RECOVER_ACCOUNT_TOKEN_INVALID_ERROR";
-                      fetchResponse: Response;
-                  }
-                | {
-                      status: "INVALID_EMAIL_ERROR";
-                      err: string;
-                      fetchResponse: Response;
-                  }
-                | {
-                      status: "INVALID_OPTIONS_ERROR";
-                      fetchResponse: Response;
-                  }
-            >(
-                await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
-                    userContext: userContext,
-                }),
-                "/webauthn/options/register",
+            const { jsonBody, fetchResponse } = await querier.post(
                 {
-                    body: JSON.stringify({
-                        email,
-                        recoverAccountToken,
-                    }),
+                    path: "/<tenantId>/webauthn/options/register",
+                    pathParams: {
+                        tenantId:
+                            (await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
+                                userContext: userContext,
+                            })) || "public",
+                    },
+                },
+                {
+                    body: email !== undefined ? { email } : { recoverAccountToken },
                 },
                 Querier.preparePreAPIHook({
                     recipePreAPIHook: recipeImplInput.preAPIHook,
@@ -120,28 +74,17 @@ export default function getRecipeImplementation(
             };
         },
         getSignInOptions: async function ({ options, userContext }) {
-            const { jsonBody, fetchResponse } = await querier.post<
-                | {
-                      status: "OK";
-                      webauthnGeneratedOptionsId: string;
-                      challenge: string;
-                      timeout: number;
-                      userVerification: UserVerification;
-                      fetchResponse: Response;
-                  }
-                | {
-                      status: "INVALID_OPTIONS_ERROR";
-                      fetchResponse: Response;
-                  }
-                | GeneralErrorResponse
-            >(
-                await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
-                    userContext: userContext,
-                }),
-                "/webauthn/options/signin",
+            const { jsonBody, fetchResponse } = await querier.post(
                 {
-                    body: JSON.stringify({}),
+                    path: "/<tenantId>/webauthn/options/signin",
+                    pathParams: {
+                        tenantId:
+                            (await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
+                                userContext: userContext,
+                            })) || "public",
+                    },
                 },
+                {},
                 Querier.preparePreAPIHook({
                     recipePreAPIHook: recipeImplInput.preAPIHook,
                     action: "SIGN_IN_OPTIONS",
@@ -163,36 +106,26 @@ export default function getRecipeImplementation(
         signUp: async function ({
             webauthnGeneratedOptionsId,
             credential,
-            shouldTryLinkingWithSessionUser,
             options,
             userContext,
+            shouldTryLinkingWithSessionUser,
         }) {
-            const { jsonBody, fetchResponse } = await querier.post<
-                | {
-                      status: "OK";
-                      user: User;
-                  }
-                | GeneralErrorResponse
-                | {
-                      status: "SIGN_UP_NOT_ALLOWED";
-                      reason: string;
-                  }
-                | { status: "INVALID_CREDENTIALS_ERROR" }
-                | { status: "OPTIONS_NOT_FOUND_ERROR" }
-                | { status: "INVALID_OPTIONS_ERROR" }
-                | { status: "INVALID_AUTHENTICATOR_ERROR"; reason: string }
-                | { status: "EMAIL_ALREADY_EXISTS_ERROR" }
-            >(
-                await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
-                    userContext: userContext,
-                }),
-                "/webauthn/signup",
+            const { jsonBody, fetchResponse } = await querier.post(
                 {
-                    body: JSON.stringify({
+                    path: "/<tenantId>/webauthn/signup",
+                    pathParams: {
+                        tenantId:
+                            (await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
+                                userContext: userContext,
+                            })) || "public",
+                    },
+                },
+                {
+                    body: {
                         webauthnGeneratedOptionsId,
                         credential,
                         shouldTryLinkingWithSessionUser,
-                    }),
+                    },
                 },
                 Querier.preparePreAPIHook({
                     recipePreAPIHook: recipeImplInput.preAPIHook,
@@ -215,32 +148,26 @@ export default function getRecipeImplementation(
         signIn: async function ({
             webauthnGeneratedOptionsId,
             credential,
-            shouldTryLinkingWithSessionUser,
             options,
             userContext,
+            shouldTryLinkingWithSessionUser,
         }) {
-            const { jsonBody, fetchResponse } = await querier.post<
-                | {
-                      status: "OK";
-                      user: User;
-                  }
-                | { status: "INVALID_CREDENTIALS_ERROR" }
-                | {
-                      status: "SIGN_IN_NOT_ALLOWED";
-                      reason: string;
-                  }
-                | GeneralErrorResponse
-            >(
-                await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
-                    userContext: userContext,
-                }),
-                "/webauthn/signin",
+            const { jsonBody, fetchResponse } = await querier.post(
                 {
-                    body: JSON.stringify({
+                    path: "/<tenantId>/webauthn/signin",
+                    pathParams: {
+                        tenantId:
+                            (await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
+                                userContext: userContext,
+                            })) || "public",
+                    },
+                },
+                {
+                    body: {
                         webauthnGeneratedOptionsId,
                         credential,
                         shouldTryLinkingWithSessionUser,
-                    }),
+                    },
                 },
                 Querier.preparePreAPIHook({
                     recipePreAPIHook: recipeImplInput.preAPIHook,
@@ -261,19 +188,20 @@ export default function getRecipeImplementation(
             };
         },
         getEmailExists: async function ({ email, options, userContext }) {
-            const { jsonBody, fetchResponse } = await querier.get<
-                | {
-                      status: "OK";
-                      exists: boolean;
-                  }
-                | GeneralErrorResponse
-            >(
-                await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
-                    userContext: userContext,
-                }),
-                "/webauthn/email/exists",
+            const { jsonBody, fetchResponse } = await querier.get(
+                {
+                    path: "/<tenantId>/webauthn/email/exists",
+                    pathParams: {
+                        tenantId:
+                            (await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
+                                userContext: userContext,
+                            })) || "public",
+                    },
+                    queryParams: {
+                        email: email,
+                    },
+                },
                 {},
-                { email: email },
                 Querier.preparePreAPIHook({
                     recipePreAPIHook: recipeImplInput.preAPIHook,
                     action: "EMAIL_EXISTS",
@@ -293,21 +221,20 @@ export default function getRecipeImplementation(
             };
         },
         generateRecoverAccountToken: async function ({ email, options, userContext }) {
-            const { jsonBody, fetchResponse } = await querier.post<
-                | {
-                      status: "OK";
-                  }
-                | { status: "RECOVER_ACCOUNT_NOT_ALLOWED"; reason: string }
-                | GeneralErrorResponse
-            >(
-                await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
-                    userContext: userContext,
-                }),
-                "/user/webauthn/reset/token",
+            const { jsonBody, fetchResponse } = await querier.post(
                 {
-                    body: JSON.stringify({
+                    path: "/<tenantId>/user/webauthn/reset/token",
+                    pathParams: {
+                        tenantId:
+                            (await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
+                                userContext: userContext,
+                            })) || "public",
+                    },
+                },
+                {
+                    body: {
                         email,
-                    }),
+                    },
                 },
                 Querier.preparePreAPIHook({
                     recipePreAPIHook: recipeImplInput.preAPIHook,
@@ -328,29 +255,22 @@ export default function getRecipeImplementation(
             };
         },
         recoverAccount: async function ({ token, webauthnGeneratedOptionsId, credential, options, userContext }) {
-            const { jsonBody, fetchResponse } = await querier.post<
-                | {
-                      status: "OK";
-                      user: User;
-                      email: string;
-                  }
-                | GeneralErrorResponse
-                | { status: "RECOVER_ACCOUNT_TOKEN_INVALID_ERROR" }
-                | { status: "INVALID_CREDENTIALS_ERROR" }
-                | { status: "OPTIONS_NOT_FOUND_ERROR" }
-                | { status: "INVALID_OPTIONS_ERROR" }
-                | { status: "INVALID_AUTHENTICATOR_ERROR"; reason: string }
-            >(
-                await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
-                    userContext: userContext,
-                }),
-                "/user/webauthn/reset",
+            const { jsonBody, fetchResponse } = await querier.post(
                 {
-                    body: JSON.stringify({
+                    path: "/<tenantId>/user/webauthn/reset",
+                    pathParams: {
+                        tenantId:
+                            (await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
+                                userContext: userContext,
+                            })) || "public",
+                    },
+                },
+                {
+                    body: {
                         token,
                         webauthnGeneratedOptionsId,
                         credential,
-                    }),
+                    },
                 },
                 Querier.preparePreAPIHook({
                     recipePreAPIHook: recipeImplInput.preAPIHook,

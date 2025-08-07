@@ -134,6 +134,7 @@ export declare type RecipeInterface = {
     signUp: (input: {
         webauthnGeneratedOptionsId: string;
         credential: RegistrationResponseJSON;
+        shouldTryLinkingWithSessionUser?: boolean;
         options?: RecipeFunctionOptions;
         userContext: any;
     }) => Promise<
@@ -173,6 +174,7 @@ export declare type RecipeInterface = {
     signIn: (input: {
         webauthnGeneratedOptionsId: string;
         credential: AuthenticationResponseJSON;
+        shouldTryLinkingWithSessionUser?: boolean;
         options?: RecipeFunctionOptions;
         userContext: any;
     }) => Promise<
@@ -291,6 +293,7 @@ export declare type RecipeInterface = {
     >;
     registerCredentialWithSignUp: (input: {
         email: string;
+        shouldTryLinkingWithSessionUser?: boolean;
         options?: RecipeFunctionOptions;
         userContext: any;
     }) => Promise<
@@ -343,7 +346,11 @@ export declare type RecipeInterface = {
               error: any;
           }
     >;
-    authenticateCredentialWithSignIn: (input: { options?: RecipeFunctionOptions; userContext: any }) => Promise<
+    authenticateCredentialWithSignIn: (input: {
+        shouldTryLinkingWithSessionUser?: boolean;
+        options?: RecipeFunctionOptions;
+        userContext: any;
+    }) => Promise<
         | {
               status: "OK";
               user: User;
