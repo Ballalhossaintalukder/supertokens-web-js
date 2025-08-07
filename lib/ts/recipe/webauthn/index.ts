@@ -155,6 +155,7 @@ export default class RecipeWrapper {
     static signUp(input: {
         webauthnGeneratedOptionsId: string;
         credential: RegistrationResponseJSON;
+        shouldTryLinkingWithSessionUser?: boolean;
         options?: RecipeFunctionOptions;
         userContext: any;
     }): Promise<
@@ -197,6 +198,7 @@ export default class RecipeWrapper {
     static signIn(input: {
         webauthnGeneratedOptionsId: string;
         credential: AuthenticationResponseJSON;
+        shouldTryLinkingWithSessionUser?: boolean;
         options?: RecipeFunctionOptions;
         userContext: any;
     }): Promise<
@@ -376,6 +378,7 @@ export default class RecipeWrapper {
      */
     static registerCredentialWithSignUp(input: {
         email: string;
+        shouldTryLinkingWithSessionUser?: boolean;
         options?: RecipeFunctionOptions;
         userContext: any;
     }): Promise<
@@ -427,7 +430,11 @@ export default class RecipeWrapper {
      *
      * @returns `{ status: "OK", ...}` if successful along a description of the user details (id, etc.) and email
      */
-    static authenticateCredentialWithSignIn(input: { options?: RecipeFunctionOptions; userContext: any }): Promise<
+    static authenticateCredentialWithSignIn(input: {
+        options?: RecipeFunctionOptions;
+        userContext: any;
+        shouldTryLinkingWithSessionUser?: boolean;
+    }): Promise<
         | {
               status: "OK";
               user: User;

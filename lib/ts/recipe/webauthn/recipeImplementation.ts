@@ -103,7 +103,13 @@ export default function getRecipeImplementation(
                 fetchResponse,
             };
         },
-        signUp: async function ({ webauthnGeneratedOptionsId, credential, options, userContext }) {
+        signUp: async function ({
+            webauthnGeneratedOptionsId,
+            credential,
+            options,
+            userContext,
+            shouldTryLinkingWithSessionUser,
+        }) {
             const { jsonBody, fetchResponse } = await querier.post(
                 {
                     path: "/<tenantId>/webauthn/signup",
@@ -118,6 +124,7 @@ export default function getRecipeImplementation(
                     body: {
                         webauthnGeneratedOptionsId,
                         credential,
+                        shouldTryLinkingWithSessionUser,
                     },
                 },
                 Querier.preparePreAPIHook({
@@ -138,7 +145,13 @@ export default function getRecipeImplementation(
                 fetchResponse,
             };
         },
-        signIn: async function ({ webauthnGeneratedOptionsId, credential, options, userContext }) {
+        signIn: async function ({
+            webauthnGeneratedOptionsId,
+            credential,
+            options,
+            userContext,
+            shouldTryLinkingWithSessionUser,
+        }) {
             const { jsonBody, fetchResponse } = await querier.post(
                 {
                     path: "/<tenantId>/webauthn/signin",
@@ -153,6 +166,7 @@ export default function getRecipeImplementation(
                     body: {
                         webauthnGeneratedOptionsId,
                         credential,
+                        shouldTryLinkingWithSessionUser,
                     },
                 },
                 Querier.preparePreAPIHook({
@@ -303,7 +317,12 @@ export default function getRecipeImplementation(
                 registrationResponse,
             };
         },
-        registerCredentialWithSignUp: async function ({ email, options, userContext }) {
+        registerCredentialWithSignUp: async function ({
+            email,
+            shouldTryLinkingWithSessionUser,
+            options,
+            userContext,
+        }) {
             // Get the registration options by using the passed email ID.
             const registrationOptions = await this.getRegisterOptions({ options, userContext, email });
             if (registrationOptions?.status !== "OK") {
@@ -330,6 +349,7 @@ export default function getRecipeImplementation(
             return await this.signUp({
                 webauthnGeneratedOptionsId: registrationOptions.webauthnGeneratedOptionsId,
                 credential: registerCredentialResponse.registrationResponse,
+                shouldTryLinkingWithSessionUser,
                 options,
                 userContext,
             });
@@ -357,7 +377,7 @@ export default function getRecipeImplementation(
                 authenticationResponse: authenticationResponse,
             };
         },
-        authenticateCredentialWithSignIn: async function ({ options, userContext }) {
+        authenticateCredentialWithSignIn: async function ({ shouldTryLinkingWithSessionUser, options, userContext }) {
             // Make a call to get the sign in options using the entered email ID.
             const signInOptions = await this.getSignInOptions({ options, userContext });
             if (signInOptions?.status !== "OK") {
@@ -379,6 +399,7 @@ export default function getRecipeImplementation(
             return await this.signIn({
                 webauthnGeneratedOptionsId: signInOptions.webauthnGeneratedOptionsId,
                 credential: authenticateCredentialResponse.authenticationResponse,
+                shouldTryLinkingWithSessionUser,
                 options: options,
                 userContext: userContext,
             });
