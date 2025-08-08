@@ -79,8 +79,7 @@ jobs:
 
             - name: Get last Node CDI version
               id: last-node-cdi-version
-              run: echo "lastNodeCdiVersion=$(echo '${{ steps.node-cdi-versions.outputs.cdiVersions }}' | jq -r '.[-1]')" >> $GITHUB_OUTPUT $GITHUB_ENV
-
+              run: echo "lastNodeCdiVersion=$(echo '${{ steps.node-cdi-versions.outputs.cdiVersions }}' | jq -r '.[-1]')" | tee -a "$GITHUB_OUTPUT" "$GITHUB_ENV"
             - name: Get Core version
               id: core-version
               uses: supertokens/get-versions-action@main
