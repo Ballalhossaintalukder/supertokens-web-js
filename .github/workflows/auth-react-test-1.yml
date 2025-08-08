@@ -93,21 +93,21 @@ jobs:
                   rm -rf node_modules/supertokens-website
                   ln -s "$PWD/../supertokens-web-js/node_modules/supertokens-website" node_modules
 
-            # - name: Set up auth-react with new dependencies
-            #   working-directory: supertokens-auth-react/examples/for-tests
-            #   env:
-            #     # Common
-            #     APP_SERVER: ${{ steps.envs.outputs.AUTH_REACT__APP_SERVER }}
-            #     NODE_PORT: ${{ steps.envs.outputs.AUTH_REACT__NODE_PORT }}
-            #     TEST_MODE: ${{ steps.envs.outputs.AUTH_REACT__TEST_MODE }}
-            #     # Step-specific
-            #     CI: true
-            #     BROWSER: none
-            #     PORT: ${{ steps.envs.outputs.AUTH_REACT__PORT }}
-            #     REACT_APP_API_PORT: ${{ steps.envs.outputs.AUTH_REACT__APP_SERVER }}
-            #   run: |
-            #     npm i
-            #     npm run prep
+            - name: Set up auth-react with new dependencies
+              working-directory: supertokens-auth-react/examples/for-tests
+              env:
+                # Common
+                APP_SERVER: ${{ steps.envs.outputs.AUTH_REACT__APP_SERVER }}
+                NODE_PORT: ${{ steps.envs.outputs.AUTH_REACT__NODE_PORT }}
+                TEST_MODE: ${{ steps.envs.outputs.AUTH_REACT__TEST_MODE }}
+                # Step-specific
+                CI: true
+                BROWSER: none
+                PORT: ${{ steps.envs.outputs.AUTH_REACT__PORT }}
+                REACT_APP_API_PORT: ${{ steps.envs.outputs.AUTH_REACT__APP_SERVER }}
+              run: |
+                npm i
+                npm run prep
 
             - uses: bissolli/gh-action-persist-workspace@v2
               with:

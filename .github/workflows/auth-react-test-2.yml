@@ -83,8 +83,6 @@ jobs:
               with:
                   driver-name: node
                   fdi-version: ${{ inputs.fdi-version }}
-            #   env:
-                #   SUPERTOKENS_API_KEY: ${{ secrets.SUPERTOKENS_API_KEY }}
 
             - name: Get last Node CDI version
               id: last-node-cdi-version
