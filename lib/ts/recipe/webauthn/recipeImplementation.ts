@@ -439,7 +439,7 @@ export default function getRecipeImplementation(
                 userContext,
             });
         },
-        registerCredentialWithUser: async function ({ recipeUserId, email, options, userContext }) {
+        createAndRegisterCredentialForSessionUser: async function ({ recipeUserId, email, options, userContext }) {
             // Get the registration options by using the passed email ID.
             const registrationOptions = await this.getRegisterOptions({ options, userContext, email });
             if (registrationOptions?.status !== "OK") {

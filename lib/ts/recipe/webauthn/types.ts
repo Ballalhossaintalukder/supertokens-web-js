@@ -335,7 +335,7 @@ export type RecipeInterface = {
         | { status: "FAILED_TO_REGISTER_USER"; error: any }
         | { status: "WEBAUTHN_NOT_SUPPORTED"; error: any }
     >;
-    registerCredentialWithUser: (input: {
+    createAndRegisterCredentialForSessionUser: (input: {
         recipeUserId: string;
         email: string;
         options?: RecipeFunctionOptions;

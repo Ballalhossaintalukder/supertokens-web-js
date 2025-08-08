@@ -555,7 +555,7 @@ export default class RecipeWrapper {
      *
      * @returns `{ status: "OK", ...}` if successful
      */
-    static registerCredentialWithUser(input: {
+    static createAndRegisterCredentialForSessionUser(input: {
         email: string;
         recipeUserId: string;
         options?: RecipeFunctionOptions;
@@ -714,7 +714,7 @@ declare const doesBrowserSupportWebAuthn: typeof RecipeWrapper.doesBrowserSuppor
 declare const listCredentials: typeof RecipeWrapper.listCredentials;
 declare const removeCredential: typeof RecipeWrapper.removeCredential;
 declare const registerCredential: typeof RecipeWrapper.registerCredential;
-declare const registerCredentialWithUser: typeof RecipeWrapper.registerCredentialWithUser;
+declare const createAndRegisterCredentialForSessionUser: typeof RecipeWrapper.createAndRegisterCredentialForSessionUser;
 export {
     init,
     getRegisterOptions,
@@ -726,7 +726,6 @@ export {
     recoverAccount,
     registerCredentialWithSignUp,
     authenticateCredentialWithSignIn,
-    registerCredentialWithRecoverAccount,
     createCredential,
     authenticateCredential,
     doesBrowserSupportWebAuthn,
@@ -734,5 +733,6 @@ export {
     listCredentials,
     removeCredential,
     registerCredential,
-    registerCredentialWithUser,
+    createAndRegisterCredentialForSessionUser,
+    registerCredentialWithRecoverAccount,
 };

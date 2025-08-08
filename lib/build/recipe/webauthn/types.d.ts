@@ -431,7 +431,7 @@ export declare type RecipeInterface = {
               error: any;
           }
     >;
-    registerCredentialWithUser: (input: {
+    createAndRegisterCredentialForSessionUser: (input: {
         recipeUserId: string;
         email: string;
         options?: RecipeFunctionOptions;

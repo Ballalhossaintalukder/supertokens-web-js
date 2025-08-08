@@ -523,7 +523,7 @@ export default class RecipeWrapper {
      *
      * @returns `{ status: "OK", ...}` if successful
      */
-    static registerCredentialWithUser(input: {
+    static createAndRegisterCredentialForSessionUser(input: {
         email: string;
         recipeUserId: string;
         options?: RecipeFunctionOptions;
@@ -544,7 +544,7 @@ export default class RecipeWrapper {
         | { status: "FAILED_TO_REGISTER_USER"; error: any }
         | { status: "WEBAUTHN_NOT_SUPPORTED"; error: any }
     > {
-        return Recipe.getInstanceOrThrow().recipeImplementation.registerCredentialWithUser({
+        return Recipe.getInstanceOrThrow().recipeImplementation.createAndRegisterCredentialForSessionUser({
             ...input,
             userContext: input?.userContext,
         });
@@ -662,7 +662,7 @@ const doesBrowserSupportWebAuthn = RecipeWrapper.doesBrowserSupportWebAuthn;
 const listCredentials = RecipeWrapper.listCredentials;
 const removeCredential = RecipeWrapper.removeCredential;
 const registerCredential = RecipeWrapper.registerCredential;
-const registerCredentialWithUser = RecipeWrapper.registerCredentialWithUser;
+const createAndRegisterCredentialForSessionUser = RecipeWrapper.createAndRegisterCredentialForSessionUser;
 
 export {
     init,
@@ -675,7 +675,6 @@ export {
     recoverAccount,
     registerCredentialWithSignUp,
     authenticateCredentialWithSignIn,
-    registerCredentialWithRecoverAccount,
     createCredential,
     authenticateCredential,
     doesBrowserSupportWebAuthn,
@@ -683,5 +682,6 @@ export {
     listCredentials,
     removeCredential,
     registerCredential,
-    registerCredentialWithUser,
+    createAndRegisterCredentialForSessionUser,
+    registerCredentialWithRecoverAccount,
 };

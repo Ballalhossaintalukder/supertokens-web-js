@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Include the `shouldTryLinkingToSessionUser` flag in the `Webauthn` recipe methods
 -   Update supported FDI versions and package version
 -   Add WebAuthn list and remove credential methods
--   Added `registerCredentialWithUser` method that creates and registers a credential with a user
+-   Added `createAndRegisterCredentialForSessionUser` method that creates and registers a credential with a user
 
 ### Breaking changes
 
