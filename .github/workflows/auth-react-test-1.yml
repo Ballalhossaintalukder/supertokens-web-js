@@ -53,6 +53,7 @@ jobs:
               with:
                   driver-name: node
                   fdi-version: ${{ matrix.fdi-version }}
+                  fetch-frontend-versions: false
                   web-js-interface-version: ${{ needs.define-versions.outputs.webJsInterfaceVersion }}
               env:
                   SUPERTOKENS_API_KEY: ${{ secrets.SUPERTOKENS_API_KEY }}
