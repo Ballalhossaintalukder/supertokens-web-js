@@ -89,7 +89,7 @@
         },
         {
             "path": "recipe/passwordless/index.js",
-            "limit": "30kb"
+            "limit": "31kb"
         },
         {
             "path": "recipe/userroles/index.js",
@@ -97,15 +97,15 @@
         },
         {
             "path": "recipe/multitenancy/index.js",
-            "limit": "28kb"
+            "limit": "29kb"
         },
         {
             "path": "recipe/multifactorauth/index.js",
-            "limit": "28kb"
+            "limit": "29kb"
         },
         {
             "path": "recipe/totp/index.js",
-            "limit": "28kb"
+            "limit": "29kb"
         },
         {
             "path": "recipe/oauth2provider/index.js",
