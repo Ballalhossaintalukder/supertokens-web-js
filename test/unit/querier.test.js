@@ -137,14 +137,14 @@ describe("Querier", () => {
 
         it(".get() should call .callPreAPIHook()", async () => {
             // when
-            await querier.get(undefined, "/path", {}, {}, mockPreAPIHook);
+            await querier.get("/path", {}, mockPreAPIHook);
 
             assert.deepEqual(callAPIParams["preAPIHook"], mockPreAPIHook);
-            // ? added to url due to possible query param input
-            assert.equal(callAPIParams["url"], "http://api.example.com/path?");
+
+            assert.equal(callAPIParams["url"], "http://api.example.com/path");
             assert.notStrictEqual(callAPIParams["requestInit"], undefined);
 
-            assert.equal(preAPIContext["url"], "http://api.example.com/path?");
+            assert.equal(preAPIContext["url"], "http://api.example.com/path");
             assert.notStrictEqual(preAPIContext["requestInit"], undefined);
 
             assert.equal(fetchURL, "/mock-url");
@@ -152,7 +152,7 @@ describe("Querier", () => {
         });
 
         it(".post() should call .callPreAPIHook()", async () => {
-            await querier.post(undefined, "/path", { body: JSON.stringify({}) }, mockPreAPIHook);
+            await querier.post("/path", { body: {} }, mockPreAPIHook);
 
             assert.deepEqual(callAPIParams["preAPIHook"], mockPreAPIHook);
             // ? added to url due to possible query param input
@@ -167,7 +167,7 @@ describe("Querier", () => {
         });
 
         it(".delete() should call .callPreAPIHook()", async () => {
-            await querier.delete(undefined, "/path", { body: JSON.stringify({}) }, mockPreAPIHook);
+            await querier.delete("/path", { body: {} }, mockPreAPIHook);
 
             assert.deepEqual(callAPIParams["preAPIHook"], mockPreAPIHook);
             // ? added to url due to possible query param input
@@ -182,7 +182,7 @@ describe("Querier", () => {
         });
 
         it(".put() should call .callPreAPIHook()", async () => {
-            await querier.put(undefined, "/path", { body: JSON.stringify({}) }, mockPreAPIHook);
+            await querier.put("/path", { body: {} }, mockPreAPIHook);
 
             assert.deepEqual(callAPIParams["preAPIHook"], mockPreAPIHook);
             // ? added to url due to possible query param input
@@ -198,14 +198,14 @@ describe("Querier", () => {
 
         it(".get() should prepend tenantId if defined", async () => {
             // when
-            await querier.get("testTenant", "/path", {}, {}, mockPreAPIHook);
+            await querier.get({ path: "/<tenantId>/path", pathParams: { tenantId: "testTenant" } }, {}, mockPreAPIHook);
 
             assert.deepEqual(callAPIParams["preAPIHook"], mockPreAPIHook);
             // ? added to url due to possible query param input
-            assert.equal(callAPIParams["url"], "http://api.example.com/testTenant/path?");
+            assert.equal(callAPIParams["url"], "http://api.example.com/testTenant/path");
             assert.notStrictEqual(callAPIParams["requestInit"], undefined);
 
-            assert.equal(preAPIContext["url"], "http://api.example.com/testTenant/path?");
+            assert.equal(preAPIContext["url"], "http://api.example.com/testTenant/path");
             assert.notStrictEqual(preAPIContext["requestInit"], undefined);
 
             assert.equal(fetchURL, "/mock-url");
@@ -213,7 +213,11 @@ describe("Querier", () => {
         });
 
         it(".post() should prepend tenantId if defined", async () => {
-            await querier.post("testTenant", "/path", { body: JSON.stringify({}) }, mockPreAPIHook);
+            await querier.post(
+                { path: "/<tenantId>/path", pathParams: { tenantId: "testTenant" } },
+                { body: {} },
+                mockPreAPIHook
+            );
 
             assert.deepEqual(callAPIParams["preAPIHook"], mockPreAPIHook);
             // ? added to url due to possible query param input
@@ -228,7 +232,11 @@ describe("Querier", () => {
         });
 
         it(".delete() should prepend tenantId if defined", async () => {
-            await querier.delete("testTenant", "/path", { body: JSON.stringify({}) }, mockPreAPIHook);
+            await querier.delete(
+                { path: "/<tenantId>/path", pathParams: { tenantId: "testTenant" } },
+                { body: {} },
+                mockPreAPIHook
+            );
 
             assert.deepEqual(callAPIParams["preAPIHook"], mockPreAPIHook);
             // ? added to url due to possible query param input
@@ -243,7 +251,11 @@ describe("Querier", () => {
         });
 
         it(".put() should prepend tenantId if defined", async () => {
-            await querier.put("testTenant", "/path", { body: JSON.stringify({}) }, mockPreAPIHook);
+            await querier.put(
+                { path: "/<tenantId>/path", pathParams: { tenantId: "testTenant" } },
+                { body: {} },
+                mockPreAPIHook
+            );
 
             assert.deepEqual(callAPIParams["preAPIHook"], mockPreAPIHook);
             // ? added to url due to possible query param input

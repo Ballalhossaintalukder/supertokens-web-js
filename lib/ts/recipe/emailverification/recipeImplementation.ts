@@ -39,16 +39,18 @@ export default function getRecipeImplementation(
                 userContext,
             });
 
-            const { jsonBody, fetchResponse } = await querier.post<{
-                status: "OK" | "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR";
-            }>(
-                tenantId,
-                "/user/email/verify",
+            const { jsonBody, fetchResponse } = await querier.post(
                 {
-                    body: JSON.stringify({
+                    path: "/<tenantId>/user/email/verify",
+                    pathParams: {
+                        tenantId: tenantId || "public",
+                    },
+                },
+                {
+                    body: {
                         method: "token",
                         token,
-                    }),
+                    },
                 },
                 Querier.preparePreAPIHook({
                     recipePreAPIHook: recipeImpleInput.preAPIHook,
@@ -80,11 +82,9 @@ export default function getRecipeImplementation(
             isVerified: boolean;
             fetchResponse: Response;
         }> {
-            const { jsonBody, fetchResponse } = await querier.get<{ status: "OK"; isVerified: boolean }>(
-                undefined,
+            const { jsonBody, fetchResponse } = await querier.get(
                 "/user/email/verify",
                 {},
-                undefined,
                 Querier.preparePreAPIHook({
                     recipePreAPIHook: recipeImpleInput.preAPIHook,
                     action: "IS_EMAIL_VERIFIED",
@@ -115,10 +115,9 @@ export default function getRecipeImplementation(
             status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
             fetchResponse: Response;
         }> {
-            const { jsonBody, fetchResponse } = await querier.post<{ status: "OK" | "EMAIL_ALREADY_VERIFIED_ERROR" }>(
-                undefined,
+            const { jsonBody, fetchResponse } = await querier.post(
                 "/user/email/verify/token",
-                { body: JSON.stringify({}) },
+                {},
                 Querier.preparePreAPIHook({
                     recipePreAPIHook: recipeImpleInput.preAPIHook,
                     action: "SEND_VERIFY_EMAIL",

@@ -17,7 +17,7 @@ jobs:
             cancel-in-progress: true
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v2
+            - uses: actions/checkout@v4
             - name: node install
               run: cd ./.github/helpers && npm i
             - name: Calling github API

@@ -131,6 +131,7 @@ export default class RecipeWrapper {
     static signUp(input: {
         webauthnGeneratedOptionsId: string;
         credential: RegistrationResponseJSON;
+        shouldTryLinkingWithSessionUser?: boolean;
         options?: RecipeFunctionOptions;
         userContext: any;
     }): Promise<
@@ -183,6 +184,7 @@ export default class RecipeWrapper {
     static signIn(input: {
         webauthnGeneratedOptionsId: string;
         credential: AuthenticationResponseJSON;
+        shouldTryLinkingWithSessionUser?: boolean;
         options?: RecipeFunctionOptions;
         userContext: any;
     }): Promise<
@@ -369,6 +371,7 @@ export default class RecipeWrapper {
      */
     static registerCredentialWithSignUp(input: {
         email: string;
+        shouldTryLinkingWithSessionUser?: boolean;
         options?: RecipeFunctionOptions;
         userContext: any;
     }): Promise<
@@ -438,7 +441,11 @@ export default class RecipeWrapper {
      *
      * @returns `{ status: "OK", ...}` if successful along a description of the user details (id, etc.) and email
      */
-    static authenticateCredentialWithSignIn(input: { options?: RecipeFunctionOptions; userContext: any }): Promise<
+    static authenticateCredentialWithSignIn(input: {
+        options?: RecipeFunctionOptions;
+        userContext: any;
+        shouldTryLinkingWithSessionUser?: boolean;
+    }): Promise<
         | {
               status: "OK";
               user: User;
@@ -548,7 +555,7 @@ export default class RecipeWrapper {
      *
      * @returns `{ status: "OK", ...}` if successful
      */
-    static registerCredentialWithUser(input: {
+    static createAndRegisterCredentialForSessionUser(input: {
         email: string;
         recipeUserId: string;
         options?: RecipeFunctionOptions;
@@ -561,7 +568,7 @@ export default class RecipeWrapper {
         | GeneralErrorResponse
         | {
               status: "REGISTER_CREDENTIAL_NOT_ALLOWED";
-              reason: string;
+              reason?: string;
           }
         | {
               status: "INVALID_EMAIL_ERROR";
@@ -578,7 +585,7 @@ export default class RecipeWrapper {
           }
         | {
               status: "INVALID_AUTHENTICATOR_ERROR";
-              reason: string;
+              reason?: string;
           }
         | {
               status: "AUTHENTICATOR_ALREADY_REGISTERED";
@@ -662,7 +669,7 @@ export default class RecipeWrapper {
         | GeneralErrorResponse
         | {
               status: "REGISTER_CREDENTIAL_NOT_ALLOWED";
-              reason: string;
+              reason?: string;
           }
         | {
               status: "INVALID_CREDENTIALS_ERROR";
@@ -675,7 +682,7 @@ export default class RecipeWrapper {
           }
         | {
               status: "INVALID_AUTHENTICATOR_ERROR";
-              reason: string;
+              reason?: string;
           }
     >;
     static doesBrowserSupportWebAuthn(input: { userContext: any }): Promise<
@@ -707,6 +714,7 @@ declare const doesBrowserSupportWebAuthn: typeof RecipeWrapper.doesBrowserSuppor
 declare const listCredentials: typeof RecipeWrapper.listCredentials;
 declare const removeCredential: typeof RecipeWrapper.removeCredential;
 declare const registerCredential: typeof RecipeWrapper.registerCredential;
+declare const createAndRegisterCredentialForSessionUser: typeof RecipeWrapper.createAndRegisterCredentialForSessionUser;
 export {
     init,
     getRegisterOptions,
@@ -718,7 +726,6 @@ export {
     recoverAccount,
     registerCredentialWithSignUp,
     authenticateCredentialWithSignIn,
-    registerCredentialWithRecoverAccount,
     createCredential,
     authenticateCredential,
     doesBrowserSupportWebAuthn,
@@ -726,4 +733,6 @@ export {
     listCredentials,
     removeCredential,
     registerCredential,
+    createAndRegisterCredentialForSessionUser,
+    registerCredentialWithRecoverAccount,
 };

@@ -25,21 +25,12 @@ export default function getRecipeImplementation(
 
     return {
         createDevice: async function ({ deviceName, options, userContext }) {
-            const { jsonBody, fetchResponse } = await querier.post<
-                | {
-                      status: "OK";
-                      deviceName: string;
-                      secret: string;
-                      qrCodeString: string;
-                  }
-                | { status: "DEVICE_ALREADY_EXISTS_ERROR" }
-            >(
-                undefined,
+            const { jsonBody, fetchResponse } = await querier.post(
                 "/totp/device",
                 {
-                    body: JSON.stringify({
+                    body: {
                         deviceName,
-                    }),
+                    },
                 },
                 Querier.preparePreAPIHook({
                     recipePreAPIHook: recipeImplInput.preAPIHook,
@@ -60,21 +51,12 @@ export default function getRecipeImplementation(
             };
         },
         verifyCode: async function ({ totp, options, userContext }) {
-            const { jsonBody, fetchResponse } = await querier.post<
-                | { status: "OK" }
-                | {
-                      status: "INVALID_TOTP_ERROR";
-                      currentNumberOfFailedAttempts: number;
-                      maxNumberOfFailedAttempts: number;
-                  }
-                | { status: "LIMIT_REACHED_ERROR"; retryAfterMs: number }
-            >(
-                undefined,
+            const { jsonBody, fetchResponse } = await querier.post(
                 "/totp/verify",
                 {
-                    body: JSON.stringify({
+                    body: {
                         totp,
-                    }),
+                    },
                 },
                 Querier.preparePreAPIHook({
                     recipePreAPIHook: recipeImplInput.preAPIHook,
@@ -95,23 +77,13 @@ export default function getRecipeImplementation(
             };
         },
         verifyDevice: async function ({ deviceName, totp, options, userContext }) {
-            const { jsonBody, fetchResponse } = await querier.post<
-                | { status: "OK"; wasAlreadyVerified: boolean }
-                | { status: "UNKNOWN_DEVICE_ERROR" }
-                | {
-                      status: "INVALID_TOTP_ERROR";
-                      currentNumberOfFailedAttempts: number;
-                      maxNumberOfFailedAttempts: number;
-                  }
-                | { status: "LIMIT_REACHED_ERROR"; retryAfterMs: number }
-            >(
-                undefined,
+            const { jsonBody, fetchResponse } = await querier.post(
                 "/totp/device/verify",
                 {
-                    body: JSON.stringify({
+                    body: {
                         deviceName,
                         totp,
-                    }),
+                    },
                 },
                 Querier.preparePreAPIHook({
                     recipePreAPIHook: recipeImplInput.preAPIHook,
@@ -132,13 +104,12 @@ export default function getRecipeImplementation(
             };
         },
         removeDevice: async function ({ deviceName, options, userContext }) {
-            const { jsonBody, fetchResponse } = await querier.post<{ status: "OK"; didDeviceExist: boolean }>(
-                undefined,
+            const { jsonBody, fetchResponse } = await querier.post(
                 "/totp/device/remove",
                 {
-                    body: JSON.stringify({
+                    body: {
                         deviceName,
-                    }),
+                    },
                 },
                 Querier.preparePreAPIHook({
                     recipePreAPIHook: recipeImplInput.preAPIHook,
@@ -159,14 +130,9 @@ export default function getRecipeImplementation(
             };
         },
         listDevices: async function ({ options, userContext }) {
-            const { jsonBody, fetchResponse } = await querier.get<{
-                status: "OK";
-                devices: { name: string; period: number; skew: number; verified: boolean }[];
-            }>(
-                undefined,
+            const { jsonBody, fetchResponse } = await querier.get(
                 "/totp/device/list",
                 {},
-                undefined,
                 Querier.preparePreAPIHook({
                     recipePreAPIHook: recipeImplInput.preAPIHook,
                     action: "LIST_DEVICES",

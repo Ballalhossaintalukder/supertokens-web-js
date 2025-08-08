@@ -155,6 +155,7 @@ export default class RecipeWrapper {
     static signUp(input: {
         webauthnGeneratedOptionsId: string;
         credential: RegistrationResponseJSON;
+        shouldTryLinkingWithSessionUser?: boolean;
         options?: RecipeFunctionOptions;
         userContext: any;
     }): Promise<
@@ -197,6 +198,7 @@ export default class RecipeWrapper {
     static signIn(input: {
         webauthnGeneratedOptionsId: string;
         credential: AuthenticationResponseJSON;
+        shouldTryLinkingWithSessionUser?: boolean;
         options?: RecipeFunctionOptions;
         userContext: any;
     }): Promise<
@@ -376,6 +378,7 @@ export default class RecipeWrapper {
      */
     static registerCredentialWithSignUp(input: {
         email: string;
+        shouldTryLinkingWithSessionUser?: boolean;
         options?: RecipeFunctionOptions;
         userContext: any;
     }): Promise<
@@ -427,7 +430,11 @@ export default class RecipeWrapper {
      *
      * @returns `{ status: "OK", ...}` if successful along a description of the user details (id, etc.) and email
      */
-    static authenticateCredentialWithSignIn(input: { options?: RecipeFunctionOptions; userContext: any }): Promise<
+    static authenticateCredentialWithSignIn(input: {
+        options?: RecipeFunctionOptions;
+        userContext: any;
+        shouldTryLinkingWithSessionUser?: boolean;
+    }): Promise<
         | {
               status: "OK";
               user: User;
@@ -516,7 +523,7 @@ export default class RecipeWrapper {
      *
      * @returns `{ status: "OK", ...}` if successful
      */
-    static registerCredentialWithUser(input: {
+    static createAndRegisterCredentialForSessionUser(input: {
         email: string;
         recipeUserId: string;
         options?: RecipeFunctionOptions;
@@ -527,17 +534,17 @@ export default class RecipeWrapper {
               fetchResponse: Response;
           }
         | GeneralErrorResponse
-        | { status: "REGISTER_CREDENTIAL_NOT_ALLOWED"; reason: string }
+        | { status: "REGISTER_CREDENTIAL_NOT_ALLOWED"; reason?: string }
         | { status: "INVALID_EMAIL_ERROR"; err: string }
         | { status: "INVALID_CREDENTIALS_ERROR" }
         | { status: "OPTIONS_NOT_FOUND_ERROR" }
         | { status: "INVALID_OPTIONS_ERROR" }
-        | { status: "INVALID_AUTHENTICATOR_ERROR"; reason: string }
+        | { status: "INVALID_AUTHENTICATOR_ERROR"; reason?: string }
         | { status: "AUTHENTICATOR_ALREADY_REGISTERED" }
         | { status: "FAILED_TO_REGISTER_USER"; error: any }
         | { status: "WEBAUTHN_NOT_SUPPORTED"; error: any }
     > {
-        return Recipe.getInstanceOrThrow().recipeImplementation.registerCredentialWithUser({
+        return Recipe.getInstanceOrThrow().recipeImplementation.createAndRegisterCredentialForSessionUser({
             ...input,
             userContext: input?.userContext,
         });
@@ -614,11 +621,11 @@ export default class RecipeWrapper {
     }): Promise<
         | { status: "OK" }
         | GeneralErrorResponse
-        | { status: "REGISTER_CREDENTIAL_NOT_ALLOWED"; reason: string }
+        | { status: "REGISTER_CREDENTIAL_NOT_ALLOWED"; reason?: string }
         | { status: "INVALID_CREDENTIALS_ERROR" }
         | { status: "OPTIONS_NOT_FOUND_ERROR" }
         | { status: "INVALID_OPTIONS_ERROR" }
-        | { status: "INVALID_AUTHENTICATOR_ERROR"; reason: string }
+        | { status: "INVALID_AUTHENTICATOR_ERROR"; reason?: string }
     > {
         return Recipe.getInstanceOrThrow().recipeImplementation.registerCredential(input);
     }
@@ -655,6 +662,7 @@ const doesBrowserSupportWebAuthn = RecipeWrapper.doesBrowserSupportWebAuthn;
 const listCredentials = RecipeWrapper.listCredentials;
 const removeCredential = RecipeWrapper.removeCredential;
 const registerCredential = RecipeWrapper.registerCredential;
+const createAndRegisterCredentialForSessionUser = RecipeWrapper.createAndRegisterCredentialForSessionUser;
 
 export {
     init,
@@ -667,7 +675,6 @@ export {
     recoverAccount,
     registerCredentialWithSignUp,
     authenticateCredentialWithSignIn,
-    registerCredentialWithRecoverAccount,
     createCredential,
     authenticateCredential,
     doesBrowserSupportWebAuthn,
@@ -675,4 +682,6 @@ export {
     listCredentials,
     removeCredential,
     registerCredential,
+    createAndRegisterCredentialForSessionUser,
+    registerCredentialWithRecoverAccount,
 };
