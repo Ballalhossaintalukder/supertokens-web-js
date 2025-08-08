@@ -106,7 +106,6 @@ jobs:
                 PORT: ${{ steps.envs.outputs.AUTH_REACT__PORT }}
                 REACT_APP_API_PORT: ${{ steps.envs.outputs.AUTH_REACT__APP_SERVER }}
               run: |
-                npm i
                 npm run prep
 
             - uses: bissolli/gh-action-persist-workspace@v2
