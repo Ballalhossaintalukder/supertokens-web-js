@@ -6,6 +6,7 @@ import {
     RecipePostAPIHookFunction,
     RecipePreAPIHookFunction,
 } from "./recipe/recipeModule/types";
+import { PathParam, RequestInitWithInferredBody, ResponseBody, Method } from "./sdk/types";
 /**
  * When network calls are made the Querier calls .clone() on the response before:
  * 1. Calling the post API hook
@@ -20,45 +21,292 @@ export default class Querier {
     private readonly recipeId;
     private readonly appInfo;
     constructor(recipeId: string, appInfo: NormalisedAppInfo);
-    get: <JsonBodyType>(
-        tenantId: string | undefined,
-        path: string,
-        config: RequestInit,
-        queryParams?: Record<string, string>,
+    private getPath;
+    private safelyStringifyBody;
+    get: <
+        P extends
+            | "/mfa/info"
+            | "/totp/device/list"
+            | "/totp/device"
+            | "/totp/device/remove"
+            | "/totp/device/verify"
+            | "/totp/verify"
+            | "/<tenantId>/signinup/code"
+            | "/<tenantId>/signinup/code/resend"
+            | "/<tenantId>/signinup/code/consume"
+            | "/<tenantId>/signup/email/exists⠀⠀"
+            | "/<tenantId>/passwordless/email/exists"
+            | "/<tenantId>/signup/phoneNumber/exists"
+            | "/<tenantId>/passwordless/phonenumber/exists"
+            | "/signout"
+            | "/session/refresh"
+            | "/<tenantId>/signin"
+            | "/<tenantId>/signup"
+            | "/<tenantId>/signup/email/exists"
+            | "/<tenantId>/emailpassword/email/exists"
+            | "/<tenantId>/user/password/reset/token"
+            | "/<tenantId>/user/password/reset"
+            | "/<tenantId>/signinup"
+            | "/<tenantId>/authorisationurl"
+            | "/<tenantId>/loginmethods"
+            | "/callback/apple"
+            | "/user/email/verify/token"
+            | "/<tenantId>/user/email/verify"
+            | "/user/email/verify"
+            | "/jwt/jwks.json"
+            | "/.well-known/openid-configuration"
+            | "/oauth/login"
+            | "/oauth/auth"
+            | "/oauth/token"
+            | "/oauth/userinfo"
+            | "/oauth/revoke"
+            | "/oauth/introspect"
+            | "/oauth/end_session"
+            | "/oauth/login/info"
+            | "/oauth/logout"
+            | "/example"
+            | "/<tenantId>/webauthn/options/register"
+            | "/<tenantId>/webauthn/options/signin"
+            | "/<tenantId>/webauthn/signup"
+            | "/<tenantId>/webauthn/signin"
+            | "/<tenantId>/webauthn/recover/account/token"
+            | "/<tenantId>/webauthn/recover/account"
+            | "/<tenantId>/webauthn/credential"
+            | "/<tenantId>/webauthn/credential/remove"
+            | "/<tenantId>/webauthn/credential/list"
+            | "/<tenantId>/webauthn/email/exists"
+            | "/<tenantId>/user/webauthn/reset/token"
+            | "/<tenantId>/user/webauthn/reset"
+    >(
+        template: PathParam<P, "get">,
+        config: RequestInitWithInferredBody<P, "get">,
         preAPIHook?: PreAPIHookFunction,
         postAPIHook?: PostAPIHookFunction
     ) => Promise<{
-        jsonBody: JsonBodyType;
+        jsonBody: import("./sdk/types").RemoveGeneralError<
+            import("./sdk/types").UncleanedResponseBody<P, "get">
+        > extends infer T
+            ? T extends import("./sdk/types").RemoveGeneralError<import("./sdk/types").UncleanedResponseBody<P, "get">>
+                ? T extends any
+                    ? { [K in keyof T]-?: NonNullable<T[K]> }
+                    : never
+                : never
+            : never;
         fetchResponse: Response;
     }>;
-    post: <JsonBodyType>(
-        tenantId: string | undefined,
-        path: string,
-        config: RequestInit,
+    post: <
+        P extends
+            | "/mfa/info"
+            | "/totp/device/list"
+            | "/totp/device"
+            | "/totp/device/remove"
+            | "/totp/device/verify"
+            | "/totp/verify"
+            | "/<tenantId>/signinup/code"
+            | "/<tenantId>/signinup/code/resend"
+            | "/<tenantId>/signinup/code/consume"
+            | "/<tenantId>/signup/email/exists⠀⠀"
+            | "/<tenantId>/passwordless/email/exists"
+            | "/<tenantId>/signup/phoneNumber/exists"
+            | "/<tenantId>/passwordless/phonenumber/exists"
+            | "/signout"
+            | "/session/refresh"
+            | "/<tenantId>/signin"
+            | "/<tenantId>/signup"
+            | "/<tenantId>/signup/email/exists"
+            | "/<tenantId>/emailpassword/email/exists"
+            | "/<tenantId>/user/password/reset/token"
+            | "/<tenantId>/user/password/reset"
+            | "/<tenantId>/signinup"
+            | "/<tenantId>/authorisationurl"
+            | "/<tenantId>/loginmethods"
+            | "/callback/apple"
+            | "/user/email/verify/token"
+            | "/<tenantId>/user/email/verify"
+            | "/user/email/verify"
+            | "/jwt/jwks.json"
+            | "/.well-known/openid-configuration"
+            | "/oauth/login"
+            | "/oauth/auth"
+            | "/oauth/token"
+            | "/oauth/userinfo"
+            | "/oauth/revoke"
+            | "/oauth/introspect"
+            | "/oauth/end_session"
+            | "/oauth/login/info"
+            | "/oauth/logout"
+            | "/example"
+            | "/<tenantId>/webauthn/options/register"
+            | "/<tenantId>/webauthn/options/signin"
+            | "/<tenantId>/webauthn/signup"
+            | "/<tenantId>/webauthn/signin"
+            | "/<tenantId>/webauthn/recover/account/token"
+            | "/<tenantId>/webauthn/recover/account"
+            | "/<tenantId>/webauthn/credential"
+            | "/<tenantId>/webauthn/credential/remove"
+            | "/<tenantId>/webauthn/credential/list"
+            | "/<tenantId>/webauthn/email/exists"
+            | "/<tenantId>/user/webauthn/reset/token"
+            | "/<tenantId>/user/webauthn/reset"
+    >(
+        template: PathParam<P, "post">,
+        config: RequestInitWithInferredBody<P, "post">,
         preAPIHook?: PreAPIHookFunction,
         postAPIHook?: PostAPIHookFunction
     ) => Promise<{
-        jsonBody: JsonBodyType;
+        jsonBody: import("./sdk/types").RemoveGeneralError<
+            import("./sdk/types").UncleanedResponseBody<P, "post">
+        > extends infer T
+            ? T extends import("./sdk/types").RemoveGeneralError<import("./sdk/types").UncleanedResponseBody<P, "post">>
+                ? T extends any
+                    ? { [K in keyof T]-?: NonNullable<T[K]> }
+                    : never
+                : never
+            : never;
         fetchResponse: Response;
     }>;
-    delete: <JsonBodyType>(
-        tenantId: string | undefined,
-        path: string,
-        config: RequestInit,
+    delete: <
+        P extends
+            | "/mfa/info"
+            | "/totp/device/list"
+            | "/totp/device"
+            | "/totp/device/remove"
+            | "/totp/device/verify"
+            | "/totp/verify"
+            | "/<tenantId>/signinup/code"
+            | "/<tenantId>/signinup/code/resend"
+            | "/<tenantId>/signinup/code/consume"
+            | "/<tenantId>/signup/email/exists⠀⠀"
+            | "/<tenantId>/passwordless/email/exists"
+            | "/<tenantId>/signup/phoneNumber/exists"
+            | "/<tenantId>/passwordless/phonenumber/exists"
+            | "/signout"
+            | "/session/refresh"
+            | "/<tenantId>/signin"
+            | "/<tenantId>/signup"
+            | "/<tenantId>/signup/email/exists"
+            | "/<tenantId>/emailpassword/email/exists"
+            | "/<tenantId>/user/password/reset/token"
+            | "/<tenantId>/user/password/reset"
+            | "/<tenantId>/signinup"
+            | "/<tenantId>/authorisationurl"
+            | "/<tenantId>/loginmethods"
+            | "/callback/apple"
+            | "/user/email/verify/token"
+            | "/<tenantId>/user/email/verify"
+            | "/user/email/verify"
+            | "/jwt/jwks.json"
+            | "/.well-known/openid-configuration"
+            | "/oauth/login"
+            | "/oauth/auth"
+            | "/oauth/token"
+            | "/oauth/userinfo"
+            | "/oauth/revoke"
+            | "/oauth/introspect"
+            | "/oauth/end_session"
+            | "/oauth/login/info"
+            | "/oauth/logout"
+            | "/example"
+            | "/<tenantId>/webauthn/options/register"
+            | "/<tenantId>/webauthn/options/signin"
+            | "/<tenantId>/webauthn/signup"
+            | "/<tenantId>/webauthn/signin"
+            | "/<tenantId>/webauthn/recover/account/token"
+            | "/<tenantId>/webauthn/recover/account"
+            | "/<tenantId>/webauthn/credential"
+            | "/<tenantId>/webauthn/credential/remove"
+            | "/<tenantId>/webauthn/credential/list"
+            | "/<tenantId>/webauthn/email/exists"
+            | "/<tenantId>/user/webauthn/reset/token"
+            | "/<tenantId>/user/webauthn/reset"
+    >(
+        template: PathParam<P, "delete">,
+        config: RequestInitWithInferredBody<P, "delete">,
         preAPIHook?: PreAPIHookFunction,
         postAPIHook?: PostAPIHookFunction
     ) => Promise<{
-        jsonBody: JsonBodyType;
+        jsonBody: import("./sdk/types").RemoveGeneralError<
+            import("./sdk/types").UncleanedResponseBody<P, "delete">
+        > extends infer T
+            ? T extends import("./sdk/types").RemoveGeneralError<
+                  import("./sdk/types").UncleanedResponseBody<P, "delete">
+              >
+                ? T extends any
+                    ? { [K in keyof T]-?: NonNullable<T[K]> }
+                    : never
+                : never
+            : never;
         fetchResponse: Response;
     }>;
-    put: <JsonBodyType>(
-        tenantId: string | undefined,
-        path: string,
-        config: RequestInit,
+    put: <
+        P extends
+            | "/mfa/info"
+            | "/totp/device/list"
+            | "/totp/device"
+            | "/totp/device/remove"
+            | "/totp/device/verify"
+            | "/totp/verify"
+            | "/<tenantId>/signinup/code"
+            | "/<tenantId>/signinup/code/resend"
+            | "/<tenantId>/signinup/code/consume"
+            | "/<tenantId>/signup/email/exists⠀⠀"
+            | "/<tenantId>/passwordless/email/exists"
+            | "/<tenantId>/signup/phoneNumber/exists"
+            | "/<tenantId>/passwordless/phonenumber/exists"
+            | "/signout"
+            | "/session/refresh"
+            | "/<tenantId>/signin"
+            | "/<tenantId>/signup"
+            | "/<tenantId>/signup/email/exists"
+            | "/<tenantId>/emailpassword/email/exists"
+            | "/<tenantId>/user/password/reset/token"
+            | "/<tenantId>/user/password/reset"
+            | "/<tenantId>/signinup"
+            | "/<tenantId>/authorisationurl"
+            | "/<tenantId>/loginmethods"
+            | "/callback/apple"
+            | "/user/email/verify/token"
+            | "/<tenantId>/user/email/verify"
+            | "/user/email/verify"
+            | "/jwt/jwks.json"
+            | "/.well-known/openid-configuration"
+            | "/oauth/login"
+            | "/oauth/auth"
+            | "/oauth/token"
+            | "/oauth/userinfo"
+            | "/oauth/revoke"
+            | "/oauth/introspect"
+            | "/oauth/end_session"
+            | "/oauth/login/info"
+            | "/oauth/logout"
+            | "/example"
+            | "/<tenantId>/webauthn/options/register"
+            | "/<tenantId>/webauthn/options/signin"
+            | "/<tenantId>/webauthn/signup"
+            | "/<tenantId>/webauthn/signin"
+            | "/<tenantId>/webauthn/recover/account/token"
+            | "/<tenantId>/webauthn/recover/account"
+            | "/<tenantId>/webauthn/credential"
+            | "/<tenantId>/webauthn/credential/remove"
+            | "/<tenantId>/webauthn/credential/list"
+            | "/<tenantId>/webauthn/email/exists"
+            | "/<tenantId>/user/webauthn/reset/token"
+            | "/<tenantId>/user/webauthn/reset"
+    >(
+        template: PathParam<P, "put">,
+        config: RequestInitWithInferredBody<P, "put">,
         preAPIHook?: PreAPIHookFunction,
         postAPIHook?: PostAPIHookFunction
     ) => Promise<{
-        jsonBody: JsonBodyType;
+        jsonBody: import("./sdk/types").RemoveGeneralError<
+            import("./sdk/types").UncleanedResponseBody<P, "put">
+        > extends infer T
+            ? T extends import("./sdk/types").RemoveGeneralError<import("./sdk/types").UncleanedResponseBody<P, "put">>
+                ? T extends any
+                    ? { [K in keyof T]-?: NonNullable<T[K]> }
+                    : never
+                : never
+            : never;
         fetchResponse: Response;
     }>;
     fetch: (
@@ -71,7 +319,64 @@ export default class Querier {
         url: string;
         requestInit: RequestInit;
     }>;
-    getFullUrl: (tenantId: string | undefined, pathStr: string, queryParams?: Record<string, string>) => string;
+    getFullUrl: <
+        P extends
+            | "/mfa/info"
+            | "/totp/device/list"
+            | "/totp/device"
+            | "/totp/device/remove"
+            | "/totp/device/verify"
+            | "/totp/verify"
+            | "/<tenantId>/signinup/code"
+            | "/<tenantId>/signinup/code/resend"
+            | "/<tenantId>/signinup/code/consume"
+            | "/<tenantId>/signup/email/exists⠀⠀"
+            | "/<tenantId>/passwordless/email/exists"
+            | "/<tenantId>/signup/phoneNumber/exists"
+            | "/<tenantId>/passwordless/phonenumber/exists"
+            | "/signout"
+            | "/session/refresh"
+            | "/<tenantId>/signin"
+            | "/<tenantId>/signup"
+            | "/<tenantId>/signup/email/exists"
+            | "/<tenantId>/emailpassword/email/exists"
+            | "/<tenantId>/user/password/reset/token"
+            | "/<tenantId>/user/password/reset"
+            | "/<tenantId>/signinup"
+            | "/<tenantId>/authorisationurl"
+            | "/<tenantId>/loginmethods"
+            | "/callback/apple"
+            | "/user/email/verify/token"
+            | "/<tenantId>/user/email/verify"
+            | "/user/email/verify"
+            | "/jwt/jwks.json"
+            | "/.well-known/openid-configuration"
+            | "/oauth/login"
+            | "/oauth/auth"
+            | "/oauth/token"
+            | "/oauth/userinfo"
+            | "/oauth/revoke"
+            | "/oauth/introspect"
+            | "/oauth/end_session"
+            | "/oauth/login/info"
+            | "/oauth/logout"
+            | "/example"
+            | "/<tenantId>/webauthn/options/register"
+            | "/<tenantId>/webauthn/options/signin"
+            | "/<tenantId>/webauthn/signup"
+            | "/<tenantId>/webauthn/signin"
+            | "/<tenantId>/webauthn/recover/account/token"
+            | "/<tenantId>/webauthn/recover/account"
+            | "/<tenantId>/webauthn/credential"
+            | "/<tenantId>/webauthn/credential/remove"
+            | "/<tenantId>/webauthn/credential/list"
+            | "/<tenantId>/webauthn/email/exists"
+            | "/<tenantId>/user/webauthn/reset/token"
+            | "/<tenantId>/user/webauthn/reset",
+        M extends Method
+    >(
+        path: PathParam<P, M>
+    ) => string;
     getResponseJsonOrThrowGeneralError: (response: Response) => Promise<any>;
     static preparePreAPIHook: <Action>({
         recipePreAPIHook,

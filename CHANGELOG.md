@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.16.0] - 2025-05-16
+
+-   Added support for auto inference of request/response body types along with query parameter types in querier methods.
+-   Adds a script to generate the types based on the FDI openapi spec.
+-   Include the `shouldTryLinkingToSessionUser` flag in the `Webauthn` recipe methods
+-   Update supported FDI versions and package version
 -   Add WebAuthn list and remove credential methods
 -   Added `registerCredentialWithUser` method that creates and registers a credential with a user
 

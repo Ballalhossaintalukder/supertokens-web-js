@@ -58,17 +58,17 @@ export default function getRecipeImplementation(
                 };
             }
 
-            const { jsonBody, fetchResponse } = await querier.post<{
-                status: "OK";
-                deviceId: string;
-                preAuthSessionId: string;
-                flowType: PasswordlessFlowType;
-            }>(
-                await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
-                    userContext: input.userContext,
-                }),
-                "/signinup/code",
-                { body: JSON.stringify(bodyObj) },
+            const { jsonBody, fetchResponse } = await querier.post(
+                {
+                    path: "/<tenantId>/signinup/code",
+                    pathParams: {
+                        tenantId:
+                            (await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
+                                userContext: input.userContext,
+                            })) || "public",
+                    },
+                },
+                { body: bodyObj },
                 Querier.preparePreAPIHook({
                     recipePreAPIHook: recipeImplInput.preAPIHook,
                     action: "PASSWORDLESS_CREATE_CODE",
@@ -104,12 +104,14 @@ export default function getRecipeImplementation(
                 shouldTryLinkingWithSessionUser: input.shouldTryLinkingWithSessionUser,
             };
 
-            const { jsonBody, fetchResponse } = await querier.post<{
-                status: "OK" | "RESTART_FLOW_ERROR";
-            }>(
-                input.tenantId,
-                "/signinup/code/resend",
-                { body: JSON.stringify(bodyObj) },
+            const { jsonBody, fetchResponse } = await querier.post(
+                {
+                    path: "/<tenantId>/signinup/code/resend",
+                    pathParams: {
+                        tenantId: input.tenantId || "public",
+                    },
+                },
+                { body: bodyObj },
                 Querier.preparePreAPIHook({
                     recipePreAPIHook: recipeImplInput.preAPIHook,
                     action: "PASSWORDLESS_RESEND_CODE",
@@ -160,24 +162,14 @@ export default function getRecipeImplementation(
                 };
             }
 
-            type ResponseType =
-                | {
-                      status: "OK";
-                      createdNewRecipeUser: boolean;
-                      user: User;
-                  }
-                | {
-                      status: "INCORRECT_USER_INPUT_CODE_ERROR" | "EXPIRED_USER_INPUT_CODE_ERROR";
-                      failedCodeInputAttemptCount: number;
-                      maximumCodeInputAttempts: number;
-                  }
-                | { status: "RESTART_FLOW_ERROR" }
-                | { status: "SIGN_IN_UP_NOT_ALLOWED"; reason: string };
-
-            const { jsonBody, fetchResponse } = await querier.post<ResponseType>(
-                input.tenantId,
-                "/signinup/code/consume",
-                { body: JSON.stringify(bodyObj) },
+            const { jsonBody, fetchResponse } = await querier.post(
+                {
+                    path: "/<tenantId>/signinup/code/consume",
+                    pathParams: {
+                        tenantId: input.tenantId || "public",
+                    },
+                },
+                { body: bodyObj },
                 Querier.preparePreAPIHook({
                     recipePreAPIHook: recipeImplInput.preAPIHook,
                     action: "PASSWORDLESS_CONSUME_CODE",
@@ -228,16 +220,20 @@ export default function getRecipeImplementation(
             doesExist: boolean;
             fetchResponse: Response;
         }> {
-            const { jsonBody, fetchResponse } = await querier.get<{
-                status: "OK";
-                exists: boolean;
-            }>(
-                await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
-                    userContext: input.userContext,
-                }),
-                "/passwordless/email/exists",
+            const { jsonBody, fetchResponse } = await querier.get(
+                {
+                    path: "/<tenantId>/passwordless/email/exists",
+                    pathParams: {
+                        tenantId:
+                            (await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
+                                userContext: input.userContext,
+                            })) || "public",
+                    },
+                    queryParams: {
+                        email: input.email,
+                    },
+                },
                 {},
-                { email: input.email },
                 Querier.preparePreAPIHook({
                     recipePreAPIHook: recipeImplInput.preAPIHook,
                     action: "EMAIL_EXISTS",
@@ -266,16 +262,20 @@ export default function getRecipeImplementation(
             doesExist: boolean;
             fetchResponse: Response;
         }> {
-            const { jsonBody, fetchResponse } = await querier.get<{
-                status: "OK";
-                exists: boolean;
-            }>(
-                await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
-                    userContext: input.userContext,
-                }),
-                "/passwordless/phonenumber/exists",
+            const { jsonBody, fetchResponse } = await querier.get(
+                {
+                    path: "/<tenantId>/passwordless/phonenumber/exists",
+                    pathParams: {
+                        tenantId:
+                            (await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
+                                userContext: input.userContext,
+                            })) || "public",
+                    },
+                    queryParams: {
+                        phoneNumber: input.phoneNumber,
+                    },
+                },
                 {},
-                { phoneNumber: input.phoneNumber },
                 Querier.preparePreAPIHook({
                     recipePreAPIHook: recipeImplInput.preAPIHook,
                     action: "PHONE_NUMBER_EXISTS",

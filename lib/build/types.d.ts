@@ -125,7 +125,7 @@ export declare type User = {
         id: string;
         userId: string;
     }[];
-    webauthn: {
+    webauthn?: {
         credentialIds: string[];
     };
     loginMethods: {

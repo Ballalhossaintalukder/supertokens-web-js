@@ -137,6 +137,7 @@ export declare type RecipeInterface = {
     signUp: (input: {
         webauthnGeneratedOptionsId: string;
         credential: RegistrationResponseJSON;
+        shouldTryLinkingWithSessionUser?: boolean;
         options?: RecipeFunctionOptions;
         userContext: any;
     }) => Promise<
@@ -176,6 +177,7 @@ export declare type RecipeInterface = {
     signIn: (input: {
         webauthnGeneratedOptionsId: string;
         credential: AuthenticationResponseJSON;
+        shouldTryLinkingWithSessionUser?: boolean;
         options?: RecipeFunctionOptions;
         userContext: any;
     }) => Promise<
@@ -294,6 +296,7 @@ export declare type RecipeInterface = {
     >;
     registerCredentialWithSignUp: (input: {
         email: string;
+        shouldTryLinkingWithSessionUser?: boolean;
         options?: RecipeFunctionOptions;
         userContext: any;
     }) => Promise<
@@ -346,7 +349,11 @@ export declare type RecipeInterface = {
               error: any;
           }
     >;
-    authenticateCredentialWithSignIn: (input: { options?: RecipeFunctionOptions; userContext: any }) => Promise<
+    authenticateCredentialWithSignIn: (input: {
+        shouldTryLinkingWithSessionUser?: boolean;
+        options?: RecipeFunctionOptions;
+        userContext: any;
+    }) => Promise<
         | {
               status: "OK";
               user: User;
@@ -437,7 +444,7 @@ export declare type RecipeInterface = {
         | GeneralErrorResponse
         | {
               status: "REGISTER_CREDENTIAL_NOT_ALLOWED";
-              reason: string;
+              reason?: string;
           }
         | {
               status: "INVALID_EMAIL_ERROR";
@@ -454,7 +461,7 @@ export declare type RecipeInterface = {
           }
         | {
               status: "INVALID_AUTHENTICATOR_ERROR";
-              reason: string;
+              reason?: string;
           }
         | {
               status: "AUTHENTICATOR_ALREADY_REGISTERED";
@@ -477,6 +484,7 @@ export declare type RecipeInterface = {
                   createdAt: number;
                   recipeUserId: string;
               }[];
+              fetchResponse: Response;
           }
         | GeneralErrorResponse
     >;
@@ -487,6 +495,7 @@ export declare type RecipeInterface = {
     }) => Promise<
         | {
               status: "OK";
+              fetchResponse: Response;
           }
         | GeneralErrorResponse
         | {
@@ -508,20 +517,25 @@ export declare type RecipeInterface = {
         | GeneralErrorResponse
         | {
               status: "REGISTER_CREDENTIAL_NOT_ALLOWED";
-              reason: string;
+              reason?: string;
+              fetchResponse: Response;
           }
         | {
               status: "INVALID_CREDENTIALS_ERROR";
+              fetchResponse: Response;
           }
         | {
               status: "OPTIONS_NOT_FOUND_ERROR";
+              fetchResponse: Response;
           }
         | {
               status: "INVALID_OPTIONS_ERROR";
+              fetchResponse: Response;
           }
         | {
               status: "INVALID_AUTHENTICATOR_ERROR";
-              reason: string;
+              reason?: string;
+              fetchResponse: Response;
           }
     >;
     doesBrowserSupportWebAuthn: (input: { userContext: any }) => Promise<

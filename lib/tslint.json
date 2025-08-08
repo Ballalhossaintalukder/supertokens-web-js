@@ -41,5 +41,8 @@
         "variable-name": [true, "ban-keywords"],
         "whitespace": [true, "check-branch", "check-decl", "check-operator", "check-separator", "check-type"]
     },
-    "rulesDirectory": ["../tslint-rules"]
+    "rulesDirectory": ["../tslint-rules"],
+    "linterOptions": {
+        "exclude": ["ts/sdk/versions/**/*.d.ts"]
+    }
 }
