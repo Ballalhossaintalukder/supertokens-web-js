@@ -2,6 +2,7 @@
 import { paths as pathsV3_1 } from "./versions/3.1/schema";
 import { paths as pathsV4_0 } from "./versions/4.0/schema";
 import { paths as pathsV4_1 } from "./versions/4.1/schema";
+import { paths as pathsV4_2 } from "./versions/4.2/schema";
 
 type MergeMethods<M1, M2> = {
     [K in keyof M1 | keyof M2]: K extends keyof M1
@@ -31,4 +32,4 @@ type MergeManyPaths<T extends Record<string, any>[]> = T extends [infer First, .
         : never
     : {};
 
-export type paths = MergeManyPaths<[pathsV3_1, pathsV4_0, pathsV4_1]>;
+export type paths = MergeManyPaths<[pathsV3_1, pathsV4_0, pathsV4_1, pathsV4_2]>;

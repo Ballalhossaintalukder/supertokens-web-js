@@ -18,7 +18,10 @@ export declare type PreAndPostAPIHookAction =
     | "SIGN_IN"
     | "EMAIL_EXISTS"
     | "GENERATE_RECOVER_ACCOUNT_TOKEN"
-    | "RECOVER_ACCOUNT";
+    | "RECOVER_ACCOUNT"
+    | "LIST_CREDENTIALS"
+    | "REMOVE_CREDENTIAL"
+    | "REGISTER_CREDENTIAL";
 export declare type PreAPIHookContext = RecipePreAPIHookContext<PreAndPostAPIHookAction>;
 export declare type PostAPIHookContext = RecipePostAPIHookContext<PreAndPostAPIHookAction>;
 export declare type ResidentKey = "required" | "preferred" | "discouraged";
@@ -254,7 +257,7 @@ export declare type RecipeInterface = {
               fetchResponse: Response;
           }
     >;
-    registerCredential: (input: {
+    createCredential: (input: {
         registrationOptions: Omit<RegistrationOptions, "fetchResponse" | "status">;
         userContext: any;
     }) => Promise<
@@ -426,6 +429,113 @@ export declare type RecipeInterface = {
         | {
               status: "WEBAUTHN_NOT_SUPPORTED";
               error: any;
+          }
+    >;
+    createAndRegisterCredentialForSessionUser: (input: {
+        recipeUserId: string;
+        email: string;
+        options?: RecipeFunctionOptions;
+        userContext: any;
+    }) => Promise<
+        | {
+              status: "OK";
+              fetchResponse: Response;
+          }
+        | GeneralErrorResponse
+        | {
+              status: "REGISTER_CREDENTIAL_NOT_ALLOWED";
+              reason?: string;
+          }
+        | {
+              status: "INVALID_EMAIL_ERROR";
+              err: string;
+          }
+        | {
+              status: "INVALID_CREDENTIALS_ERROR";
+          }
+        | {
+              status: "OPTIONS_NOT_FOUND_ERROR";
+          }
+        | {
+              status: "INVALID_OPTIONS_ERROR";
+          }
+        | {
+              status: "INVALID_AUTHENTICATOR_ERROR";
+              reason?: string;
+          }
+        | {
+              status: "AUTHENTICATOR_ALREADY_REGISTERED";
+          }
+        | {
+              status: "FAILED_TO_REGISTER_USER";
+              error: any;
+          }
+        | {
+              status: "WEBAUTHN_NOT_SUPPORTED";
+              error: any;
+          }
+    >;
+    listCredentials: (input: { options?: RecipeFunctionOptions; userContext: any }) => Promise<
+        | {
+              status: "OK";
+              credentials: {
+                  webauthnCredentialId: string;
+                  relyingPartyId: string;
+                  createdAt: number;
+                  recipeUserId: string;
+              }[];
+              fetchResponse: Response;
+          }
+        | GeneralErrorResponse
+    >;
+    removeCredential: (input: {
+        webauthnCredentialId: string;
+        options?: RecipeFunctionOptions;
+        userContext: any;
+    }) => Promise<
+        | {
+              status: "OK";
+              fetchResponse: Response;
+          }
+        | GeneralErrorResponse
+        | {
+              status: "CREDENTIAL_NOT_FOUND_ERROR";
+              fetchResponse: Response;
+          }
+    >;
+    registerCredential: (input: {
+        webauthnGeneratedOptionsId: string;
+        recipeUserId: string;
+        credential: RegistrationResponseJSON;
+        options?: RecipeFunctionOptions;
+        userContext: any;
+    }) => Promise<
+        | {
+              status: "OK";
+              fetchResponse: Response;
+          }
+        | GeneralErrorResponse
+        | {
+              status: "REGISTER_CREDENTIAL_NOT_ALLOWED";
+              reason?: string;
+              fetchResponse: Response;
+          }
+        | {
+              status: "INVALID_CREDENTIALS_ERROR";
+              fetchResponse: Response;
+          }
+        | {
+              status: "OPTIONS_NOT_FOUND_ERROR";
+              fetchResponse: Response;
+          }
+        | {
+              status: "INVALID_OPTIONS_ERROR";
+              fetchResponse: Response;
+          }
+        | {
+              status: "INVALID_AUTHENTICATOR_ERROR";
+              reason?: string;
+              fetchResponse: Response;
           }
     >;
     doesBrowserSupportWebAuthn: (input: { userContext: any }) => Promise<

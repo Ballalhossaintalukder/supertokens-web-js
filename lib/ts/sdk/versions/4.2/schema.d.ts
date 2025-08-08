@@ -862,6 +862,42 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/<tenantId>/webauthn/credential/remove": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Remove a WebAuthn credential for an existing user
+         *      */
+        post: operations["webauthnRemoveCredential"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/<tenantId>/webauthn/credential/list": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description List all WebAuthn credentials for an existing user
+         *      */
+        get: operations["webauthnListCredentials"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/<tenantId>/webauthn/email/exists": {
         parameters: {
             query?: never;
@@ -3613,6 +3649,8 @@ export interface operations {
                 "application/json": {
                     /** @example opt_123... */
                     webauthnGeneratedOptionsId: string;
+                    /** @example user_123... */
+                    recipeUserId: string;
                     credential: components["schemas"]["registrationPayload"];
                 };
             };
@@ -3639,6 +3677,95 @@ export interface operations {
                               /** @example Register credential not allowed */
                               reason?: string;
                           };
+                };
+            };
+            404: components["responses"]["404"];
+            500: components["responses"]["500"];
+        };
+    };
+    webauthnRemoveCredential: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @example webauthn */
+                rid?: components["parameters"]["webauthnRid"];
+                /** @description This will only be here if enabled by the user. */
+                "anti-csrf"?: components["parameters"]["anti-csrf"];
+            };
+            path: {
+                /** @description Its value depends on the apiBasePath set by the user */
+                apiBasePath: components["parameters"]["apiBasePath"];
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /** @example cred_123... */
+                    webauthnCredentialId: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Credential removal response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                          }
+                        | components["schemas"]["generalErrorResponse"]
+                        | {
+                              /** @enum {string} */
+                              status: "CREDENTIAL_NOT_FOUND_ERROR";
+                          };
+                };
+            };
+            404: components["responses"]["404"];
+            500: components["responses"]["500"];
+        };
+    };
+    webauthnListCredentials: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @example webauthn */
+                rid?: components["parameters"]["webauthnRid"];
+                /** @description This will only be here if enabled by the user. */
+                "anti-csrf"?: components["parameters"]["anti-csrf"];
+            };
+            path: {
+                /** @description Its value depends on the apiBasePath set by the user */
+                apiBasePath: components["parameters"]["apiBasePath"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Credential list response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json":
+                        | {
+                              status: components["schemas"]["statusOK"];
+                              credentials?: {
+                                  /** @example cred_123... */
+                                  webauthnCredentialId: string;
+                                  /** @example https://example.com */
+                                  relyingPartyId: string;
+                                  /** @example user_123... */
+                                  recipeUserId: string;
+                                  /** @example 1638433545183 */
+                                  createdAt: number;
+                              }[];
+                          }
+                        | components["schemas"]["generalErrorResponse"];
                 };
             };
             404: components["responses"]["404"];

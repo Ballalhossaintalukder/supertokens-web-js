@@ -13,6 +13,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Adds a script to generate the types based on the FDI openapi spec.
 -   Include the `shouldTryLinkingToSessionUser` flag in the `Webauthn` recipe methods
 -   Update supported FDI versions and package version
+-   Add WebAuthn list and remove credential methods
+-   Added `createAndRegisterCredentialForSessionUser` method that creates and registers a credential with a user
+
+### Breaking changes
+
+-   The `registerCredential` method has been renamed to `createCredential`. This was done to better represent the creation of a credential and not the actual registration of it with the backend API. The new `registerCredential` implementation now calls the backend API.
 
 ## [0.15.0] - 2025-03-20
 

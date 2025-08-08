@@ -317,7 +317,7 @@ export default class RecipeWrapper {
     }
 
     /**
-     * Register credential with the passed options by using native webauthn functions.
+     * Creates the credential with the passed options by using native webauthn functions.
      *
      * It uses `@simplewebauthn/browser` to make the webauthn calls.
      *
@@ -325,7 +325,7 @@ export default class RecipeWrapper {
      *
      * @returns `{ status: "OK", ...}` if successful along with registration response received
      */
-    static registerCredential(input: {
+    static createCredential(input: {
         registrationOptions: Omit<RegistrationOptions, "fetchResponse" | "status">;
         userContext: any;
     }): Promise<
@@ -337,7 +337,7 @@ export default class RecipeWrapper {
         | { status: "FAILED_TO_REGISTER_USER"; error: any }
         | { status: "WEBAUTHN_NOT_SUPPORTED"; error: any }
     > {
-        return Recipe.getInstanceOrThrow().recipeImplementation.registerCredential(input);
+        return Recipe.getInstanceOrThrow().recipeImplementation.createCredential(input);
     }
 
     /**
@@ -508,6 +508,128 @@ export default class RecipeWrapper {
         });
     }
 
+    /**
+     * Register the new device with the passed user details
+     *
+     * It uses `@simplewebauthn/browser` to make the webauthn calls.
+     *
+     * @param email Email of the WebAuthn user to register the credential for
+     *
+     * @param recipeUserId The recipe user ID of the webauthn user to register the credential for
+     *
+     * @param userContext (OPTIONAL) Refer to {@link https://supertokens.com/docs/emailpassword/advanced-customizations/user-context the documentation}
+     *
+     * @param options (OPTIONAL) Use this to configure additional properties (for example pre api hooks)
+     *
+     * @returns `{ status: "OK", ...}` if successful
+     */
+    static createAndRegisterCredentialForSessionUser(input: {
+        email: string;
+        recipeUserId: string;
+        options?: RecipeFunctionOptions;
+        userContext: any;
+    }): Promise<
+        | {
+              status: "OK";
+              fetchResponse: Response;
+          }
+        | GeneralErrorResponse
+        | { status: "REGISTER_CREDENTIAL_NOT_ALLOWED"; reason?: string }
+        | { status: "INVALID_EMAIL_ERROR"; err: string }
+        | { status: "INVALID_CREDENTIALS_ERROR" }
+        | { status: "OPTIONS_NOT_FOUND_ERROR" }
+        | { status: "INVALID_OPTIONS_ERROR" }
+        | { status: "INVALID_AUTHENTICATOR_ERROR"; reason?: string }
+        | { status: "AUTHENTICATOR_ALREADY_REGISTERED" }
+        | { status: "FAILED_TO_REGISTER_USER"; error: any }
+        | { status: "WEBAUTHN_NOT_SUPPORTED"; error: any }
+    > {
+        return Recipe.getInstanceOrThrow().recipeImplementation.createAndRegisterCredentialForSessionUser({
+            ...input,
+            userContext: input?.userContext,
+        });
+    }
+
+    /**
+     * List the credentials for the user
+     *
+     * @param options (OPTIONAL) Use this to configure additional properties (for example pre api hooks)
+     *
+     * @returns `{ status: "OK", ...}` if successful along with a list of the user's credentials
+     */
+    static listCredentials(input: { options?: RecipeFunctionOptions; userContext: any }): Promise<
+        | {
+              status: "OK";
+              credentials: {
+                  webauthnCredentialId: string;
+                  relyingPartyId: string;
+                  createdAt: number;
+                  recipeUserId: string;
+              }[];
+          }
+        | GeneralErrorResponse
+    > {
+        return Recipe.getInstanceOrThrow().recipeImplementation.listCredentials({
+            ...input,
+            userContext: input?.userContext,
+        });
+    }
+
+    /**
+     * Remove the credential for the passed credential ID
+     *
+     * @param webauthnCredentialId The ID of the credential to remove
+     *
+     * @param options (OPTIONAL) Use this to configure additional properties (for example pre api hooks)
+     *
+     * @returns `{ status: "OK", ...}` if successful
+     */
+    static removeCredential(input: {
+        webauthnCredentialId: string;
+        options?: RecipeFunctionOptions;
+        userContext: any;
+    }): Promise<
+        { status: "OK" } | GeneralErrorResponse | { status: "CREDENTIAL_NOT_FOUND_ERROR"; fetchResponse: Response }
+    > {
+        return Recipe.getInstanceOrThrow().recipeImplementation.removeCredential({
+            ...input,
+            userContext: input?.userContext,
+        });
+    }
+
+    /**
+     * Register the new device with the passed user details
+     *
+     * It uses `@simplewebauthn/browser` to make the webauthn calls.
+     *
+     * @param webauthnGeneratedOptionsId The ID of the stored options
+     *
+     * @param recipeUserId The recipe user ID of the webauthn user to register the credential for
+     *
+     * @param credential The credential to register
+     *
+     * @param options (OPTIONAL) Use this to configure additional properties (for example pre api hooks)
+     *
+     * @returns `{ status: "OK", ...}` if successful
+     */
+    static registerCredential(input: {
+        webauthnGeneratedOptionsId: string;
+        recipeUserId: string;
+        credential: RegistrationResponseJSON;
+        options?: RecipeFunctionOptions;
+        userContext: any;
+    }): Promise<
+        | { status: "OK" }
+        | GeneralErrorResponse
+        | { status: "REGISTER_CREDENTIAL_NOT_ALLOWED"; reason?: string }
+        | { status: "INVALID_CREDENTIALS_ERROR" }
+        | { status: "OPTIONS_NOT_FOUND_ERROR" }
+        | { status: "INVALID_OPTIONS_ERROR" }
+        | { status: "INVALID_AUTHENTICATOR_ERROR"; reason?: string }
+    > {
+        return Recipe.getInstanceOrThrow().recipeImplementation.registerCredential(input);
+    }
+
     static doesBrowserSupportWebAuthn(input: { userContext: any }): Promise<
         | {
               status: "OK";
@@ -534,9 +656,13 @@ const recoverAccount = RecipeWrapper.recoverAccount;
 const registerCredentialWithSignUp = RecipeWrapper.registerCredentialWithSignUp;
 const authenticateCredentialWithSignIn = RecipeWrapper.authenticateCredentialWithSignIn;
 const registerCredentialWithRecoverAccount = RecipeWrapper.registerCredentialWithRecoverAccount;
-const registerCredential = RecipeWrapper.registerCredential;
+const createCredential = RecipeWrapper.createCredential;
 const authenticateCredential = RecipeWrapper.authenticateCredential;
 const doesBrowserSupportWebAuthn = RecipeWrapper.doesBrowserSupportWebAuthn;
+const listCredentials = RecipeWrapper.listCredentials;
+const removeCredential = RecipeWrapper.removeCredential;
+const registerCredential = RecipeWrapper.registerCredential;
+const createAndRegisterCredentialForSessionUser = RecipeWrapper.createAndRegisterCredentialForSessionUser;
 
 export {
     init,
@@ -549,9 +675,13 @@ export {
     recoverAccount,
     registerCredentialWithSignUp,
     authenticateCredentialWithSignIn,
-    registerCredentialWithRecoverAccount,
-    registerCredential,
+    createCredential,
     authenticateCredential,
     doesBrowserSupportWebAuthn,
     RecipeInterface,
+    listCredentials,
+    removeCredential,
+    registerCredential,
+    createAndRegisterCredentialForSessionUser,
+    registerCredentialWithRecoverAccount,
 };

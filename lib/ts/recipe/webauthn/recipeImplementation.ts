@@ -26,6 +26,7 @@ import {
     startAuthentication,
     startRegistration,
 } from "@simplewebauthn/browser";
+import { paths } from "../../sdk/paths";
 
 export default function getRecipeImplementation(
     recipeImplInput: RecipeImplementationInput<PreAndPostAPIHookAction>
@@ -290,7 +291,7 @@ export default function getRecipeImplementation(
                 fetchResponse,
             };
         },
-        registerCredential: async function ({ registrationOptions }) {
+        createCredential: async function ({ registrationOptions }) {
             let registrationResponse: RegistrationResponseJSON;
             try {
                 registrationResponse = await startRegistration({ optionsJSON: registrationOptions });
@@ -339,16 +340,16 @@ export default function getRecipeImplementation(
             }
 
             // We should have received a valid registration options response.
-            const registerCredentialResponse = await this.registerCredential({ registrationOptions, userContext });
-            if (registerCredentialResponse.status !== "OK") {
-                return registerCredentialResponse;
+            const createCredentialResponse = await this.createCredential({ registrationOptions, userContext });
+            if (createCredentialResponse.status !== "OK") {
+                return createCredentialResponse;
             }
 
             // We should have a valid registration response for the passed credentials
             // and we are good to go ahead and verify them.
             return await this.signUp({
                 webauthnGeneratedOptionsId: registrationOptions.webauthnGeneratedOptionsId,
-                credential: registerCredentialResponse.registrationResponse,
+                credential: createCredentialResponse.registrationResponse,
                 shouldTryLinkingWithSessionUser,
                 options,
                 userContext,
@@ -422,21 +423,165 @@ export default function getRecipeImplementation(
             }
 
             // We should have received a valid registration options response.
-            const registerCredentialResponse = await this.registerCredential({
+            const createCredentialResponse = await this.createCredential({
                 registrationOptions,
                 userContext,
             });
-            if (registerCredentialResponse.status !== "OK") {
-                return registerCredentialResponse;
+            if (createCredentialResponse.status !== "OK") {
+                return createCredentialResponse;
             }
 
             return await this.recoverAccount({
                 token: recoverAccountToken,
                 webauthnGeneratedOptionsId: registrationOptions.webauthnGeneratedOptionsId,
-                credential: registerCredentialResponse.registrationResponse,
+                credential: createCredentialResponse.registrationResponse,
                 options,
                 userContext,
             });
+        },
+        createAndRegisterCredentialForSessionUser: async function ({ recipeUserId, email, options, userContext }) {
+            // Get the registration options by using the passed email ID.
+            const registrationOptions = await this.getRegisterOptions({ options, userContext, email });
+            if (registrationOptions?.status !== "OK") {
+                // If we did not get an OK status, we need to return the error as is.
+
+                // If the `status` is `RECOVER_ACCOUNT_TOKEN_INVALID_ERROR`, we need to throw an
+                // error since that should never happen as we are registering with an email
+                // and not a token.
+                if (registrationOptions?.status === "RECOVER_ACCOUNT_TOKEN_INVALID_ERROR") {
+                    throw new Error("Got `RECOVER_ACCOUNT_TOKEN_INVALID_ERROR` status that should never happen");
+                }
+
+                return registrationOptions;
+            }
+
+            // We should have received a valid registration options response.
+            const createCredentialResponse = await this.createCredential({ registrationOptions, userContext });
+            if (createCredentialResponse.status !== "OK") {
+                return createCredentialResponse;
+            }
+
+            // We should have a valid registration response for the passed credentials
+            // and we are good to go ahead and verify them.
+            return await this.registerCredential({
+                webauthnGeneratedOptionsId: registrationOptions.webauthnGeneratedOptionsId,
+                recipeUserId,
+                credential: createCredentialResponse.registrationResponse,
+                options,
+                userContext,
+            });
+        },
+        listCredentials: async function ({ options, userContext }) {
+            const { jsonBody, fetchResponse } = await querier.get(
+                {
+                    path: "/<tenantId>/webauthn/credential/list",
+                    pathParams: {
+                        tenantId:
+                            (await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
+                                userContext: userContext,
+                            })) || "public",
+                    },
+                },
+                {},
+                Querier.preparePreAPIHook({
+                    recipePreAPIHook: recipeImplInput.preAPIHook,
+                    action: "LIST_CREDENTIALS",
+                    options: options,
+                    userContext: userContext,
+                }),
+                Querier.preparePostAPIHook({
+                    recipePostAPIHook: recipeImplInput.postAPIHook,
+                    action: "LIST_CREDENTIALS",
+                    userContext: userContext,
+                })
+            );
+
+            return {
+                ...jsonBody,
+                fetchResponse,
+            };
+        },
+        removeCredential: async function ({ webauthnCredentialId, options, userContext }) {
+            const { jsonBody, fetchResponse } = await querier.post(
+                {
+                    path: "/<tenantId>/webauthn/credential/remove",
+                    pathParams: {
+                        tenantId:
+                            (await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
+                                userContext: userContext,
+                            })) || "public",
+                    },
+                },
+                {
+                    body: {
+                        webauthnCredentialId,
+                    },
+                },
+                Querier.preparePreAPIHook({
+                    recipePreAPIHook: recipeImplInput.preAPIHook,
+                    action: "REMOVE_CREDENTIAL",
+                    options: options,
+                    userContext: userContext,
+                }),
+                Querier.preparePostAPIHook({
+                    recipePostAPIHook: recipeImplInput.postAPIHook,
+                    action: "REMOVE_CREDENTIAL",
+                    userContext: userContext,
+                })
+            );
+
+            return {
+                ...jsonBody,
+                fetchResponse,
+            };
+        },
+        registerCredential: async function ({
+            webauthnGeneratedOptionsId,
+            recipeUserId,
+            credential,
+            options,
+            userContext,
+        }) {
+            // This weird trick is required because otherwise TS will complain since we added the new prop in 4.2, but still support 4.1
+            // It doesn't get picked up somehow...
+            // TODO: Figure out why merging doesn't work right in this case
+            const body: Required<
+                paths["/<tenantId>/webauthn/credential"]["post"]
+            >["requestBody"]["content"]["application/json"] = {
+                webauthnGeneratedOptionsId,
+                recipeUserId,
+                credential,
+            };
+            const { jsonBody, fetchResponse } = await querier.post(
+                {
+                    path: "/<tenantId>/webauthn/credential",
+                    pathParams: {
+                        tenantId:
+                            (await Multitenancy.getInstanceOrThrow().recipeImplementation.getTenantId({
+                                userContext: userContext,
+                            })) || "public",
+                    },
+                },
+                {
+                    body,
+                },
+                Querier.preparePreAPIHook({
+                    recipePreAPIHook: recipeImplInput.preAPIHook,
+                    action: "REGISTER_CREDENTIAL",
+                    options: options,
+                    userContext: userContext,
+                }),
+                Querier.preparePostAPIHook({
+                    recipePostAPIHook: recipeImplInput.postAPIHook,
+                    action: "REGISTER_CREDENTIAL",
+                    userContext: userContext,
+                })
+            );
+
+            return {
+                ...jsonBody,
+                fetchResponse,
+            };
         },
         doesBrowserSupportWebAuthn: async () => {
             try {
