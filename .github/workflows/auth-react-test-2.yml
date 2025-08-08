@@ -63,6 +63,7 @@ jobs:
             AUTH_REACT__APP_SERVER: ${{ inputs.AUTH_REACT__NODE_PORT }}
             AUTH_REACT__TEST_MODE: ${{ inputs.AUTH_REACT__TEST_MODE }}
             AUTH_REACT__PORT: ${{ inputs.AUTH_REACT__PORT }}
+            SUPERTOKENS_API_KEY: ${{ secrets.SUPERTOKENS_API_KEY }}
 
         steps:
             - uses: bissolli/gh-action-persist-workspace@v2
@@ -82,8 +83,8 @@ jobs:
               with:
                   driver-name: node
                   fdi-version: ${{ inputs.fdi-version }}
-              env:
-                  SUPERTOKENS_API_KEY: ${{ secrets.SUPERTOKENS_API_KEY }}
+            #   env:
+                #   SUPERTOKENS_API_KEY: ${{ secrets.SUPERTOKENS_API_KEY }}
 
             - name: Get last Node CDI version
               id: last-node-cdi-version
