@@ -66,6 +66,10 @@ jobs:
             SUPERTOKENS_API_KEY: ${{ secrets.SUPERTOKENS_API_KEY }}
 
         steps:
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+
             - uses: bissolli/gh-action-persist-workspace@v2
               with:
                   action: retrieve
