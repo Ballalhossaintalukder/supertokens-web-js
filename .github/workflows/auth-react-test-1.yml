@@ -1,0 +1,127 @@
+name: Auth-React Tests - L1
+
+on:
+    pull_request:
+        types:
+            - opened
+            - reopened
+            - synchronize
+    push:
+        tags:
+            - dev-v[0-9]+.[0-9]+.[0-9]+
+
+jobs:
+    define-versions:
+        runs-on: ubuntu-latest
+        outputs:
+            fdiVersions: ${{ steps.versions.outputs.fdiVersions }}
+            webJsInterfaceVersion: ${{ steps.versions.outputs.webJsInterfaceVersion }}
+        steps:
+            - uses: actions/checkout@v4
+
+            - uses: supertokens/get-supported-versions-action@main
+              id: versions
+              with:
+                  has-fdi: true
+                  has-web-js: true
+
+    setup-auth-react:
+        runs-on: ubuntu-latest
+        needs: define-versions
+        strategy:
+            fail-fast: true
+            matrix:
+                fdi-version: ${{ fromJSON(needs.define-versions.outputs.fdiVersions) }}
+
+        outputs:
+            AUTH_REACT__LOG_DIR: ${{ steps.envs.outputs.AUTH_REACT__LOG_DIR }}
+            AUTH_REACT__SCREENSHOT_DIR: ${{ steps.envs.outputs.AUTH_REACT__SCREENSHOT_DIR }}
+            AUTH_REACT__NODE_PORT: ${{ steps.envs.outputs.AUTH_REACT__NODE_PORT }}
+            AUTH_REACT__APP_SERVER: ${{ steps.envs.outputs.AUTH_REACT__NODE_PORT }}
+            AUTH_REACT__TEST_MODE: ${{ steps.envs.outputs.AUTH_REACT__TEST_MODE }}
+            AUTH_REACT__PORT: ${{ steps.envs.outputs.AUTH_REACT__PORT }}
+            specs: ${{ steps.envs.outputs.specs }}
+            fdiVersions: ${{ needs.define-versions.outputs.fdiVersions }}
+
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  path: supertokens-web-js
+
+            - uses: supertokens/get-versions-action@main
+              id: versions
+              with:
+                  driver-name: node
+                  fdi-version: ${{ matrix.fdi-version }}
+                  web-js-interface-version: ${{ needs.define-versions.outputs.webJsInterfaceVersion }}
+              env:
+                  SUPERTOKENS_API_KEY: ${{ secrets.SUPERTOKENS_API_KEY }}
+
+            - uses: supertokens/auth-react-testing-action/setup@main
+              id: envs
+              with:
+                  auth-react-version: ${{ steps.versions.outputs.webJsReactTag }}
+                  node-sdk-version: ${{ steps.versions.outputs.nodeTag }}
+                  fdi-version: ${{ matrix.fdi-version }}
+                  use-common-app-and-test-server: "true"
+                  persist-workspace: "false"
+
+            # We will use this in the test run to get the core version
+            - uses: actions/checkout@v4
+              with:
+                  repository: supertokens/supertokens-node
+                  ref: ${{ steps.versions.outputs.nodeTag }}
+                  path: supertokens-node
+
+            - name: Copy over required dependencies
+              run: |
+                  cd supertokens-web-js
+                  # Create a tarball of the web-js package
+                  npm pack
+
+                  cd ../supertokens-auth-react
+                  # Extract the tarball to the auth-react package
+                  tar -xf ../supertokens-web-js/supertokens-web-js-*.tgz --strip-components=1 -C node_modules/supertokens-web-js
+                  # Remove existing website package and link to the one from web-js
+                  rm -rf node_modules/supertokens-website
+                  ln -s "$PWD/../supertokens-web-js/node_modules/supertokens-website" node_modules
+
+            # - name: Set up auth-react with new dependencies
+            #   working-directory: supertokens-auth-react/examples/for-tests
+            #   env:
+            #     # Common
+            #     APP_SERVER: ${{ steps.envs.outputs.AUTH_REACT__APP_SERVER }}
+            #     NODE_PORT: ${{ steps.envs.outputs.AUTH_REACT__NODE_PORT }}
+            #     TEST_MODE: ${{ steps.envs.outputs.AUTH_REACT__TEST_MODE }}
+            #     # Step-specific
+            #     CI: true
+            #     BROWSER: none
+            #     PORT: ${{ steps.envs.outputs.AUTH_REACT__PORT }}
+            #     REACT_APP_API_PORT: ${{ steps.envs.outputs.AUTH_REACT__APP_SERVER }}
+            #   run: |
+            #     npm i
+            #     npm run prep
+
+            - uses: bissolli/gh-action-persist-workspace@v2
+              with:
+                  action: persist
+                  artifactName: auth-react-${{ matrix.fdi-version }}
+
+    launch-test-workflow:
+        uses: ./.github/workflows/auth-react-test-2.yml
+        needs: setup-auth-react
+        name: FDI ${{ matrix.fdi-version }}
+        strategy:
+            max-parallel: 1 # This is important to avoid ddos GHA API
+            fail-fast: false # Don't fail fast to avoid locking TF State
+            matrix:
+                fdi-version: ${{ fromJSON(needs.setup-auth-react.outputs.fdiVersions) }}
+        with:
+            fdi-version: ${{ matrix.fdi-version }}
+            specs: ${{ needs.setup-auth-react.outputs.specs }}
+            AUTH_REACT__LOG_DIR: ${{ needs.setup-auth-react.outputs.AUTH_REACT__LOG_DIR }}
+            AUTH_REACT__SCREENSHOT_DIR: ${{ needs.setup-auth-react.outputs.AUTH_REACT__SCREENSHOT_DIR }}
+            AUTH_REACT__APP_SERVER: ${{ needs.setup-auth-react.outputs.AUTH_REACT__APP_SERVER }}
+            AUTH_REACT__NODE_PORT: ${{ needs.setup-auth-react.outputs.AUTH_REACT__NODE_PORT }}
+            AUTH_REACT__TEST_MODE: ${{ needs.setup-auth-react.outputs.AUTH_REACT__TEST_MODE }}
+            AUTH_REACT__PORT: ${{ needs.setup-auth-react.outputs.AUTH_REACT__PORT }}
