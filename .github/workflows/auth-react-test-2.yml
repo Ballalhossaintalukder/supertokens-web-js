@@ -77,9 +77,20 @@ jobs:
                   has-cdi: true
                   working-directory: supertokens-node
 
+            - uses: supertokens/get-versions-action@main
+              id: versions
+              with:
+                  driver-name: node
+                  fdi-version: ${{ inputs.fdi-version }}
+              env:
+                  SUPERTOKENS_API_KEY: ${{ secrets.SUPERTOKENS_API_KEY }}
+
             - name: Get last Node CDI version
               id: last-node-cdi-version
-              run: echo "lastNodeCdiVersion=$(echo '${{ steps.node-cdi-versions.outputs.cdiVersions }}' | jq -r '.[-1]')" | tee -a "$GITHUB_OUTPUT" "$GITHUB_ENV"
+              run: |
+                export lastVersion=$(echo '${{ steps.node-cdi-versions.outputs.cdiVersions }}' | jq -r '.[-1]')
+                echo "lastNodeCdiVersion=$lastVersion" | tee -a "$GITHUB_OUTPUT" "$GITHUB_ENV"
+
             - name: Get Core version
               id: core-version
               uses: supertokens/get-versions-action@main
@@ -102,3 +113,4 @@ jobs:
                   check-name-suffix: "[FDI=${{ inputs.fdi-version }}][Spec=${{ matrix.spec }}]"
                   path: supertokens-auth-react
                   spec: ${{ matrix.spec }}
+                  retrieve-workspace: "false"
