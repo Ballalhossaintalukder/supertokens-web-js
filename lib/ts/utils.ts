@@ -16,9 +16,21 @@ import { WindowHandlerReference } from "./windowHandler";
 import { DEFAULT_API_BASE_PATH, SSR_ERROR } from "./constants";
 import NormalisedURLDomain from "./normalisedURLDomain";
 import NormalisedURLPath from "./normalisedURLPath";
-import { AppInfoUserInput, NormalisedAppInfo, User } from "./types";
+import {
+    AllRecipeConfigs,
+    AppInfoUserInput,
+    NormalisedAppInfo,
+    SuperTokensConfigWithNormalisedAppInfo,
+    SuperTokensPlugin,
+    SuperTokensPublicConfig,
+    SuperTokensPublicPlugin,
+    User,
+    NonPublicConfigPropertiesType,
+    nonPublicConfigProperties,
+} from "./types";
 import { SessionClaimValidator } from "supertokens-website";
 import { getGlobalClaimValidators as getGlobalClaimValidatorsWebsite } from "supertokens-website/utils/globalClaimValidators";
+import OverrideableBuilder from "supertokens-js-override";
 
 export function appendQueryParamsToURL(stringUrl: string, queryParams?: Record<string, string>): string {
     if (queryParams === undefined) {
@@ -205,4 +217,61 @@ export function normaliseUser(
             },
         ],
     };
+}
+
+export function applyPlugins<T extends keyof AllRecipeConfigs>(
+    recipeId: T,
+    config: AllRecipeConfigs[T] | undefined,
+    plugins: NonNullable<SuperTokensPlugin["overrideMap"]>[]
+): AllRecipeConfigs[T] {
+    let _config = { ...(config ?? ({} as AllRecipeConfigs[T])) };
+    let functionLayers = [_config.override?.functions];
+    for (const plugin of plugins) {
+        const overrides = plugin[recipeId];
+        if (overrides) {
+            _config = { ...(overrides.config ? overrides.config(_config) : _config) };
+            if (overrides.functions !== undefined) {
+                functionLayers.push(overrides.functions as any);
+            }
+        }
+    }
+    functionLayers = functionLayers.reverse().filter((layer) => layer !== undefined);
+
+    if (functionLayers.length > 0) {
+        _config.override = {
+            ..._config.override,
+            functions: (oI: any, builder: OverrideableBuilder<any>) => {
+                for (const layer of functionLayers) {
+                    builder.override(layer as any);
+                }
+                return oI as any;
+            },
+        };
+    }
+
+    return _config;
+}
+
+export function getPublicPlugin(plugin: SuperTokensPlugin): SuperTokensPublicPlugin {
+    return {
+        id: plugin.id,
+        initialized: plugin.init ? false : true, // since the init method is optional, we default to true
+        version: plugin.version,
+        exports: plugin.exports,
+        compatibleWebJSSDKVersions: plugin.compatibleWebJSSDKVersions,
+    };
+}
+
+export function getPublicConfig(config: SuperTokensConfigWithNormalisedAppInfo): SuperTokensPublicConfig {
+    const configKeys = Object.keys(config) as (keyof SuperTokensConfigWithNormalisedAppInfo)[];
+
+    const publicConfig = configKeys.reduce((acc, key) => {
+        if (nonPublicConfigProperties.includes(key as NonPublicConfigPropertiesType)) {
+            return acc;
+        } else {
+            return { ...acc, [key]: config[key] };
+        }
+    }, {} as SuperTokensPublicConfig);
+
+    return publicConfig;
 }

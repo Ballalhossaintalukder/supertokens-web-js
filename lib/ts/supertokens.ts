@@ -14,13 +14,21 @@
  */
 
 import RecipeModule from "./recipe/recipeModule";
-import { NormalisedAppInfo, SuperTokensConfig } from "./types";
-import { checkForSSRErrorAndAppendIfNeeded, isTest, normaliseInputAppInfoOrThrowError } from "./utils";
+import { NormalisedAppInfo, SuperTokensConfig, SuperTokensPlugin, SuperTokensPublicPlugin } from "./types";
+import {
+    checkForSSRErrorAndAppendIfNeeded,
+    getPublicConfig,
+    getPublicPlugin,
+    isTest,
+    normaliseInputAppInfoOrThrowError,
+} from "./utils";
 import { CookieHandlerReference } from "./cookieHandler";
 import { WindowHandlerReference } from "./windowHandler";
 import { PostSuperTokensInitCallbacks } from "./postSuperTokensInitCallbacks";
 import { Recipe as MultitenancyRecipe } from "./recipe/multitenancy/recipe";
 import { DateProviderReference } from "./dateProvider";
+import { package_version } from "./version";
+import { isVersionCompatible } from "./versionChecker";
 
 export default class SuperTokens {
     /*
@@ -33,6 +41,7 @@ export default class SuperTokens {
      */
     appInfo: NormalisedAppInfo;
     recipeList: RecipeModule<any, any>[] = [];
+    pluginList: SuperTokensPublicPlugin[] = [];
 
     constructor(config: SuperTokensConfig) {
         this.appInfo = normaliseInputAppInfoOrThrowError(config.appInfo);
@@ -43,6 +52,71 @@ export default class SuperTokens {
             );
         }
 
+        const finalPluginList: SuperTokensPlugin[] = [];
+        if (config.experimental?.plugins) {
+            for (const plugin of config.experimental.plugins) {
+                if (plugin.compatibleWebJSSDKVersions) {
+                    const versionCheck = isVersionCompatible(package_version, plugin.compatibleWebJSSDKVersions);
+                    if (!versionCheck) {
+                        throw new Error(
+                            `Incompatible SDK version for plugin ${
+                                plugin.id
+                            }. Version "${package_version}" not found in compatible versions: ${JSON.stringify(
+                                plugin.compatibleWebJSSDKVersions
+                            )}`
+                        );
+                    }
+                }
+
+                if (plugin.dependencies) {
+                    const result = plugin.dependencies(
+                        getPublicConfig({ ...config, appInfo: this.appInfo }),
+                        finalPluginList.map(getPublicPlugin),
+                        package_version
+                    );
+                    if (result.status === "ERROR") {
+                        throw new Error(result.message);
+                    }
+                    if (result.pluginsToAdd) {
+                        finalPluginList.push(...result.pluginsToAdd);
+                    }
+                }
+                finalPluginList.push(plugin);
+            }
+        }
+
+        const duplicatePluginIds = finalPluginList.filter((plugin, index) =>
+            finalPluginList.some((elem, idx) => elem.id === plugin.id && idx !== index)
+        );
+        if (duplicatePluginIds.length > 0) {
+            throw new Error(`Duplicate plugin IDs: ${duplicatePluginIds.map((plugin) => plugin.id).join(", ")}`);
+        }
+
+        this.pluginList = finalPluginList.map(getPublicPlugin);
+
+        for (let pluginIndex = 0; pluginIndex < this.pluginList.length; pluginIndex += 1) {
+            const plugin = finalPluginList[pluginIndex];
+            if (plugin.config) {
+                // @ts-ignore
+                const { appInfo, ...pluginConfig } =
+                    plugin.config(getPublicConfig({ ...config, appInfo: this.appInfo })) || {};
+
+                config = { ...config, ...pluginConfig };
+            }
+
+            const pluginInit = finalPluginList[pluginIndex].init;
+            if (pluginInit) {
+                PostSuperTokensInitCallbacks.addPostInitCallback(() => {
+                    pluginInit(getPublicConfig({ ...config, appInfo: this.appInfo }), this.pluginList, package_version);
+                    this.pluginList[pluginIndex].initialized = true;
+                });
+            }
+        }
+
+        const overrideMaps = finalPluginList
+            .filter((p) => p.overrideMap !== undefined)
+            .map((p) => p.overrideMap) as NonNullable<SuperTokensPlugin["overrideMap"]>[];
+
         let enableDebugLogs = false;
         if (config.enableDebugLogs !== undefined) {
             enableDebugLogs = config.enableDebugLogs;
@@ -51,7 +125,7 @@ export default class SuperTokens {
         let multitenancyFound = false;
 
         this.recipeList = config.recipeList.map((recipe) => {
-            const recipeInstance = recipe(this.appInfo, config.clientType, enableDebugLogs);
+            const recipeInstance = recipe(this.appInfo, config.clientType, enableDebugLogs, overrideMaps);
             if (recipeInstance.config.recipeId === MultitenancyRecipe.RECIPE_ID) {
                 multitenancyFound = true;
             }
@@ -59,7 +133,9 @@ export default class SuperTokens {
         });
 
         if (!multitenancyFound) {
-            this.recipeList.push(MultitenancyRecipe.init()(this.appInfo, config.clientType, enableDebugLogs));
+            this.recipeList.push(
+                MultitenancyRecipe.init()(this.appInfo, config.clientType, enableDebugLogs, overrideMaps)
+            );
         }
     }
 

@@ -1,4 +1,13 @@
-import { AppInfoUserInput, NormalisedAppInfo, User } from "./types";
+import {
+    AllRecipeConfigs,
+    AppInfoUserInput,
+    NormalisedAppInfo,
+    SuperTokensConfigWithNormalisedAppInfo,
+    SuperTokensPlugin,
+    SuperTokensPublicConfig,
+    SuperTokensPublicPlugin,
+    User,
+} from "./types";
 import { SessionClaimValidator } from "supertokens-website";
 export declare function appendQueryParamsToURL(stringUrl: string, queryParams?: Record<string, string>): string;
 export declare function normaliseInputAppInfoOrThrowError(appInfo: AppInfoUserInput): NormalisedAppInfo;
@@ -69,3 +78,10 @@ export declare function normaliseUser(
               timeJoined: number;
           }
 ): User;
+export declare function applyPlugins<T extends keyof AllRecipeConfigs>(
+    recipeId: T,
+    config: AllRecipeConfigs[T] | undefined,
+    plugins: NonNullable<SuperTokensPlugin["overrideMap"]>[]
+): AllRecipeConfigs[T];
+export declare function getPublicPlugin(plugin: SuperTokensPlugin): SuperTokensPublicPlugin;
+export declare function getPublicConfig(config: SuperTokensConfigWithNormalisedAppInfo): SuperTokensPublicConfig;
