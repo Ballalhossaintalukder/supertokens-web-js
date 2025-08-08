@@ -662,6 +662,7 @@ const doesBrowserSupportWebAuthn = RecipeWrapper.doesBrowserSupportWebAuthn;
 const listCredentials = RecipeWrapper.listCredentials;
 const removeCredential = RecipeWrapper.removeCredential;
 const registerCredential = RecipeWrapper.registerCredential;
+const registerCredentialWithUser = RecipeWrapper.registerCredentialWithUser;
 
 export {
     init,
@@ -682,4 +683,5 @@ export {
     listCredentials,
     removeCredential,
     registerCredential,
+    registerCredentialWithUser,
 };

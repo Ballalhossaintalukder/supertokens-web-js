@@ -714,6 +714,7 @@ declare const doesBrowserSupportWebAuthn: typeof RecipeWrapper.doesBrowserSuppor
 declare const listCredentials: typeof RecipeWrapper.listCredentials;
 declare const removeCredential: typeof RecipeWrapper.removeCredential;
 declare const registerCredential: typeof RecipeWrapper.registerCredential;
+declare const registerCredentialWithUser: typeof RecipeWrapper.registerCredentialWithUser;
 export {
     init,
     getRegisterOptions,
@@ -733,4 +734,5 @@ export {
     listCredentials,
     removeCredential,
     registerCredential,
+    registerCredentialWithUser,
 };
