@@ -113,7 +113,7 @@
         },
         {
             "path": "recipe/webauthn/index.js",
-            "limit": "33kb"
+            "limit": "34kb"
         }
     ]
 }
