@@ -260,7 +260,7 @@ jobs:
                     if [ -n "$jsonPayload" ] && [ "$jsonPayload" != "{" ]; then
                         jsonPayload+=","
                     fi
-                    jsonPayload+="\"$name\":\"https://cdn.jsdelivr.net/gh/supertokens/supertokens-web-js@v${version}/bundle/$filename\""
+                    jsonPayload+="\"$name\":\"https://cdn.jsdelivr.net/gh/supertokens/supertokens-web-js@v${{ needs.setup.outputs.packageVersion }}/bundle/$filename\""
                 done
                 # Close the JSON object
                 jsonPayload+="}"
