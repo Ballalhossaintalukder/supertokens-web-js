@@ -94,7 +94,7 @@ jobs:
                     echo "AUTH_REACT__PORT=3031" | tee -a "$GITHUB_OUTPUT" "$GITHUB_ENV"
 
                     cd supertokens-auth-react
-                    echo "specs=$(find 'test/end-to-end' -name '*.test.js' -type f | sort | jq -Rsc 'split("\n")[:-1]' | jq -r 'tostring')" | tee -a "$GITHUB_OUTPUT" "$GITHUB_ENV"
+                    echo "specs=$(find 'test/end-to-end' -name '*.test.js' -type f | jq -Rsc 'split("\n")[:-1]' | jq -r 'tostring')" | tee -a "$GITHUB_OUTPUT" "$GITHUB_ENV"
 
             - name: Setup auth-react
               working-directory: supertokens-auth-react

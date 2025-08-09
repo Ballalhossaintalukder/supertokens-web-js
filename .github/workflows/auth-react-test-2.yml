@@ -117,6 +117,3 @@ jobs:
                   path: supertokens-auth-react
                   spec: ${{ matrix.spec }}
                   retrieve-workspace: "false"
-
-            - uses: mxschmitt/action-tmate@v3
-              if: failure()
