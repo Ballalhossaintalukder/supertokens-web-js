@@ -71,7 +71,7 @@ jobs:
             - uses: supertokens/auth-react-testing-action/setup@main
               id: envs
               with:
-                  auth-react-version: ${{ steps.versions.outputs.webJsReactTag }}
+                  auth-react-version: ${{ steps.versions.outputs.webJsReactVersionXy }}
                   node-sdk-version: ${{ steps.versions.outputs.nodeTag }}
                   fdi-version: ${{ matrix.fdi-version }}
                   use-common-app-and-test-server: "true"
