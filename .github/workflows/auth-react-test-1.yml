@@ -93,9 +93,9 @@ jobs:
                   cd ../supertokens-auth-react
                   # Extract the tarball to the auth-react package
                   tar -xf ../supertokens-web-js/supertokens-web-js-*.tgz --strip-components=1 -C node_modules/supertokens-web-js
-                  # Remove existing website package and link to the one from web-js
-                  rm -rf node_modules/supertokens-website
-                  ln -s "../supertokens-web-js/node_modules/supertokens-website" node_modules
+                #   # Remove existing website package and link to the one from web-js
+                #   rm -rf node_modules/supertokens-website
+                #   ln -s "../supertokens-web-js/node_modules/supertokens-website" node_modules
 
             - name: Set up auth-react with new dependencies
               working-directory: supertokens-auth-react/examples/for-tests
