@@ -50,13 +50,13 @@ jobs:
             fdiVersions: ${{ needs.define-versions.outputs.fdiVersions }}
 
         steps:
-            - uses: actions/setup-node@v4
-              with:
-                  node-version: 20
-
             - uses: actions/checkout@v4
               with:
                   path: supertokens-web-js
+
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 20
 
             - uses: supertokens/get-versions-action@main
               id: versions
@@ -68,11 +68,14 @@ jobs:
               env:
                   SUPERTOKENS_API_KEY: ${{ secrets.SUPERTOKENS_API_KEY }}
 
-            - uses: actions/checkout@v4
+            - uses: supertokens/auth-react-testing-action/setup@main
+              id: envs
               with:
-                  repository: supertokens/supertokens-auth-react
-                  ref: ${{ steps.versions.outputs.webJsReactTag }}
-                  path: supertokens-auth-react
+                  auth-react-version: ${{ steps.versions.outputs.webJsReactTag }}
+                  node-sdk-version: ${{ steps.versions.outputs.nodeTag }}
+                  fdi-version: ${{ matrix.fdi-version }}
+                  use-common-app-and-test-server: "true"
+                  persist-workspace: "false"
 
             # We will use this in the test run to get the core version
             - uses: actions/checkout@v4
@@ -80,59 +83,6 @@ jobs:
                   repository: supertokens/supertokens-node
                   ref: ${{ steps.versions.outputs.nodeTag }}
                   path: supertokens-node
-
-            - name: Setup envs
-              id: envs
-              run: |
-                    echo "AUTH_REACT__LOG_DIR=${{ github.workspace }}/supertokens-auth-react/test_report/logs" | tee -a "$GITHUB_OUTPUT" "$GITHUB_ENV"
-                    echo "AUTH_REACT__SCREENSHOT_DIR=${{ github.workspace }}/supertokens-auth-react/test_report/screenshots" | tee -a "$GITHUB_OUTPUT" "$GITHUB_ENV"
-
-                    echo "AUTH_REACT__NODE_PORT=8082" | tee -a "$GITHUB_OUTPUT" "$GITHUB_ENV"
-                    echo "AUTH_REACT__APP_SERVER=8082" | tee -a "$GITHUB_OUTPUT" "$GITHUB_ENV"
-
-                    echo "AUTH_REACT__TEST_MODE=testing" | tee -a "$GITHUB_OUTPUT" "$GITHUB_ENV"
-                    echo "AUTH_REACT__PORT=3031" | tee -a "$GITHUB_OUTPUT" "$GITHUB_ENV"
-
-                    cd supertokens-auth-react
-                    echo "specs=$(find 'test/end-to-end' -name '*.test.js' -type f | jq -Rsc 'split("\n")[:-1]' | jq -r 'tostring')" | tee -a "$GITHUB_OUTPUT" "$GITHUB_ENV"
-
-            - name: Setup auth-react
-              working-directory: supertokens-auth-react
-              env:
-                  ROOT_DIR: supertokens-auth-react
-              run: |
-                npm i
-                mkdir -p ${{ steps.envs.outputs.AUTH_REACT__LOG_DIR }}
-                mkdir -p ${{ steps.envs.outputs.AUTH_REACT__SCREENSHOT_DIR }}
-
-            - name: Setup auth-react test server
-              working-directory: supertokens-auth-react/test/server/
-              env:
-                # Common
-                APP_SERVER: ${{ steps.envs.outputs.AUTH_REACT__APP_SERVER }}
-                NODE_PORT: ${{ steps.envs.outputs.AUTH_REACT__NODE_PORT }}
-                TEST_MODE: ${{ steps.envs.outputs.AUTH_REACT__TEST_MODE }}
-                # Step-specific
-                NODE_TAG: ${{ steps.versions.outputs.nodeTag }}
-              run: |
-                npm i git+https://github.com:supertokens/supertokens-node.git#$NODE_TAG
-                npm i
-
-            - name: Setup auth-react frontend application
-              working-directory: supertokens-auth-react/examples/for-tests/
-              env:
-                # Common
-                APP_SERVER: ${{ steps.envs.outputs.AUTH_REACT__APP_SERVER }}
-                NODE_PORT: ${{ steps.envs.outputs.AUTH_REACT__NODE_PORT }}
-                TEST_MODE: ${{ steps.envs.outputs.AUTH_REACT__TEST_MODE }}
-                # Step-specific
-                CI: true
-                BROWSER: none
-                PORT: ${{ steps.envs.outputs.AUTH_REACT__PORT }}
-                REACT_APP_API_PORT: ${{ steps.envs.outputs.AUTH_REACT__APP_SERVER }}
-              run: |
-                npm i
-                npm run prep
 
             - name: Copy over required dependencies
               run: |
@@ -146,6 +96,21 @@ jobs:
                   # Remove existing website package and link to the one from web-js
                 #   rm -rf node_modules/supertokens-website
                 #   ln -s "../supertokens-web-js/node_modules/supertokens-website" node_modules
+
+            - name: Set up auth-react with new dependencies
+              working-directory: supertokens-auth-react/examples/for-tests
+              env:
+                # Common
+                APP_SERVER: ${{ steps.envs.outputs.AUTH_REACT__APP_SERVER }}
+                NODE_PORT: ${{ steps.envs.outputs.AUTH_REACT__NODE_PORT }}
+                TEST_MODE: ${{ steps.envs.outputs.AUTH_REACT__TEST_MODE }}
+                # Step-specific
+                CI: true
+                BROWSER: none
+                PORT: ${{ steps.envs.outputs.AUTH_REACT__PORT }}
+                REACT_APP_API_PORT: ${{ steps.envs.outputs.AUTH_REACT__APP_SERVER }}
+              run: |
+                npm run prep
 
             - uses: bissolli/gh-action-persist-workspace@v2
               with:
