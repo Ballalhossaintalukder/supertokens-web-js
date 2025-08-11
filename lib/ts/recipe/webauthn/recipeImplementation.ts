@@ -85,7 +85,9 @@ export default function getRecipeImplementation(
                             })) || "public",
                     },
                 },
-                {},
+                {
+                    body: undefined,
+                },
                 Querier.preparePreAPIHook({
                     recipePreAPIHook: recipeImplInput.preAPIHook,
                     action: "SIGN_IN_OPTIONS",

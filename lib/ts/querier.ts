@@ -24,7 +24,13 @@ import {
 } from "./recipe/recipeModule/types";
 import STGeneralError from "./error";
 import { paths } from "./sdk/paths";
-import { PathParam, RequestInitWithInferredBody, ResponseBody, Method } from "./sdk/types";
+import {
+    PathParam,
+    RequestInitWithInferredBody,
+    ResponseBody,
+    Method,
+    RequestInitWithInferredBodyRequired,
+} from "./sdk/types";
 
 /**
  * When network calls are made the Querier calls .clone() on the response before:
@@ -39,7 +45,7 @@ import { PathParam, RequestInitWithInferredBody, ResponseBody, Method } from "./
 export default class Querier {
     constructor(private readonly recipeId: string, private readonly appInfo: NormalisedAppInfo) {}
 
-    private getPath = <P extends keyof paths, M extends Method>(path: PathParam<P, M>): NormalisedURLPath => {
+    private getPath = <P extends keyof paths, M extends Method>(path: PathParam<P, M>): string => {
         const template = typeof path === "string" ? path : path.path;
         const pathParams = typeof path === "string" ? {} : path.pathParams ?? {};
         const queryParams = typeof path === "string" ? {} : path.queryParams ?? {};
@@ -49,11 +55,12 @@ export default class Querier {
             populated = populated.replace(new RegExp(`<${key}>`, "g"), String(value));
         }
 
+        populated = new NormalisedURLPath(populated).getAsStringDangerous();
         // Create a new URLSearchParams object with the query params and add it to the path
         const searchParams = new URLSearchParams(queryParams);
         populated += "?" + searchParams.toString();
 
-        return new NormalisedURLPath(populated);
+        return populated;
     };
 
     private safelyStringifyBody = (body?: any) => (body ? JSON.stringify(body) : undefined);
@@ -89,17 +96,13 @@ export default class Querier {
 
     post = async <P extends keyof paths>(
         template: PathParam<P, "post">,
-        config: RequestInitWithInferredBody<P, "post">,
+        config: RequestInitWithInferredBodyRequired<P, "post">,
         preAPIHook?: PreAPIHookFunction,
         postAPIHook?: PostAPIHookFunction
     ): Promise<{
         jsonBody: ResponseBody<P, "post">;
         fetchResponse: Response;
     }> => {
-        if (config.body === undefined) {
-            throw new Error("Post request must have a body");
-        }
-
         const result = await this.fetch(
             this.getFullUrl(template),
             {
@@ -246,7 +249,7 @@ export default class Querier {
         let basePath = this.appInfo.apiBasePath.getAsStringDangerous();
         const normalisedPath = this.getPath(path);
 
-        return `${this.appInfo.apiDomain.getAsStringDangerous()}${basePath}${normalisedPath.getAsStringDangerous()}`;
+        return `${this.appInfo.apiDomain.getAsStringDangerous()}${basePath}${normalisedPath}`;
     };
 
     getResponseJsonOrThrowGeneralError = async (response: Response): Promise<any> => {

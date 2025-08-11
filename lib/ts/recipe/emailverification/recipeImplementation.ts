@@ -117,7 +117,9 @@ export default function getRecipeImplementation(
         }> {
             const { jsonBody, fetchResponse } = await querier.post(
                 "/user/email/verify/token",
-                {},
+                {
+                    body: undefined,
+                },
                 Querier.preparePreAPIHook({
                     recipePreAPIHook: recipeImpleInput.preAPIHook,
                     action: "SEND_VERIFY_EMAIL",

@@ -6,7 +6,13 @@ import {
     RecipePostAPIHookFunction,
     RecipePreAPIHookFunction,
 } from "./recipe/recipeModule/types";
-import { PathParam, RequestInitWithInferredBody, ResponseBody, Method } from "./sdk/types";
+import {
+    PathParam,
+    RequestInitWithInferredBody,
+    ResponseBody,
+    Method,
+    RequestInitWithInferredBodyRequired,
+} from "./sdk/types";
 /**
  * When network calls are made the Querier calls .clone() on the response before:
  * 1. Calling the post API hook
@@ -150,7 +156,7 @@ export default class Querier {
             | "/<tenantId>/user/webauthn/reset"
     >(
         template: PathParam<P, "post">,
-        config: RequestInitWithInferredBody<P, "post">,
+        config: RequestInitWithInferredBodyRequired<P, "post">,
         preAPIHook?: PreAPIHookFunction,
         postAPIHook?: PostAPIHookFunction
     ) => Promise<{

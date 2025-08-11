@@ -75,4 +75,10 @@ export declare type PathParam<P extends keyof paths, M extends Method> =
 export declare type RequestInitWithInferredBody<P extends keyof paths, M extends Method> = Omit<RequestInit, "body"> & {
     body?: RequestBody<P, M>;
 };
+export declare type RequestInitWithInferredBodyRequired<P extends keyof paths, M extends Method> = Omit<
+    RequestInit,
+    "body"
+> & {
+    body: RequestBody<P, M>;
+};
 export {};

@@ -81,3 +81,9 @@ export type PathParam<P extends keyof paths, M extends Method> =
 export type RequestInitWithInferredBody<P extends keyof paths, M extends Method> = Omit<RequestInit, "body"> & {
     body?: RequestBody<P, M>;
 };
+
+// Custom type defined from RequestInit to ensure request body is the one inferred from the path.
+// Here the body is required (for use in POST requests mostly)
+export type RequestInitWithInferredBodyRequired<P extends keyof paths, M extends Method> = Omit<RequestInit, "body"> & {
+    body: RequestBody<P, M>;
+};
