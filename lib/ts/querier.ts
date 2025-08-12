@@ -56,9 +56,16 @@ export default class Querier {
         }
 
         populated = new NormalisedURLPath(populated).getAsStringDangerous();
+        if (populated.startsWith("/public/")) {
+            populated = populated.substring(7);
+        }
+
         // Create a new URLSearchParams object with the query params and add it to the path
         const searchParams = new URLSearchParams(queryParams);
-        populated += "?" + searchParams.toString();
+        const stringifiedSearchParams = searchParams.toString();
+        if (stringifiedSearchParams.length > 0) {
+            populated += "?" + searchParams.toString();
+        }
 
         return populated;
     };
