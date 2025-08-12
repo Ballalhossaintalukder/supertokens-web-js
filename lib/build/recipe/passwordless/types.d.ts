@@ -1,7 +1,19 @@
 import { User } from "../../types";
-import { NormalisedRecipeConfig, RecipeConfig, RecipeFunctionOptions, RecipePostAPIHookContext, RecipePreAPIHookContext, UserInput as RecipeModuleUserInput } from "../recipeModule/types";
+import {
+    NormalisedRecipeConfig,
+    RecipeConfig,
+    RecipeFunctionOptions,
+    RecipePostAPIHookContext,
+    RecipePreAPIHookContext,
+    UserInput as RecipeModuleUserInput,
+} from "../recipeModule/types";
 import OverrideableBuilder from "supertokens-js-override";
-export declare type PreAndPostAPIHookAction = "PASSWORDLESS_CREATE_CODE" | "PASSWORDLESS_CONSUME_CODE" | "PASSWORDLESS_RESEND_CODE" | "EMAIL_EXISTS" | "PHONE_NUMBER_EXISTS";
+export declare type PreAndPostAPIHookAction =
+    | "PASSWORDLESS_CREATE_CODE"
+    | "PASSWORDLESS_CONSUME_CODE"
+    | "PASSWORDLESS_RESEND_CODE"
+    | "EMAIL_EXISTS"
+    | "PHONE_NUMBER_EXISTS";
 export declare type PreAPIHookContext = RecipePreAPIHookContext<PreAndPostAPIHookAction>;
 export declare type PostAPIHookContext = RecipePostAPIHookContext<PreAndPostAPIHookAction>;
 export declare type UserInput = {
@@ -9,13 +21,19 @@ export declare type UserInput = {
      * Refer to {@link https://supertokens.com/docs/passwordless/advanced-customizations/frontend-functions-override/about the documentation}
      */
     override?: {
-        functions?: (originalImplementation: RecipeInterface, builder: OverrideableBuilder<RecipeInterface>) => RecipeInterface;
+        functions?: (
+            originalImplementation: RecipeInterface,
+            builder: OverrideableBuilder<RecipeInterface>
+        ) => RecipeInterface;
     };
 } & RecipeModuleUserInput<PreAndPostAPIHookAction>;
 export declare type InputType = RecipeConfig<PreAndPostAPIHookAction> & UserInput;
 export declare type NormalisedInputType = NormalisedRecipeConfig<PreAndPostAPIHookAction> & {
     override: {
-        functions: (originalImplementation: RecipeInterface, builder: OverrideableBuilder<RecipeInterface>) => RecipeInterface;
+        functions: (
+            originalImplementation: RecipeInterface,
+            builder: OverrideableBuilder<RecipeInterface>
+        ) => RecipeInterface;
     };
 };
 export declare type PasswordlessFlowType = "USER_INPUT_CODE" | "MAGIC_LINK" | "USER_INPUT_CODE_AND_MAGIC_LINK";
@@ -37,27 +55,34 @@ export declare type RecipeInterface = {
      *
      * @throws STGeneralError if the API exposed by the backend SDKs returns `status: "GENERAL_ERROR"`
      */
-    createCode: (input: {
-        email: string;
-        shouldTryLinkingWithSessionUser: boolean | undefined;
-        userContext: any;
-        options?: RecipeFunctionOptions;
-    } | {
-        phoneNumber: string;
-        shouldTryLinkingWithSessionUser: boolean | undefined;
-        userContext: any;
-        options?: RecipeFunctionOptions;
-    }) => Promise<{
-        status: "OK";
-        deviceId: string;
-        preAuthSessionId: string;
-        flowType: PasswordlessFlowType;
-        fetchResponse: Response;
-    } | {
-        status: "SIGN_IN_UP_NOT_ALLOWED";
-        reason: string;
-        fetchResponse: Response;
-    }>;
+    createCode: (
+        input:
+            | {
+                  email: string;
+                  shouldTryLinkingWithSessionUser: boolean | undefined;
+                  userContext: any;
+                  options?: RecipeFunctionOptions;
+              }
+            | {
+                  phoneNumber: string;
+                  shouldTryLinkingWithSessionUser: boolean | undefined;
+                  userContext: any;
+                  options?: RecipeFunctionOptions;
+              }
+    ) => Promise<
+        | {
+              status: "OK";
+              deviceId: string;
+              preAuthSessionId: string;
+              flowType: PasswordlessFlowType;
+              fetchResponse: Response;
+          }
+        | {
+              status: "SIGN_IN_UP_NOT_ALLOWED";
+              reason: string;
+              fetchResponse: Response;
+          }
+    >;
     /**
      * Resend the code to the user
      *
@@ -116,39 +141,48 @@ export declare type RecipeInterface = {
      *
      * @throws STGeneralError if the API exposed by the backend SDKs returns `status: "GENERAL_ERROR"`
      */
-    consumeCode: (input: {
-        userInputCode: string;
-        deviceId: string;
-        tenantId: string | undefined;
-        preAuthSessionId: string;
-        shouldTryLinkingWithSessionUser: boolean | undefined;
-        userContext: any;
-        options?: RecipeFunctionOptions;
-    } | {
-        tenantId: string | undefined;
-        preAuthSessionId: string;
-        shouldTryLinkingWithSessionUser: boolean | undefined;
-        linkCode: string;
-        userContext: any;
-        options?: RecipeFunctionOptions;
-    }) => Promise<{
-        status: "OK";
-        createdNewRecipeUser: boolean;
-        user: User;
-        fetchResponse: Response;
-    } | {
-        status: "INCORRECT_USER_INPUT_CODE_ERROR" | "EXPIRED_USER_INPUT_CODE_ERROR";
-        failedCodeInputAttemptCount: number;
-        maximumCodeInputAttempts: number;
-        fetchResponse: Response;
-    } | {
-        status: "RESTART_FLOW_ERROR";
-        fetchResponse: Response;
-    } | {
-        status: "SIGN_IN_UP_NOT_ALLOWED";
-        reason: string;
-        fetchResponse: Response;
-    }>;
+    consumeCode: (
+        input:
+            | {
+                  userInputCode: string;
+                  deviceId: string;
+                  tenantId: string | undefined;
+                  preAuthSessionId: string;
+                  shouldTryLinkingWithSessionUser: boolean | undefined;
+                  userContext: any;
+                  options?: RecipeFunctionOptions;
+              }
+            | {
+                  tenantId: string | undefined;
+                  preAuthSessionId: string;
+                  shouldTryLinkingWithSessionUser: boolean | undefined;
+                  linkCode: string;
+                  userContext: any;
+                  options?: RecipeFunctionOptions;
+              }
+    ) => Promise<
+        | {
+              status: "OK";
+              createdNewRecipeUser: boolean;
+              user: User;
+              fetchResponse: Response;
+          }
+        | {
+              status: "INCORRECT_USER_INPUT_CODE_ERROR" | "EXPIRED_USER_INPUT_CODE_ERROR";
+              failedCodeInputAttemptCount: number;
+              maximumCodeInputAttempts: number;
+              fetchResponse: Response;
+          }
+        | {
+              status: "RESTART_FLOW_ERROR";
+              fetchResponse: Response;
+          }
+        | {
+              status: "SIGN_IN_UP_NOT_ALLOWED";
+              reason: string;
+              fetchResponse: Response;
+          }
+    >;
     /**
      * Reads and returns the link code from the current URL
      *
@@ -156,9 +190,7 @@ export declare type RecipeInterface = {
      *
      * @returns The hash (#) property of the current URL
      */
-    getLinkCodeFromURL: (input: {
-        userContext: any;
-    }) => string;
+    getLinkCodeFromURL: (input: { userContext: any }) => string;
     /**
      * Reads and returns the tenant id from the current URL
      *
@@ -166,9 +198,7 @@ export declare type RecipeInterface = {
      *
      * @returns The "tenantId" query parameter from the current URL
      */
-    getTenantIdFromURL: (input: {
-        userContext: any;
-    }) => string | undefined;
+    getTenantIdFromURL: (input: { userContext: any }) => string | undefined;
     /**
      * Reads and returns the pre auth session id from the current URL
      *
@@ -176,9 +206,7 @@ export declare type RecipeInterface = {
      *
      * @returns The "preAuthSessionId" query parameter from the current URL
      */
-    getPreAuthSessionIdFromURL: (input: {
-        userContext: any;
-    }) => string;
+    getPreAuthSessionIdFromURL: (input: { userContext: any }) => string;
     /**
      * Check if a user with the given email exists
      *
@@ -192,11 +220,7 @@ export declare type RecipeInterface = {
      *
      * @throws STGeneralError if the API exposed by the backend SDKs returns `status: "GENERAL_ERROR"`
      */
-    doesEmailExist: (input: {
-        email: string;
-        userContext: any;
-        options?: RecipeFunctionOptions;
-    }) => Promise<{
+    doesEmailExist: (input: { email: string; userContext: any; options?: RecipeFunctionOptions }) => Promise<{
         status: "OK";
         doesExist: boolean;
         fetchResponse: Response;
@@ -230,15 +254,16 @@ export declare type RecipeInterface = {
      *
      * @returns `{deviceId, preAuthSessionId, flowType}` if present, returns undefined otherwise
      */
-    getLoginAttemptInfo: <CustomLoginAttemptInfoProperties>(input: {
-        userContext: any;
-    }) => Promise<undefined | ({
-        tenantId?: string;
-        deviceId: string;
-        preAuthSessionId: string;
-        shouldTryLinkingWithSessionUser?: boolean;
-        flowType: PasswordlessFlowType;
-    } & CustomLoginAttemptInfoProperties)>;
+    getLoginAttemptInfo: <CustomLoginAttemptInfoProperties>(input: { userContext: any }) => Promise<
+        | undefined
+        | ({
+              tenantId?: string;
+              deviceId: string;
+              preAuthSessionId: string;
+              shouldTryLinkingWithSessionUser?: boolean;
+              flowType: PasswordlessFlowType;
+          } & CustomLoginAttemptInfoProperties)
+    >;
     /**
      * Set information about the current login attempt to storage
      *
@@ -259,7 +284,5 @@ export declare type RecipeInterface = {
      *
      * @param userContext Refer to {@link https://supertokens.com/docs/passwordless/advanced-customizations/user-context the documentation}
      */
-    clearLoginAttemptInfo: (input: {
-        userContext: any;
-    }) => Promise<void>;
+    clearLoginAttemptInfo: (input: { userContext: any }) => Promise<void>;
 };

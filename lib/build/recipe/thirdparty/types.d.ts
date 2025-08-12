@@ -1,6 +1,14 @@
 import { User } from "../../types";
-import { NormalisedInputType as AuthRecipeNormalisedInputType, InputType as AuthRecipeInputType } from "../authRecipe/types";
-import { RecipePostAPIHookContext, RecipePreAPIHookContext, RecipeFunctionOptions, UserInput as RecipeModuleUserInput } from "../recipeModule/types";
+import {
+    NormalisedInputType as AuthRecipeNormalisedInputType,
+    InputType as AuthRecipeInputType,
+} from "../authRecipe/types";
+import {
+    RecipePostAPIHookContext,
+    RecipePreAPIHookContext,
+    RecipeFunctionOptions,
+    UserInput as RecipeModuleUserInput,
+} from "../recipeModule/types";
 import OverrideableBuilder from "supertokens-js-override";
 export declare type PreAndPostAPIHookAction = "GET_AUTHORISATION_URL" | "THIRD_PARTY_SIGN_IN_UP";
 export declare type PreAPIHookContext = RecipePreAPIHookContext<PreAndPostAPIHookAction>;
@@ -10,13 +18,19 @@ export declare type UserInput = {
      * Refer to {@link https://supertokens.com/docs/thirdparty/advanced-customizations/frontend-functions-override/about the documentation}
      */
     override?: {
-        functions?: (originalImplementation: RecipeInterface, builder: OverrideableBuilder<RecipeInterface>) => RecipeInterface;
+        functions?: (
+            originalImplementation: RecipeInterface,
+            builder: OverrideableBuilder<RecipeInterface>
+        ) => RecipeInterface;
     };
 } & RecipeModuleUserInput<PreAndPostAPIHookAction>;
 export declare type InputType = AuthRecipeInputType<PreAndPostAPIHookAction> & UserInput;
 export declare type NormalisedInputType = AuthRecipeNormalisedInputType<PreAndPostAPIHookAction> & {
     override: {
-        functions: (originalImplementation: RecipeInterface, builder: OverrideableBuilder<RecipeInterface>) => RecipeInterface;
+        functions: (
+            originalImplementation: RecipeInterface,
+            builder: OverrideableBuilder<RecipeInterface>
+        ) => RecipeInterface;
     };
 };
 export declare type StateObject = {
@@ -123,23 +137,24 @@ export declare type RecipeInterface = {
      *
      * @throws STGeneralError if the API exposed by the backend SDKs returns `status: "GENERAL_ERROR"`
      */
-    signInAndUp: (input: {
-        userContext: any;
-        options?: RecipeFunctionOptions;
-    }) => Promise<{
-        status: "OK";
-        user: User;
-        createdNewRecipeUser: boolean;
-        tenantId?: string;
-        fetchResponse: Response;
-    } | {
-        status: "NO_EMAIL_GIVEN_BY_PROVIDER";
-        fetchResponse: Response;
-    } | {
-        status: "SIGN_IN_UP_NOT_ALLOWED";
-        reason: string;
-        fetchResponse: Response;
-    }>;
+    signInAndUp: (input: { userContext: any; options?: RecipeFunctionOptions }) => Promise<
+        | {
+              status: "OK";
+              user: User;
+              createdNewRecipeUser: boolean;
+              tenantId?: string;
+              fetchResponse: Response;
+          }
+        | {
+              status: "NO_EMAIL_GIVEN_BY_PROVIDER";
+              fetchResponse: Response;
+          }
+        | {
+              status: "SIGN_IN_UP_NOT_ALLOWED";
+              reason: string;
+              fetchResponse: Response;
+          }
+    >;
     /**
      * Generate a new state that will be sent to the third party provider
      *
@@ -149,10 +164,7 @@ export declare type RecipeInterface = {
      *
      * @returns string
      */
-    generateStateToSendToOAuthProvider: (input?: {
-        frontendRedirectURI?: string;
-        userContext: any;
-    }) => string;
+    generateStateToSendToOAuthProvider: (input?: { frontendRedirectURI?: string; userContext: any }) => string;
     /**
      * Verify that the state recieved from the third party provider matches the one in storage
      *
@@ -174,9 +186,7 @@ export declare type RecipeInterface = {
      *
      * @returns The "error" query param from the current URL. Returns undefined if no error exists
      */
-    getAuthErrorFromURL: (input: {
-        userContext: any;
-    }) => string | undefined;
+    getAuthErrorFromURL: (input: { userContext: any }) => string | undefined;
     /**
      * Returns the auth state from the current URL
      *
@@ -184,7 +194,5 @@ export declare type RecipeInterface = {
      *
      * @returns The "state" query param from the current URL. Returns an empty string if no state exists
      */
-    getAuthStateFromURL: (input: {
-        userContext: any;
-    }) => string;
+    getAuthStateFromURL: (input: { userContext: any }) => string;
 };
