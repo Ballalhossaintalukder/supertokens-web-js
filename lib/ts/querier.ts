@@ -70,7 +70,7 @@ export default class Querier {
         return populated;
     };
 
-    private safelyStringifyBody = (body?: any) => (body ? JSON.stringify(body) : undefined);
+    private safelyStringifyBody = (body?: any) => (body ? JSON.stringify(body) : "{}");
 
     get = async <P extends keyof paths>(
         template: PathParam<P, "get">,
@@ -87,7 +87,7 @@ export default class Querier {
             {
                 method: "GET",
                 ...config,
-                body: this.safelyStringifyBody(config.body),
+                body: undefined,
             },
             preAPIHook,
             postAPIHook
