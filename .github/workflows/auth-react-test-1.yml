@@ -22,6 +22,12 @@ jobs:
         outputs:
             fdiVersions: ${{ steps.versions.outputs.fdiVersions }}
             webJsInterfaceVersion: ${{ steps.versions.outputs.webJsInterfaceVersion }}
+
+            authReactFdiVersionMap: ${{ steps.auth-react-versions.outputs.fdiVersions }}
+            authReactWjiVersionMap: ${{ steps.auth-react-versions.outputs.webJsInterfaceVersions }}
+
+            nodeFdiVersionMap: ${{ steps.node-versions.outputs.fdiVersions }}
+
         steps:
             - uses: actions/checkout@v4
 
@@ -30,6 +36,21 @@ jobs:
               with:
                   has-fdi: true
                   has-web-js: true
+
+            - uses: supertokens/actions/get-versions-from-repo@main
+              id: auth-react-versions
+              with:
+                repo: supertokens-auth-react
+                github-token: ${{ secrets.GITHUB_TOKEN }}
+                fdi-versions: ${{ steps.versions.outputs.fdiVersions }}
+                wji-versions: '[${{ steps.versions.outputs.webJsInterfaceVersion }}]'
+
+            - uses: supertokens/actions/get-versions-from-repo@main
+              id: node-versions
+              with:
+                repo: supertokens-node
+                github-token: ${{ secrets.GITHUB_TOKEN }}
+                fdi-versions: ${{ steps.versions.outputs.fdiVersions }}
 
     setup-auth-react:
         runs-on: ubuntu-latest
@@ -58,21 +79,21 @@ jobs:
               with:
                   node-version: 20
 
-            - uses: supertokens/get-versions-action@main
-              id: versions
-              with:
-                  driver-name: node
-                  fdi-version: ${{ matrix.fdi-version }}
-                  fetch-frontend-versions: false
-                  web-js-interface-version: ${{ needs.define-versions.outputs.webJsInterfaceVersion }}
-              env:
-                  SUPERTOKENS_API_KEY: ${{ secrets.SUPERTOKENS_API_KEY }}
+            - id: repo-versions
+              run: |
+                authReactVersionFromFdi=$( echo '${{ needs.define-versions.outputs.authReactFdiVersionMap }}' | jq -r '.["${{ matrix.fdi-version }}"]' )
+                authReactVersionFromWji=$( echo '${{ needs.define-versions.outputs.authReactWjiVersionMap }}' | jq -r '.["${{ matrix.fdi-version }}"]' )
+                nodeVersion=$( echo '${{ needs.define-versions.outputs.nodeFdiVersionMap }}' | jq -r '.["${{ matrix.fdi-version }}"]' )
+
+                echo "authReactVersionFromFdi=${authReactVersionFromFdi}" >> $GITHUB_OUTPUT
+                echo "authReactVersionFromWji=${authReactVersionFromWji}" >> $GITHUB_OUTPUT
+                echo "nodeVersion=${nodeVersion}" >> $GITHUB_OUTPUT
 
             - uses: supertokens/auth-react-testing-action/setup@main
               id: envs
               with:
-                  auth-react-version: ${{ steps.versions.outputs.webJsReactVersionXy }}
-                  node-sdk-version: ${{ steps.versions.outputs.nodeTag }}
+                  auth-react-version: ${{ steps.repo-versions.outputs.authReactVersionFromFdi }}
+                  node-sdk-version: ${{ steps.repo-versions.outputs.nodeVersion }}
                   fdi-version: ${{ matrix.fdi-version }}
                   use-common-app-and-test-server: "true"
                   persist-workspace: "false"
@@ -81,7 +102,7 @@ jobs:
             - uses: actions/checkout@v4
               with:
                   repository: supertokens/supertokens-node
-                  ref: ${{ steps.versions.outputs.nodeTag }}
+                  ref: ${{ steps.repo-versions.outputs.nodeVersion }}
                   path: supertokens-node
 
             - name: Copy over required dependencies
