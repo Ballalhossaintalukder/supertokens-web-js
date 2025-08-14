@@ -40,17 +40,17 @@ jobs:
             - uses: supertokens/actions/get-versions-from-repo@main
               id: auth-react-versions
               with:
-                repo: supertokens-auth-react
-                github-token: ${{ secrets.GITHUB_TOKEN }}
-                fdi-versions: ${{ steps.versions.outputs.fdiVersions }}
-                wji-versions: '[${{ steps.versions.outputs.webJsInterfaceVersion }}]'
+                  repo: supertokens-auth-react
+                  github-token: ${{ secrets.GITHUB_TOKEN }}
+                  fdi-versions: ${{ steps.versions.outputs.fdiVersions }}
+                  wji-versions: "[${{ steps.versions.outputs.webJsInterfaceVersion }}]"
 
             - uses: supertokens/actions/get-versions-from-repo@main
               id: node-versions
               with:
-                repo: supertokens-node
-                github-token: ${{ secrets.GITHUB_TOKEN }}
-                fdi-versions: ${{ steps.versions.outputs.fdiVersions }}
+                  repo: supertokens-node
+                  github-token: ${{ secrets.GITHUB_TOKEN }}
+                  fdi-versions: ${{ steps.versions.outputs.fdiVersions }}
 
     setup-auth-react:
         runs-on: ubuntu-latest
@@ -81,13 +81,13 @@ jobs:
 
             - id: repo-versions
               run: |
-                authReactVersionFromFdi=$( echo '${{ needs.define-versions.outputs.authReactFdiVersionMap }}' | jq -r '.["${{ matrix.fdi-version }}"]' )
-                authReactVersionFromWji=$( echo '${{ needs.define-versions.outputs.authReactWjiVersionMap }}' | jq -r '.["${{ matrix.fdi-version }}"]' )
-                nodeVersion=$( echo '${{ needs.define-versions.outputs.nodeFdiVersionMap }}' | jq -r '.["${{ matrix.fdi-version }}"]' )
+                  authReactVersionFromFdi=$( echo '${{ needs.define-versions.outputs.authReactFdiVersionMap }}' | jq -r '.["${{ matrix.fdi-version }}"]' )
+                  authReactVersionFromWji=$( echo '${{ needs.define-versions.outputs.authReactWjiVersionMap }}' | jq -r '.["${{ matrix.fdi-version }}"]' )
+                  nodeVersion=$( echo '${{ needs.define-versions.outputs.nodeFdiVersionMap }}' | jq -r '.["${{ matrix.fdi-version }}"]' )
 
-                echo "authReactVersionFromFdi=${authReactVersionFromFdi}" >> $GITHUB_OUTPUT
-                echo "authReactVersionFromWji=${authReactVersionFromWji}" >> $GITHUB_OUTPUT
-                echo "nodeVersion=${nodeVersion}" >> $GITHUB_OUTPUT
+                  echo "authReactVersionFromFdi=${authReactVersionFromFdi}" >> $GITHUB_OUTPUT
+                  echo "authReactVersionFromWji=${authReactVersionFromWji}" >> $GITHUB_OUTPUT
+                  echo "nodeVersion=${nodeVersion}" >> $GITHUB_OUTPUT
 
             - uses: supertokens/auth-react-testing-action/setup@main
               id: envs
